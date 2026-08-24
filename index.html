@@ -7,14 +7,15 @@
 
     <style>
         :root {
-            --primary: #173f5f;
-            --secondary: #20639b;
-            --accent: #2a9d8f;
-            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #eef8f5 100%);
-            --text-main: #1f2937;
-            --text-muted: #626b76;
-            --card-bg: #ffffff;
-            --radius: 14px;
+            --primary: #0f2c42;
+            --secondary: #1d4ed8;
+            --accent: #0ea5e9;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f2c42 100%);
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --radius: 16px;
         }
 
         * {
@@ -23,46 +24,84 @@
 
         body {
             margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             background: var(--bg-gradient);
             color: var(--text-main);
-            line-height: 1.4;
+            line-height: 1.5;
+            min-height: 100vh;
         }
 
+        /* Edler Header im Glass-Look mit Profil-Icon & Kaffeetasse */
         header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
             text-align: center;
-            padding: 30px 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 25px 15px;
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 700px;
+            margin: 0 auto 10px;
+        }
+
+        .profile-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
+        }
+
+        .coffee-btn {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fbbf24;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+
+        .coffee-btn:hover {
+            background: rgba(245, 158, 11, 0.35);
         }
 
         header h1 {
-            margin: 0 0 6px;
-            font-size: clamp(1.5rem, 5vw, 2.2rem);
-            white-space: nowrap;
+            margin: 0;
+            font-size: clamp(1.4rem, 4vw, 2rem);
             letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #ffffff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
         }
 
         header p {
-            margin: 0;
-            font-size: 0.95rem;
-            opacity: 0.9;
+            margin: 5px 0 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
         }
 
-        /* Kompakte Menü-Leiste ohne horizontales Scrollen */
+        /* Kompakte, edle Menü-Leiste */
         .nav-menu {
             display: flex;
             flex-direction: column;
             gap: 8px;
             padding: 12px;
-            background: #ffffff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 650px;
+            margin: 15px auto 0;
         }
 
         .menu-row {
@@ -72,26 +111,28 @@
         }
 
         .tab-btn {
-            background: #f0f4f8;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 10px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            padding: 10px 14px;
+            border-radius: 12px;
             font-weight: bold;
-            color: var(--primary);
+            color: var(--text-main);
             cursor: pointer;
             font-size: 0.85rem;
             flex: 1;
             text-align: center;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
 
         .tab-btn.active, .tab-btn:hover {
             background: var(--secondary);
-            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
         }
 
         .container {
-            width: min(700px, 92%);
+            width: min(680px, 92%);
             margin: 20px auto 40px;
         }
 
@@ -103,22 +144,21 @@
             display: block;
         }
 
-        /* Boxen & Karten */
+        /* Glassmorphism Boxen */
         .box {
-            background: var(--card-bg);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
             border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .box h2, .box h3 {
             margin-top: 0;
-            color: var(--primary);
-        }
-
-        .about-box {
-            border-left: 4px solid var(--accent);
+            color: #38bdf8;
         }
 
         .card-grid {
@@ -128,10 +168,10 @@
         }
 
         .card {
-            background: var(--card-bg);
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
             border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
         }
 
         .card img {
@@ -142,7 +182,7 @@
         }
 
         .card-content {
-            padding: 15px;
+            padding: 16px;
         }
 
         .button {
@@ -159,81 +199,113 @@
             cursor: pointer;
             font-size: 0.9rem;
             margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .button:hover {
+            background: #2563eb;
         }
 
         .button.green {
-            background: var(--accent);
+            background: #0d9488;
+        }
+        .button.green:hover {
+            background: #0f766e;
         }
 
-        /* Quiz & Aufgaben */
+        /* Aufgaben & Interaktive Widgets mit dynamischer Lücke */
         .quiz-box {
-            background: white;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
             border-radius: var(--radius);
-            padding: 18px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .sentence-slot {
+            display: inline-block;
+            min-width: 80px;
+            border-bottom: 2px dashed #38bdf8;
+            text-align: center;
+            padding: 0 8px;
+            color: #38bdf8;
+            font-weight: bold;
         }
 
         .options {
             display: flex;
             gap: 8px;
-            margin-top: 12px;
+            margin-top: 15px;
             flex-wrap: wrap;
         }
 
         .opt-btn {
-            background: #f0f4f8;
-            border: 2px solid #d1d9e0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
             padding: 8px 14px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            color: var(--text-main);
             font-size: 0.9rem;
             flex: 1;
             min-width: 90px;
             text-align: center;
+            transition: all 0.2s;
+        }
+
+        .opt-btn:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: #38bdf8;
         }
 
         .feedback {
-            margin-top: 8px;
+            margin-top: 10px;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
 
-        /* Social Links kompakt */
+        /* Social Links */
         .social-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .social-btn {
-            background: white;
-            color: var(--primary);
-            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 12px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: bold;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         footer {
             text-align: center;
             color: var(--text-muted);
-            padding: 15px;
+            padding: 20px;
             font-size: 0.85rem;
         }
 
-        /* Viewer */
+        /* Bild-Viewer */
         .viewer {
             display: none;
             position: fixed;
             inset: 0;
             z-index: 1000;
-            background: rgba(10, 18, 28, 0.95);
+            background: rgba(10, 15, 25, 0.95);
+            backdrop-filter: blur(10px);
             overflow-y: auto;
             padding: 15px;
         }
@@ -251,11 +323,21 @@
 <body>
 
 <header>
-    <h1>🇩🇪 Deutsch mit Xander Fox</h1>
-    <p>Der praktische Deutsch-Kompass</p>
+    <div class="header-top">
+        <!-- Rundes Profil-Icon -->
+        <img src="https://github.com/XanderFoxy/Deutsch/blob/main/Bilder2/9ob2nzt2.jpeg?raw=true" alt="Xander Fox" class="profile-icon">
+        
+        <!-- Kaffeetasse / Spenden-Button -->
+        <a href="https://www.paypal.com/paypalme/XanderFox" target="_blank" class="coffee-btn">
+            ☕ Kaffee spendieren
+        </a>
+    </div>
+
+    <h1>Deutsch mit Xander Fox</h1>
+    <p>Der praktische Deutsch-Kompass – Verständlich, logisch, direkt.</p>
 </header>
 
-<!-- Menü ohne horizontales Scrollen -->
+<!-- Kompaktes Menü -->
 <nav class="nav-menu">
     <div class="menu-row">
         <button class="tab-btn active" onclick="switchTab('about')">ℹ️ Über mich</button>
@@ -271,19 +353,22 @@
 
     <!-- SEKTION 1: ÜBER MICH (Startseite) -->
     <section id="about" class="section-block active">
-        <div class="box about-box">
+        <div class="box">
             <h2>👋 Hallo, ich bin Alex (Xander Fox)!</h2>
-            <p>Ich bin 46 Jahre alt, lebe in Deutschland und bin deutscher Muttersprachler. Neben meiner Musikproduktion helfe ich Menschen über meine Clubhouse-Räume beim Ankommen und Deutschlernen.</p>
-            <p>Mein Ansatz: Ich erkläre dir die Hintergründe von Wörtern und Redewendungen, damit du sie im Alltag gezielt und richtig einsetzen kannst.</p>
+            <p>Schön, dass du da bist! Diese Seite ist dein praktischer Begleiter, um die deutsche Sprache strukturiert und ohne trockene Bürokratie zu verstehen.</p>
+            <p>Mein Ansatz: Ich erkläre dir die Logik hinter Wörtern, Grammatik und Redewendungen, damit du sie im echten Leben sicher anwenden kannst.</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 15px;">
+                <em>Hinweis am Rande:</em> In meiner Freizeit produziere ich übrigens leidenschaftlich gerne Musik in deutscher und englischer Sprache (mehr dazu findest du unten in den Kanälen).
+            </p>
         </div>
 
         <div class="box">
-            <h3>🔗 Meine Kanäle & Support</h3>
+            <h3>🔗 Weiterführende Links & Kanäle</h3>
             <div class="social-container">
-                <a href="https://www.paypal.com/paypalme/XanderFox" target="_blank" class="social-btn">☕ PayPal</a>
-                <a href="https://www.amazon.de/hz/wishlist/ls/DIM8QB67LPDM?ref_=wl_share" target="_blank" class="social-btn">🎁 Wunschliste</a>
-                <a href="https://m.youtube.com/playlist?list=PLza1DhjwP_bew29ZGGnpEuq-vgugL0dhR&ra=m#bottom-sheet" target="_blank" class="social-btn">▶️ YouTube</a>
+                <a href="https://m.youtube.com/playlist?list=PLza1DhjwP_bew29ZGGnpEuq-vgugL0dhR&ra=m#bottom-sheet" target="_blank" class="social-btn">▶️ YouTube Kanal</a>
                 <a href="https://www.tiktok.com/@xander_fox_official?_r=1&_t=ZG-999gwucfjBg" target="_blank" class="social-btn">🎵 TikTok</a>
+                <a href="https://www.amazon.de/hz/wishlist/ls/DIM8QB67LPDM?ref_=wl_share" target="_blank" class="social-btn">🎁 Wunschliste</a>
+                <a href="https://www.paypal.com/paypalme/XanderFox" target="_blank" class="social-btn">☕ PayPal Support</a>
             </div>
         </div>
     </section>
@@ -293,7 +378,7 @@
     <section id="material" class="section-block">
         <div class="box">
             <h2>Lernmaterialien & Geschichten</h2>
-            <p>Kompakte Übersichten für deinen Einstieg.</p>
+            <p>Übersichtliche Begleitmaterialien für deinen Lernfortschritt.</p>
         </div>
 
         <div class="card-grid">
@@ -301,8 +386,8 @@
                 <img src="Bilder2/IMG_1206.jpeg" alt="Peter und der Wolf" onclick="openViewer('Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png', 'Peter und der Wolf')">
                 <div class="card-content">
                     <h3>🐺 Peter und der Wolf</h3>
-                    <p>Deutsche Geschichte als Leseübung.</p>
-                    <button class="button" onclick="openViewer('Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png', 'Peter und der Wolf')">📖 Öffnen</button>
+                    <p>Klassische Leseübung mit Textstruktur.</p>
+                    <button class="button" onclick="openViewer('Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png', 'Peter und der Wolf')">📖 Vollbild öffnen</button>
                 </div>
             </article>
 
@@ -310,84 +395,95 @@
                 <img src="Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png" alt="A1 Grundlagen" onclick="openViewer('Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png', 'Erste Schritte (A1)')">
                 <div class="card-content">
                     <h3>🇩🇪 Erste Schritte (A1)</h3>
-                    <p>Wichtige Wörter und einfache Sätze.</p>
-                    <button class="button green" onclick="openViewer('Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png', 'Erste Schritte (A1)')">📝 Öffnen</button>
+                    <p>Grundwortschatz und erste Alltags-Sätze.</p>
+                    <button class="button green" onclick="openViewer('Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png', 'Erste Schritte (A1)')">📝 Übersicht öffnen</button>
                 </div>
             </article>
         </div>
     </section>
 
 
-    <!-- SEKTION 3: SPIELE & AUFGABEN -->
+    <!-- SEKTION 3: SPIELE & AUFGABEN (Mit dynamischem Einsetzen in die Lücke) -->
     <section id="games" class="section-block">
         <div class="box">
-            <h2>Interaktives Training</h2>
-            <p>Teste dein Wissen mit logischen Aufgaben.</p>
+            <h2>🧩 Interaktives Training</h2>
+            <p>Teste dein Wissen direkt hier – klicke auf die richtige Antwort, und sie füllt sich automatisch in den Satz ein!</p>
         </div>
 
-        <!-- Logische Plural-Aufgabe -->
+        <!-- Aufgabe 1: Artikel-Trainer -->
         <div class="quiz-box">
-            <h3>🧩 Singular & Plural</h3>
-            <p><strong>Satz:</strong> „Auf dem Baum sitzen heute viele ________.“ (Hier wird die Mehrzahl gesucht!)</p>
+            <h3>🎯 Artikel-Trainer</h3>
+            <p>Satz: „<span id="slot1" class="sentence-slot">_____</span> Kölner Dom ist weltberühmt.“</p>
             <div class="options">
-                <button class="opt-btn" onclick="checkAns(this, false, 'Falsch. Das ist die Einzahl.')">Vogel</button>
-                <button class="opt-btn" onclick="checkAns(this, true, 'Richtig! „Vögel“ ist hier die passende Mehrzahl.')">Vögel</button>
+                <button class="opt-btn" onclick="fillAndCheck(1, 'Die', false, 'Leider falsch. Der Dom ist männlich.')">Die</button>
+                <button class="opt-btn" onclick="fillAndCheck(1, 'Der', true, 'Genau richtig! „Der Kölner Dom“ ist maskulin.')">Der</button>
+                <button class="opt-btn" onclick="fillAndCheck(1, 'Das', false, 'Leider falsch.')">Das</button>
             </div>
             <div class="feedback" id="fb1"></div>
         </div>
 
-        <!-- Artikel-Aufgabe -->
+        <!-- Aufgabe 2: Singular / Plural -->
         <div class="quiz-box">
-            <h3>🎯 Artikel-Trainer</h3>
-            <p>Welcher Artikel passt zum Wahrzeichen? <strong>„________ Kölner Dom“</strong></p>
+            <h3>📖 Singular & Plural</h3>
+            <p>Satz: „Im Garten zwitschern heute viele <span id="slot2" class="sentence-slot">_____</span>.“ (Mehrzahl gesucht)</p>
             <div class="options">
-                <button class="opt-btn" onclick="checkAns(this, false, 'Falsch.')">Die</button>
-                <button class="opt-btn" onclick="checkAns(this, true, 'Richtig! Es heißt „Der Kölner Dom“.')">Der</button>
-                <button class="opt-btn" onclick="checkAns(this, false, 'Falsch.')">Das</button>
+                <button class="opt-btn" onclick="fillAndCheck(2, 'Vogel', false, 'Falsch. Das ist die Einzahl (Singular).')">Vogel</button>
+                <button class="opt-btn" onclick="fillAndCheck(2, 'Vögel', true, 'Perfekt! „Vögel“ ist die korrekte Mehrzahl.')">Vögel</button>
             </div>
             <div class="feedback" id="fb2"></div>
         </div>
 
-        <!-- Wissensquiz -->
+        <!-- Aufgabe 3: Deutschland-Wissen (Trivia) -->
         <div class="quiz-box">
             <h3>📍 Deutschland-Wissen</h3>
-            <p>In welcher deutschen Stadt steht der berühmte Kölner Dom?</p>
+            <p>Satz: „Die Hauptstadt von Deutschland heißt <span id="slot3" class="sentence-slot">_____</span>.“</p>
             <div class="options">
-                <button class="opt-btn" onclick="checkAns(this, true, 'Richtig! In Köln.')">Köln</button>
-                <button class="opt-btn" onclick="checkAns(this, false, 'Falsch.')">Berlin</button>
-                <button class="opt-btn" onclick="checkAns(this, false, 'Falsch.')">München</button>
+                <button class="opt-btn" onclick="fillAndCheck(3, 'München', false, 'Falsch. München ist die Hauptstadt von Bayern.')">München</button>
+                <button class="opt-btn" onclick="fillAndCheck(3, 'Berlin', true, 'Richtig! Berlin ist die Bundeshauptstadt.')">Berlin</button>
+                <button class="opt-btn" onclick="fillAndCheck(3, 'Hamburg', false, 'Falsch. Hamburg hat den größten Hafen, ist aber nicht Hauptstadt.')">Hamburg</button>
             </div>
             <div class="feedback" id="fb3"></div>
         </div>
     </section>
 
 
-    <!-- SEKTION 4: DEUTSCH-KOMPASS -->
+    <!-- SEKTION 4: DEUTSCH-KOMPASS (Pädagogisch wertvoll mit Beispielen) -->
     <section id="compass" class="section-block">
         <div class="box">
             <h2>🧭 Der Deutsch-Kompass</h2>
-            <p>Hintergründe, die Lehrbücher oft verschweigen.</p>
+            <p>Wichtige sprachliche Feinheiten einfach erklärt – mit klaren Beispielen für deinen Alltag.</p>
         </div>
+
         <div class="box">
-            <h3>💡 Das Wort „doch“</h3>
-            <p>Das Multitalent für Überzeugung – egal ob du jemanden ermutigst (*„Das ist doch schön!“*) oder einen Zweifel abwehrst.</p>
+            <h3>💡 Das kleine Wort „doch“</h3>
+            <p>Das Wort „doch“ ist ein echtes Multitalent im Deutschen. Man nutzt es vor allem in drei Situationen:</p>
+            <ul style="padding-left: 20px; color: var(--text-muted); font-size: 0.95rem;">
+                <li><strong>Widerspruch zu einer Verneinung:</strong><br><em>– „Du kommst heute nicht mit?“ – „Doch, ich komme mit!“</em></li>
+                <li><strong>Bestätigung & Begeisterung:</strong><br><em>– „Das Essen schmeckt doch lecker!“</em></li>
+                <li><strong>Ermutigung:</strong><br><em>– „Mach dir keine Sorgen, das schaffst du doch!“</em></li>
+            </ul>
         </div>
+
         <div class="box">
-            <h3>⚖️ „Als“ vs. „Wie“</h3>
-            <p>Wie wendet man Vergleiche im Deutschen fehlerfrei an?</p>
+            <h3>⚖️ Die Falle: „Als“ vs. „Wie“</h3>
+            <p>Viele Lernende verwechseln diese beiden Wörter bei Vergleichen. Hier ist die einfache Regel:</p>
+            <ul style="padding-left: 20px; color: var(--text-muted); font-size: 0.95rem;">
+                <li><strong>Gleichheit (=):</strong> Man nutzt <strong>„wie“</strong>.<br><em>Beispiel: „Er ist so groß **wie** sein Vater.“</em></li>
+                <li><strong>Ungleichheit / Komparativ (&gt; oder &lt;):</strong> Man nutzt <strong>„als“</strong>.<br><em>Beispiel: „Er ist größer **als** sein Vater.“</em></li>
+            </ul>
         </div>
     </section>
 
 </main>
 
 <footer>
-    Deutsch mit Xander Fox · Lernmaterialien
+    Deutsch mit Xander Fox · Sprachkompass & Lernplattform
 </footer>
 
 <!-- VIEWER -->
 <div id="viewer" class="viewer" onclick="if(event.target === this) closeViewer()">
-    <div style="text-align: right; padding: 10px;">
-        <button onclick="closeViewer()" style="background:white; border:none; padding:8px 14px; border-radius:8px; font-weight:bold;">✖ Schließen</button>
+    <div style="text-align: right; padding: 15px; max-width: 800px; margin: 0 auto;">
+        <button onclick="closeViewer()" style="background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); color:white; padding:8px 16px; border-radius:8px; font-weight:bold; cursor:pointer;">✖ Schließen</button>
     </div>
     <img id="viewerImg" class="viewer-img" src="" alt="">
 </div>
@@ -401,12 +497,16 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function checkAns(btn, isCorrect, msg) {
-        const parent = btn.closest('.quiz-box');
+    // Funktion für dynamisches Einsetzen in die Lücke und Feedback
+    function fillAndCheck(slotNum, chosenWord, isCorrect, msg) {
+        const slot = document.getElementById('slot' + slotNum);
+        slot.textContent = chosenWord;
+        slot.style.color = isCorrect ? '#34d399' : '#f87171';
+        slot.style.borderBottomColor = isCorrect ? '#34d399' : '#f87171';
+
+        const parent = slot.closest('.quiz-box');
         const fb = parent.querySelector('.feedback');
-        parent.querySelectorAll('.opt-btn').forEach(b => b.style.borderColor = '#d1d9e0');
-        btn.style.borderColor = isCorrect ? '#2a9d8f' : '#e63946';
-        fb.style.color = isCorrect ? '#2a9d8f' : '#e63946';
+        fb.style.color = isCorrect ? '#34d399' : '#f87171';
         fb.textContent = msg;
     }
 
