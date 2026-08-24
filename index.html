@@ -8,14 +8,17 @@
     <style>
         :root {
             --bg-main: #ffffff;
-            --bg-card: #f8fafc;
-            --border-color: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #475569;
+            --bg-card: #ffffff;
+            --bg-subtle: #f9fafb;
+            --border-color: #f1f5f9;
+            --border-card: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #4b5563;
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --accent-green: #0d9488;
-            --radius: 12px;
+            --accent-pink: #ec4899;
+            --accent-teal: #0d9488;
+            --radius: 16px;
         }
 
         * {
@@ -26,20 +29,20 @@
 
         body {
             font-family: system-ui, -apple-system, sans-serif;
-            background: var(--bg-main);
+            background: #ffffff;
             color: var(--text-main);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Minimalistischer, heller Header mit Amazon & Kaffee */
+        /* Heller, sauberer Header ohne Umbruch, kompakt für Mobile */
         header {
             background: #ffffff;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-card);
             position: sticky;
             top: 0;
             z-index: 100;
-            padding: 10px 16px;
+            padding: 10px 14px;
         }
 
         .header-inner {
@@ -51,71 +54,69 @@
         }
 
         header h1 {
-            font-size: 1.15rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-main);
+            white-space: nowrap;
             letter-spacing: -0.3px;
         }
 
         .header-links {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             align-items: center;
         }
 
-        /* Dezente Mikro-Buttons für Kaffee & Wunschliste */
         .header-btn {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
+            gap: 3px;
+            padding: 5px 8px;
             border-radius: 20px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-card);
             background: #ffffff;
             transition: all 0.2s ease;
+            white-space: nowrap;
+            font-weight: 500;
         }
 
         .header-btn:hover {
-            background: var(--bg-card);
+            background: var(--bg-subtle);
             color: var(--primary);
             border-color: var(--primary);
         }
 
-        /* Moderne Tab-Navigation für Smartphones */
+        /* Keine horizontale Scrollbar: Flex-Wrap für Navigation */
         .nav-bar {
             display: flex;
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border-color);
-            padding: 6px 12px;
+            flex-wrap: wrap;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-card);
+            padding: 8px 14px;
             gap: 6px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .nav-bar::-webkit-scrollbar {
-            display: none;
+            justify-content: center;
         }
 
         .tab-btn {
-            background: transparent;
-            border: none;
-            padding: 8px 12px;
-            font-size: 0.85rem;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-card);
+            padding: 6px 12px;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
-            border-radius: 8px;
-            white-space: nowrap;
+            border-radius: 20px;
             transition: all 0.2s ease;
         }
 
         .tab-btn.active, .tab-btn:hover {
-            background: #ffffff;
-            color: var(--primary);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
         }
 
         .container {
@@ -132,14 +133,14 @@
             display: block;
         }
 
-        /* Karten & Boxen im Clean-White-Design */
+        /* Karten: Reinweiß mit feinem modernen Rahmen & Schatten */
         .card {
             background: #ffffff;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-card);
             border-radius: var(--radius);
             padding: 18px;
             margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
         .card h2, .card h3 {
@@ -156,12 +157,13 @@
         }
 
         .profile-img-wrap {
-            width: 95px;
-            height: 95px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             overflow: hidden;
             flex-shrink: 0;
-            border: 2px solid var(--border-color);
+            border: 2px solid var(--border-card);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .profile-img-wrap img {
@@ -171,7 +173,7 @@
         }
 
         .about-text p {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-muted);
             margin-bottom: 8px;
         }
@@ -189,34 +191,40 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-card);
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--text-main);
             text-decoration: none;
             font-size: 0.82rem;
             font-weight: 600;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
         .link-btn:hover {
-            background: #f1f5f9;
+            background: #ffffff;
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
-        /* Quiz & Interaktive Elemente */
+        /* Quiz & Übungen im frischen Weiß-Look */
         .quiz-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
+            background: #ffffff;
+            border: 1px solid var(--border-card);
             border-radius: var(--radius);
             padding: 16px;
             margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
         .quiz-sentence {
             font-size: 0.92rem;
             margin-bottom: 12px;
             font-weight: 500;
+            background: var(--bg-subtle);
+            padding: 10px 12px;
+            border-radius: 8px;
         }
 
         .blank-slot {
@@ -237,9 +245,9 @@
 
         .opt-choice {
             background: #ffffff;
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 6px;
+            border: 1px solid var(--border-card);
+            padding: 8px 12px;
+            border-radius: 8px;
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
@@ -247,11 +255,13 @@
             min-width: 70px;
             text-align: center;
             transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
 
         .opt-choice:hover {
             border-color: var(--primary);
             color: var(--primary);
+            background: var(--bg-subtle);
         }
 
         .feedback-text {
@@ -262,23 +272,24 @@
 
         .next-step-btn {
             margin-top: 10px;
-            background: var(--text-main);
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
             font-size: 0.78rem;
             cursor: pointer;
             display: none;
             font-weight: 600;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
         }
 
         /* Kompass & Mikroausdrücke */
         .grammar-box {
-            background: var(--bg-card);
-            border-left: 3px solid var(--primary);
+            background: var(--bg-subtle);
+            border-left: 3px solid var(--accent-teal);
             padding: 12px;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 10px 10px 0;
             margin-bottom: 10px;
             font-size: 0.88rem;
         }
@@ -301,10 +312,10 @@
         }
 
         .idiom-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-card);
             padding: 10px 12px;
-            border-radius: 8px;
+            border-radius: 10px;
         }
 
         .idiom-card strong {
@@ -326,16 +337,18 @@
         }
 
         .mat-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            background: #ffffff;
+            border: 1px solid var(--border-card);
+            border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.15s;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
         .mat-item:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         .mat-item img {
@@ -356,8 +369,9 @@
             font-size: 0.75rem;
             color: var(--text-muted);
             padding: 24px 16px;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-card);
             margin-top: 20px;
+            background: #ffffff;
         }
 
         /* Fullscreen Bild-Viewer */
@@ -365,7 +379,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(17, 24, 39, 0.95);
             z-index: 1000;
             padding: 20px;
             overflow-y: auto;
@@ -391,7 +405,7 @@
     <div class="header-inner">
         <h1>Deutsch mit Xander Fox</h1>
         <div class="header-links">
-            <a href="https://www.amazon.de" target="_blank" class="header-btn">
+            <a href="https://www.amazon.de/hz/wishlist/ls/3TOSW7K1A4G5U" target="_blank" class="header-btn">
                 🎁 Wunschliste
             </a>
             <a href="https://www.paypal.com/paypalme/XanderFox" target="_blank" class="header-btn">
@@ -401,11 +415,10 @@
     </div>
 </header>
 
-<!-- Kompakte Navigation für Mobilgeräte -->
+<!-- Aufgeräumte Navigation (Kein horizontales Scrollen) -->
 <nav class="nav-bar">
     <button class="tab-btn active" onclick="switchTab('about', this)">Über mich</button>
-    <button class="tab-btn" onclick="switchTab('exercises', this)">Übungen</button>
-    <button class="tab-btn" onclick="switchTab('quiz', this)">Quiz</button>
+    <button class="tab-btn" onclick="switchTab('exercises', this)">Übungen & Quiz</button>
     <button class="tab-btn" onclick="switchTab('compass', this)">Kompass</button>
     <button class="tab-btn" onclick="switchTab('materials', this)">Material</button>
 </nav>
@@ -422,7 +435,7 @@
                 </div>
                 <div class="about-text">
                     <p>Ich bin Xander Fox. Ich helfe dir dabei, die deutsche Sprache logisch, praxisnah und ohne unnötige Komplexität zu meistern.</p>
-                    <p>Klares Design, echter Alltagsbezug und direkte Verständlichkeit stehen hier im Mittelpunkt.</p>
+                    <p>Klares Design, echte Alltagsbeispiele und Kulturverständnis stehen hier im Mittelpunkt.</p>
                 </div>
             </div>
 
@@ -439,11 +452,11 @@
         </div>
     </section>
 
-    <!-- SEKTION 2: ÜBUNGEN (Riesiger, echter Zufallspool ohne Wiederholungs-Hänger) -->
+    <!-- SEKTION 2: ÜBUNGEN & QUIZ (Kombiniert, riesiger Pool, echte Lückenanzeige, Deutschland-Quiz) -->
     <section id="exercises" class="section">
         <div class="card">
-            <h2>Interaktives Training</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Echte Zufallsauswahl mit vielen verschiedenen Beispielen für maximalen Lerneffekt.</p>
+            <h2>Übungen & Deutschland-Quiz</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Trainiere Grammatik mit reichlich Beispielen und lerne die deutsche Kultur kennen.</p>
         </div>
 
         <!-- Artikel Trainer -->
@@ -463,25 +476,18 @@
             <div class="feedback-text" id="plu-fb"></div>
             <button class="next-step-btn" id="plu-next" onclick="loadPluralQuestion()">Nächste Aufgabe ➔</button>
         </div>
-    </section>
 
-    <!-- SEKTION 3: QUIZ (Vollwertiges Extra-Quiz) -->
-    <section id="quiz" class="section">
-        <div class="card">
-            <h2>Wissens-Quiz</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Teste dein Gesamtverständnis der deutschen Grammatik und des Vokabulars.</p>
-        </div>
-
+        <!-- Kultur & Deutschland Quiz -->
         <div class="quiz-card">
-            <h3>🧠 Grammatik-Schnelltest</h3>
-            <div class="quiz-sentence" id="general-quiz-question">Lade Frage...</div>
-            <div class="options-row" id="general-quiz-options"></div>
-            <div class="feedback-text" id="general-quiz-fb"></div>
-            <button class="next-step-btn" id="general-quiz-next" onclick="loadGeneralQuiz()">Nächste Frage ➔</button>
+            <h3>🇩🇪 Kultur-Quiz: Typisch Deutschland</h3>
+            <div class="quiz-sentence" id="culture-question">Lade Frage...</div>
+            <div class="options-row" id="culture-options"></div>
+            <div class="feedback-text" id="culture-fb"></div>
+            <button class="next-step-btn" id="culture-next" onclick="loadCultureQuestion()">Nächste Aufgabe ➔</button>
         </div>
     </section>
 
-    <!-- SEKTION 4: KOMPASS & MIKROAUSDRÜCKE -->
+    <!-- SEKTION 3: KOMPASS & MIKROAUSDRÜCKE -->
     <section id="compass" class="section">
         <div class="card">
             <h2>Der Deutsch-Kompass</h2>
@@ -494,7 +500,7 @@
             </div>
             <div class="grammar-box">
                 <strong>Das Wort „tja“</strong>
-                <p>Ein typisches non-verbales Seufzen in Lautform. Drückt drastische Ratlosigkeit, Resignation oder stumme Akzeptanz aus („Tja, da kann man nichts machen.“).</p>
+                <p>Ein typisches non-verbales Seufzen in Lautform. Drückt Ratlosigkeit, Resignation oder stumme Akzeptanz aus („Tja, da kann man nichts machen.“).</p>
             </div>
             <div class="grammar-box">
                 <strong>Das Wort „doch“</strong>
@@ -509,7 +515,7 @@
             <div class="idiom-grid">
                 <div class="idiom-card">
                     <strong>Jemandem die Daumen drücken</strong>
-                    <span>Bedeutung: Jemandem Glück für eine bevorstehende Prüfung oder Situation wünschen.</span>
+                    <span>Bedeutung: Jemandem Glück für eine bevorstehende Prüfung wünschen.</span>
                 </div>
                 <div class="idiom-card">
                     <strong>Da liegt der Hund begraben</strong>
@@ -529,17 +535,17 @@
                 </div>
                 <div class="idiom-card">
                     <strong>Ins Gras beißen</strong>
-                    <span>Bedeutung: Sterben (historische Metapher aus der Schlacht).</span>
+                    <span>Bedeutung: Sterben (historische Metapher).</span>
                 </div>
                 <div class="idiom-card">
                     <strong>Sich etwas durch den Kopf gehen lassen</strong>
-                    <span>Bedeutung: Über ein Angebot oder eine Idee in Ruhe nachdenken.</span>
+                    <span>Bedeutung: Über eine Idee in Ruhe nachdenken.</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SEKTION 5: MATERIALIEN -->
+    <!-- SEKTION 4: MATERIALIEN -->
     <section id="materials" class="section">
         <div class="card">
             <h2>Lernmaterialien</h2>
@@ -579,7 +585,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- RIESIGER, ECHTER ZUFALLS-POOL (Keine Endlosschleife / Exakte Lückenfüllung) ---
+    // --- ERWEITERTE DATENBANKEN MIT ECHTER ZUFALLSAUSWAHL & VOLLSTÄNDIGEN BEISPIELEN ---
     const articlePool = [
         { text: "___ Kölner Dom ist weltberühmt.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
         { text: "___ Sonne scheint heute den ganzen Tag.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" },
@@ -587,28 +593,30 @@
         { text: "___ Apfel schmeckt sehr frisch und knackig.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
         { text: "___ Tasse steht sicher auf dem Holztisch.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" },
         { text: "___ Buch enthält extrem spannende Geschichten.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral (sächlich)" },
-        { text: "___ Hund läuft fröhlich über die Wiese.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
-        { text: "___ Katze schläft gemütlich auf dem Sofa.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" },
-        { text: "___ Wasser ist heute angenehm kühl.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral (sächlich)" },
-        { text: "___ Mond leuchtet hell in der Nacht.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" }
+        { text: "___ Hund läuft fröhlich über die grüne Wiese.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
+        { text: "___ Katze schläft gemütlich auf dem weichen Sofa.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" },
+        { text: "___ Wasser ist heute im Sommer angenehm kühl.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral (sächlich)" },
+        { text: "___ Mond leuchtet hell in der klaren Nacht.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
+        { text: "___ Berliner Fernsehturm ist gigantisch hoch.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
+        { text: "___ Elbe fließt direkt durch Hamburg.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" }
     ];
 
     const pluralPool = [
         { text: "Im Garten zwitschern heute viele ___.", correct: "Vögel", all: ["Vogel", "Vögel"], hint: "Mehrzahl von Vogel" },
-        { text: "Auf dem Tisch stehen drei rote ___.", correct: "Tassen", all: ["Tasse", "Tassen"], hint: "Mehrzahl von Tasse" },
-        { text: "Im Park laufen mehrere schnelle ___.", correct: "Hunde", all: ["Hund", "Hunde"], hint: "Mehrzahl von Hund" },
-        { text: "Die ___ hängen ordentlich im Kleiderschrank.", correct: "Jacken", all: ["Jacke", "Jacken"], hint: "Mehrzahl von Jacke" },
-        { text: "In der großen Stadt fahren viele rote ___.", correct: "Autos", all: ["Auto", "Autos"], hint: "Mehrzahl von Auto" },
-        { text: "Im Wald stehen riesige, alte ___.", correct: "Bäume", all: ["Baum", "Bäume"], hint: "Mehrzahl von Baum" },
-        { text: "Zum Geburtstag gab es leckere ___.", correct: "Kuchen", all: ["Kuchen"], hint: "Singular und Plural oft gleich (hier Plural)" },
-        { text: "Die ___ blühen im Frühling wunderschön.", correct: "Blumen", all: ["Blume", "Blumen"], hint: "Mehrzahl von Blume" }
+        { text: "Auf dem Holztisch stehen drei rote ___.", correct: "Tassen", all: ["Tasse", "Tassen"], hint: "Mehrzahl von Tasse" },
+        { text: "Im Park laufen mehrere verspielte ___.", correct: "Hunde", all: ["Hund", "Hunde"], hint: "Mehrzahl von Hund" },
+        { text: "Die warme ___ hängen ordentlich im Schrank.", correct: "Jacken", all: ["Jacke", "Jacken"], hint: "Mehrzahl von Jacke" },
+        { text: "In der Großstadt fahren viele moderne ___.", correct: "Autos", all: ["Auto", "Autos"], hint: "Mehrzahl von Auto" },
+        { text: "Im deutschen Wald stehen riesige, alte ___.", correct: "Bäume", all: ["Baum", "Bäume"], hint: "Mehrzahl von Baum" },
+        { text: "Zum Kaffeetrinken gab es leckere ___.", correct: "Kuchen", all: ["Kuchen"], hint: "Singular und Plural formgleich" },
+        { text: "Die roten ___ blühen im Frühling im Park.", correct: "Blumen", all: ["Blume", "Blumen"], hint: "Mehrzahl von Blume" }
     ];
 
-    const generalQuizPool = [
-        { q: "Welches Verb passt: „Ich ___ jeden Tag Deutsch.“", correct: "lerne", all: ["lernen", "lerne", "lernt"], hint: "Form für 'Ich'" },
-        { q: "Wie lautet das Perfekt von 'gehen'?", correct: "bin gegangen", all: ["habe gegangen", "bin gegangen", "ist gegangen"], hint: "Bewegungsverb nutzt 'sein'" },
-        { q: "Welcher Satz ist im Akkusativ korrekt?", correct: "Ich sehe den Mann.", all: ["Ich sehe der Mann.", "Ich sehe dem Mann.", "Ich sehe den Mann."], hint: "Maskulin verändert sich im Akkusativ zu 'den'" },
-        { q: "Wie fragt man nach einer Uhrzeit?", correct: "Wie viel Uhr ist es?", all: ["Wie viel Uhr ist es?", "Was ist für eine Uhr?", "Wie spät Uhr?"], hint: "Klassische Formulierung" }
+    const cultureQuizPool = [
+        { q: "Was ist ein typisch deutsches Frühstücksprodukt am Sonntag?", correct: "Frische Brötchen", all: ["Frische Brötchen", "Sushi", "Reisbrei"], hint: "Gibt es beim Bäcker um die Ecke" },
+        { q: "Welches Getränk ist in Bayern tief mit der Kultur verwurzelt?", correct: "Bier", all: ["Bier", "Weinbrand", "Reismilch"], hint: "Wird oft im Biergarten getrunken" },
+        { q: "Welcher Feiertag ist der Nationalfeiertag in Deutschland?", correct: "Tag der Deutschen Einheit", all: ["Tag der Deutschen Einheit", "Tag der Arbeit", "Silvester"], hint: "Am 3. Oktober" },
+        { q: "Wie nennt man den traditionellen Markt vor Weihnachten?", correct: "Weihnachtsmarkt", all: ["Weihnachtsmarkt", "Osterbazar", "Sommerfest"], hint: "Dort gibt es Glühwein und gebrannte Mandeln" }
     ];
 
     function loadArticleQuestion() {
@@ -620,13 +628,13 @@
         document.getElementById('art-next').style.display = "none";
         
         container.innerHTML = "";
-         [...item.all].sort(() => Math.random() - 0.5).forEach(opt => {
+        [...item.all].sort(() => Math.random() - 0.5).forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'opt-choice';
             btn.textContent = opt;
             btn.onclick = () => {
                 const correct = opt === item.correct;
-                document.getElementById('art-fb').style.color = correct ? '#0d9488' : '#e11d48';
+                document.getElementById('art-fb').style.color = correct ? '#0d9488' : '#ec4899';
                 document.getElementById('art-fb').textContent = correct ? "Richtig! Gut gemacht." : `Falsch. Tipp: ${item.hint}`;
                 if(correct) document.getElementById('art-next').style.display = "inline-block";
             };
@@ -649,7 +657,7 @@
             btn.textContent = opt;
             btn.onclick = () => {
                 const correct = opt === item.correct;
-                document.getElementById('plu-fb').style.color = correct ? '#0d9488' : '#e11d48';
+                document.getElementById('plu-fb').style.color = correct ? '#0d9488' : '#ec4899';
                 document.getElementById('plu-fb').textContent = correct ? "Richtig! Perfekte Form." : `Falsch. Tipp: ${item.hint}`;
                 if(correct) document.getElementById('plu-next').style.display = "inline-block";
             };
@@ -657,12 +665,12 @@
         });
     }
 
-    function loadGeneralQuiz() {
-        const item = generalQuizPool[Math.floor(Math.random() * generalQuizPool.length)];
-        const container = document.getElementById('general-quiz-options');
-        document.getElementById('general-quiz-question').textContent = item.q;
-        document.getElementById('general-quiz-fb').textContent = "";
-        document.getElementById('general-quiz-next').style.display = "none";
+    function loadCultureQuestion() {
+        const item = cultureQuizPool[Math.floor(Math.random() * cultureQuizPool.length)];
+        const container = document.getElementById('culture-options');
+        document.getElementById('culture-question').textContent = item.q;
+        document.getElementById('culture-fb').textContent = "";
+        document.getElementById('culture-next').style.display = "none";
 
         container.innerHTML = "";
         [...item.all].sort(() => Math.random() - 0.5).forEach(opt => {
@@ -671,9 +679,9 @@
             btn.textContent = opt;
             btn.onclick = () => {
                 const correct = opt === item.correct;
-                document.getElementById('general-quiz-fb').style.color = correct ? '#0d9488' : '#e11d48';
-                document.getElementById('general-quiz-fb').textContent = correct ? "Richtig! Ausgezeichnet." : `Falsch. Tipp: ${item.hint}`;
-                if(correct) document.getElementById('general-quiz-next').style.display = "inline-block";
+                document.getElementById('culture-fb').style.color = correct ? '#0d9488' : '#ec4899';
+                document.getElementById('culture-fb').textContent = correct ? "Richtig! Ausgezeichnetes Kulturwissen." : `Falsch. Tipp: ${item.hint}`;
+                if(correct) document.getElementById('culture-next').style.display = "inline-block";
             };
             container.appendChild(btn);
         });
@@ -682,7 +690,7 @@
     // Initialisierung beim Start
     loadArticleQuestion();
     loadPluralQuestion();
-    loadGeneralQuiz();
+    loadCultureQuestion();
 
     // Viewer Skript
     function openViewer(src) {
