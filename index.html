@@ -3,10 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Deutsch mit Xander Fox – Infografiken</title>
+    <title>Deutsch mit Xander Fox – Der praktische Deutsch-Kompass</title>
 
     <style>
+        :root {
+            --primary: #173f5f;
+            --secondary: #20639b;
+            --accent: #2a9d8f;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #eef8f5 100%);
+            --text-main: #1f2937;
+            --text-muted: #626b76;
+            --card-bg: #ffffff;
+            --radius: 16px;
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -14,142 +24,250 @@
         body {
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
-            background:
-                linear-gradient(135deg, #f5f7ff 0%, #eef8f5 100%);
-            color: #1f2937;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            line-height: 1.5;
         }
 
         header {
-            background: linear-gradient(135deg, #173f5f, #20639b);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             text-align: center;
-            padding: 55px 20px 45px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            padding: 45px 20px 35px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
 
         header h1 {
-            margin: 0 0 12px;
-            font-size: clamp(2rem, 5vw, 3.2rem);
-            letter-spacing: -1px;
+            margin: 0 0 10px;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            letter-spacing: -0.5px;
         }
 
         header p {
             margin: 0;
-            font-size: 1.1rem;
-            opacity: 0.92;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation / Tabs für Handy */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 10px;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tab-btn {
+            background: #f0f4f8;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--secondary);
+            color: white;
         }
 
         .container {
-            width: min(1100px, 92%);
-            margin: 45px auto 70px;
+            width: min(1000px, 92%);
+            margin: 30px auto 50px;
         }
 
-        .intro {
-            text-align: center;
-            margin-bottom: 35px;
+        .section-block {
+            display: none;
         }
 
-        .intro h2 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: #173f5f;
+        .section-block.active {
+            display: block;
         }
 
-        .intro p {
-            color: #5b6470;
-            font-size: 1.05rem;
+        .intro-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .intro-box h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.5rem;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 28px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
 
         .card {
-            background: white;
-            border-radius: 22px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.10);
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 14px 35px rgba(0,0,0,0.15);
-        }
-
-        .cover-link {
-            display: block;
+        .card img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
             cursor: pointer;
         }
 
-        .cover-link img {
-            width: 100%;
-            display: block;
-            aspect-ratio: 4 / 3;
-            object-fit: cover;
-        }
-
         .card-content {
-            padding: 25px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .card h3 {
-            margin: 0 0 10px;
-            font-size: 1.45rem;
-            color: #173f5f;
+            margin: 0 0 8px;
+            color: var(--primary);
+            font-size: 1.25rem;
         }
 
         .card p {
-            margin: 0 0 22px;
-            line-height: 1.6;
-            color: #626b76;
+            margin: 0 0 15px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            flex-grow: 1;
         }
 
         .button {
             display: inline-block;
             border: none;
-            border-radius: 12px;
-            padding: 13px 20px;
-            background: #20639b;
+            border-radius: 10px;
+            padding: 10px 16px;
+            background: var(--secondary);
             color: white;
             text-decoration: none;
             font-weight: bold;
+            text-align: center;
             cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.2s ease, transform 0.2s ease;
+            font-size: 0.95rem;
+            transition: background 0.2s;
         }
 
         .button:hover {
-            background: #173f5f;
-            transform: translateY(-1px);
+            background: var(--primary);
         }
 
         .button.green {
-            background: #2a9d8f;
+            background: var(--accent);
         }
 
         .button.green:hover {
             background: #217d72;
         }
 
-        .icon {
-            font-size: 2rem;
-            margin-bottom: 12px;
+        /* Interaktive Übungs-Widgets */
+        .quiz-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .quiz-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .options-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            background: #f0f4f8;
+            border: 2px solid #d1d9e0;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .option-btn:hover {
+            border-color: var(--secondary);
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Über mich Box */
+        .about-me {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--accent);
+        }
+
+        .about-me h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        /* Social & Support Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 30px 0 15px;
+        }
+
+        .social-btn {
+            background: white;
+            color: var(--primary);
+            padding: 10px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            background: var(--secondary);
+            color: white;
         }
 
         footer {
             text-align: center;
             color: #737b86;
-            padding: 25px 20px 45px;
-            font-size: 0.95rem;
+            padding: 20px;
+            font-size: 0.9rem;
         }
 
-        /* Großansicht */
-
+        /* Viewer für Infografiken */
         .viewer {
             display: none;
             position: fixed;
@@ -157,7 +275,7 @@
             z-index: 1000;
             background: rgba(10, 18, 28, 0.96);
             overflow-y: auto;
-            padding: 25px;
+            padding: 20px;
         }
 
         .viewer.active {
@@ -165,77 +283,30 @@
         }
 
         .viewer-top {
-            width: min(1200px, 100%);
-            margin: 0 auto 20px;
+            width: min(1100px, 100%);
+            margin: 0 auto 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 15px;
         }
 
         .back-button {
             border: none;
-            border-radius: 12px;
-            padding: 12px 18px;
+            border-radius: 10px;
+            padding: 10px 15px;
             background: white;
-            color: #173f5f;
-            font-size: 1rem;
+            color: var(--primary);
             font-weight: bold;
             cursor: pointer;
         }
 
-        .back-button:hover {
-            background: #e9eef3;
-        }
-
-        .viewer-title {
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
         .viewer-image {
             display: block;
-            max-width: min(1200px, 100%);
-            width: auto;
-            height: auto;
-            max-height: calc(100vh - 120px);
+            max-width: min(1100px, 100%);
+            max-height: calc(100vh - 100px);
             margin: 0 auto;
             object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.45);
-        }
-
-        @media (max-width: 600px) {
-            header {
-                padding: 40px 18px 35px;
-            }
-
-            .container {
-                width: 94%;
-                margin-top: 30px;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            .viewer {
-                padding: 15px;
-            }
-
-            .viewer-top {
-                align-items: flex-start;
-            }
-
-            .viewer-title {
-                font-size: 1rem;
-            }
-
-            .back-button {
-                padding: 10px 14px;
-                font-size: 0.9rem;
-            }
         }
     </style>
 </head>
@@ -244,188 +315,200 @@
 
 <header>
     <h1>🇩🇪 Deutsch mit Xander Fox</h1>
-    <p>Infografiken und Lernmaterialien zum Deutschlernen</p>
+    <p>Der praktische Deutsch-Kompass – Verstehen, anwenden, ankommen.</p>
 </header>
 
+<!-- Menü / Tabs -->
+<nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('material')">📚 Lernmaterialien</button>
+    <button class="tab-btn" onclick="switchTab('games')">🎮 Spiele & Übungen</button>
+    <button class="tab-btn" onclick="switchTab('compass')">🧭 Deutsch-Kompass</button>
+    <button class="tab-btn" onclick="switchTab('about')">ℹ️ Über mich</button>
+</nav>
 
 <main class="container">
 
-    <div class="intro">
-        <h2>📚 Lernmaterialien</h2>
-        <p>
-            Entdecke Geschichten und praktische Lernübersichten
-            für deinen Weg zur deutschen Sprache.
-        </p>
-    </div>
+    <!-- SEKTION 1: LERNMATERIALIEN & INFOGRAFIKEN -->
+    <section id="material" class="section-block active">
+        <div class="intro-box">
+            <h2>Lernmaterialien & Geschichten</h2>
+            <p>Entdecke praktische Lesetexte und kompakte Übersichten für deinen Einstieg in die deutsche Sprache.</p>
+        </div>
 
+        <div class="grid">
+            <!-- Peter und der Wolf -->
+            <article class="card">
+                <img src="Bilder2/IMG_1206.jpeg" alt="Peter und der Wolf" onclick="openViewer('Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png', 'Peter und der Wolf')">
+                <div class="card-content">
+                    <h3>🐺 Peter und der Wolf</h3>
+                    <p>Eine klassische deutsche Geschichte als interaktive Leseübung. Klicke direkt auf das Bild für die Vollansicht.</p>
+                    <button class="button" onclick="openViewer('Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png', 'Peter und der Wolf')">📖 Geschichte öffnen</button>
+                </div>
+            </article>
 
-    <section class="grid">
-
-        <!-- PETER UND DER WOLF -->
-
-        <article class="card">
-
-            <a
-                class="cover-link"
-                href="#"
-                onclick="openViewer(
-                    'Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png',
-                    'Peter und der Wolf'
-                ); return false;"
-            >
-                <img
-                    src="Bilder2/IMG_1206.jpeg"
-                    alt="Peter und der Wolf – Cover"
-                >
-            </a>
-
-            <div class="card-content">
-
-                <div class="icon">🐺</div>
-
-                <h3>Peter und der Wolf</h3>
-
-                <p>
-                    Eine deutsche Geschichte als Leseübung.
-                    Klicke auf das Cover, um die vollständige
-                    Geschichte zu öffnen.
-                </p>
-
-                <button
-                    class="button"
-                    onclick="openViewer(
-                        'Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png',
-                        'Peter und der Wolf'
-                    )"
-                >
-                    📖 Geschichte öffnen
-                </button>
-
-            </div>
-        </article>
-
-
-        <!-- DEUTSCH-GRUNDWORTSCHATZ -->
-
-        <article class="card">
-
-            <div class="card-content">
-
-                <div class="icon">🇩🇪</div>
-
-                <h3>Deutsch – Erste Schritte (A1)</h3>
-
-                <p>
-                    Eine praktische Übersicht mit wichtigen
-                    deutschen Wörtern, einfachen Sätzen und
-                    grundlegenden Strukturen für Anfänger.
-                </p>
-
-                <button
-                    class="button green"
-                    onclick="openViewer(
-                        'Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png',
-                        'Deutsch – Erste Schritte (A1)'
-                    )"
-                >
-                    📝 Lernübersicht öffnen
-                </button>
-
-            </div>
-        </article>
-
+            <!-- Grundwortschatz A1 -->
+            <article class="card">
+                <img src="Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png" alt="Deutsch – Erste Schritte (A1)" onclick="openViewer('Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png', 'Deutsch – Erste Schritte (A1)')">
+                <div class="card-content">
+                    <h3>🇩🇪 Erste Schritte (A1)</h3>
+                    <p>Wichtige deutsche Wörter, einfache Sätze und Grundstrukturen für absolute Anfänger übersichtlich erklärt.</p>
+                    <button class="button green" onclick="openViewer('Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png', 'Deutsch – Erste Schritte (A1)')">📝 Lernübersicht öffnen</button>
+                </div>
+            </article>
+        </div>
     </section>
+
+
+    <!-- SEKTION 2: SPIELE & ÜBUNGEN -->
+    <section id="games" class="section-block">
+        <div class="intro-box">
+            <h2>Interaktives Training</h2>
+            <p>Teste dein Wissen direkt spielerisch – von Singular/Plural bis hin zu wichtigen Artikeln.</p>
+        </div>
+
+        <!-- Mini-Spiel 1: Singular / Plural -->
+        <div class="quiz-card">
+            <h3>🧩 Singular & Plural Challenge</h3>
+            <p><strong>Satz:</strong> „Auf dem Baum sitzt ein ________.“ (Wähle die passende Form im Plural/Singular, wenn mehrere Vögel gemeint sind)</p>
+            <div class="options-group">
+                <button class="option-btn" onclick="checkAnswer(this, false, 'Fast! Das ist Singular, aber es wird nach der passenden Mehrzahl gefragt.')">Vogel</button>
+                <button class="option-btn" onclick="checkAnswer(this, true, 'Richtig! „Vögel“ ist hier korrekt im Plural.')">Vögel</button>
+                <button class="option-btn" onclick="checkAnswer(this, false, 'Falsch. Das passt grammatikalisch nicht.')">Vogels</button>
+            </div>
+            <div class="feedback" id="fb1"></div>
+        </div>
+
+        <!-- Mini-Spiel 2: Artikel-Trainer -->
+        <div class="quiz-card">
+            <h3>🎯 Artikel-Trainer (der, die, das)</h3>
+            <p>Welcher Artikel gehört zu diesem Wort? <strong>„________ Kölner Dom“</strong></p>
+            <div class="options-group">
+                <button class="option-btn" onclick="checkAnswer2(this, false, 'Leider falsch. Der Dom ist männlich.')">Die</button>
+                <button class="option-btn" onclick="checkAnswer2(this, true, 'Ausgezeichnet! „Der Kölner Dom“ ist maskulin.')">Der</button>
+                <button class="option-btn" onclick="checkAnswer2(this, false, 'Leider falsch.')">Das</button>
+            </div>
+            <div class="feedback" id="fb2"></div>
+        </div>
+    </section>
+
+
+    <!-- SEKTION 3: DEUTSCH-KOMPASS & HINTERGRÜNDE -->
+    <section id="compass" class="section-block">
+        <div class="intro-box">
+            <h2>🧭 Der Deutsch-Kompass</h2>
+            <p>Hintergründe, die dir kein normales Lehrbuch verrät: Lerne Redewendungen und Funktionsweisen richtig zu platzieren.</p>
+        </div>
+
+        <div class="grid">
+            <article class="card" style="padding: 20px;">
+                <h3>💡 Das Wort „doch“ richtig nutzen</h3>
+                <p>„Doch“ ist ein echtes Überzeugungs-Werkzeug im Deutschen. Ob du jemanden ermutigst, der lange draußen war (*„Das ist doch schön!“*), oder ob du dich gegen einen Zweifel wehrst (*„Das geht doch!“*) – hier erfährst du den gemeinsamen Nenner.</p>
+            </article>
+
+            <article class="card" style="padding: 20px;">
+                <h3>⚖️ „Als“ vs. „Wie“</h3>
+                <p>Wann benutzt man welches Wort? Vergleiche richtig anwenden, ohne in die typischen Anfängerfallen zu tappen.</p>
+            </article>
+
+            <article class="card" style="padding: 20px;">
+                <h3>🏠 Alltag: Rund ums Haus & Familie</h3>
+                <p>Wichtige Vokabeln und praktische Ausdrücke für den echten Alltag, Freunde und das Zusammenleben in Deutschland.</p>
+            </article>
+        </div>
+    </section>
+
+
+    <!-- SEKTION 4: ÜBER MICH -->
+    <section id="about" class="section-block">
+        <div class="about-me">
+            <h3>👋 Hallo, ich bin Alex (Xander Fox)!</h3>
+            <p>Ich bin 46 Jahre alt, lebe in Deutschland und bin deutscher Muttersprachler. Neben meiner Leidenschaft für das Produzieren eigener Musik (in deutscher und englischer Sprache) helfe ich Menschen über das Internet und meine Clubhouse-Räume <strong>„Deutsch mit Xander Fox“</strong> beim Ankommen und Deutschlernen.</p>
+            <p>Mein Ansatz ist praktisch und direkt: Ich erkläre dir die Hintergründe von Vokabeln und Redewendungen, damit du sie nicht blind auswendig lernst, sondern genau weißt, wie und wann du sie im echten Leben zielgerichtet einsetzen kannst.</p>
+        </div>
+    </section>
+
+    <!-- Social Links & Unterstützung -->
+    <div class="social-links">
+        <a href="https://www.paypal.com/paypalme/XanderFox" target="_blank" class="social-btn">☕ PayPal / Support</a>
+        <a href="https://www.amazon.de/hz/wishlist/ls/DIM8QB67LPDM?ref_=wl_share" target="_blank" class="social-btn">🎁 Amazon Wunschliste</a>
+        <a href="https://m.youtube.com/playlist?list=PLza1DhjwP_bew29ZGGnpEuq-vgugL0dhR&ra=m#bottom-sheet" target="_blank" class="social-btn">▶️ YouTube</a>
+        <a href="https://www.tiktok.com/@xander_fox_official?_r=1&_t=ZG-999gwucfjBg" target="_blank" class="social-btn">🎵 TikTok</a>
+    </div>
 
 </main>
 
 
 <footer>
-    Deutsch mit Xander Fox · Lernmaterialien für Deutschlerner
+    Deutsch mit Xander Fox · Lernmaterialien & Sprach-Kompass
 </footer>
 
 
-<!-- BILD-VIEWER -->
-
-<div
-    id="viewer"
-    class="viewer"
-    onclick="closeViewerIfBackground(event)"
->
-
+<!-- BILD-VIEWER FÜR INFOGRAFIKEN -->
+<div id="viewer" class="viewer" onclick="closeViewerIfBg(event)">
     <div class="viewer-top">
-
-        <button
-            class="back-button"
-            onclick="closeViewer()"
-        >
-            ← Zurück zur Übersicht
-        </button>
-
-        <div
-            id="viewerTitle"
-            class="viewer-title"
-        ></div>
-
+        <button class="back-button" onclick="closeViewer()">← Zurück</button>
+        <div id="viewerTitle" style="color: white; font-weight: bold;"></div>
     </div>
-
-    <img
-        id="viewerImage"
-        class="viewer-image"
-        src=""
-        alt=""
-    >
-
+    <img id="viewerImage" class="viewer-image" src="" alt="">
 </div>
 
 
 <script>
+    // Tab-Navigation Steuerung
+    function switchTab(tabId) {
+        document.querySelectorAll('.section-block').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Mini-Spiel 1 Logik
+    function checkAnswer(button, isCorrect, message) {
+        const parent = button.parentElement.parentElement;
+        const fb = parent.querySelector('.feedback');
+        parent.querySelectorAll('.option-btn').forEach(b => b.style.borderColor = '#d1d9e0');
+        
+        button.style.borderColor = isCorrect ? '#2a9d8f' : '#e63946';
+        fb.style.color = isCorrect ? '#2a9d8f' : '#e63946';
+        fb.textContent = message;
+    }
+
+    // Mini-Spiel 2 Logik
+    function checkAnswer2(button, isCorrect, message) {
+        const parent = button.parentElement.parentElement;
+        const fb = parent.querySelector('.feedback');
+        parent.querySelectorAll('.option-btn').forEach(b => b.style.borderColor = '#d1d9e0');
+        
+        button.style.borderColor = isCorrect ? '#2a9d8f' : '#e63946';
+        fb.style.color = isCorrect ? '#2a9d8f' : '#2a9d8f';
+        fb.textContent = message;
+    }
+
+    // Bild-Viewer Funktionen
     function openViewer(imagePath, title) {
-
-        const viewer = document.getElementById("viewer");
-        const image = document.getElementById("viewerImage");
-        const viewerTitle = document.getElementById("viewerTitle");
-
-        image.src = imagePath;
-        image.alt = title;
-        viewerTitle.textContent = title;
-
-        viewer.classList.add("active");
-
+        document.getElementById("viewerImage").src = imagePath;
+        document.getElementById("viewerTitle").textContent = title;
+        document.getElementById("viewer").classList.add("active");
         document.body.style.overflow = "hidden";
     }
 
-
     function closeViewer() {
-
-        const viewer = document.getElementById("viewer");
-        const image = document.getElementById("viewerImage");
-
-        viewer.classList.remove("active");
-
-        image.src = "";
-
+        document.getElementById("viewer").classList.remove("active");
+        document.getElementById("viewerImage").src = "";
         document.body.style.overflow = "";
     }
 
-
-    function closeViewerIfBackground(event) {
-
+    function closeViewerIfBg(event) {
         if (event.target === document.getElementById("viewer")) {
             closeViewer();
         }
-
     }
 
-
     document.addEventListener("keydown", function(event) {
-
-        if (event.key === "Escape") {
-            closeViewer();
-        }
-
+        if (event.key === "Escape") { closeViewer(); }
     });
-
 </script>
 
 </body>
