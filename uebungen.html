@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Übungen – Deutsch mit Alex</title>
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --bg-card: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #2563eb;
+            --accent-green: #0d9488;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .quiz-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .quiz-card h2 {
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+        }
+
+        .quiz-sentence {
+            font-size: 0.95rem;
+            margin-bottom: 14px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .blank-slot {
+            display: inline-block;
+            min-width: 60px;
+            border-bottom: 2px solid var(--primary);
+            text-align: center;
+            color: var(--primary);
+            font-weight: bold;
+            padding: 0 6px;
+        }
+
+        .options-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .opt-choice {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .opt-choice:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .feedback-text {
+            margin-top: 12px;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .next-step-btn {
+            margin-top: 12px;
+            background: var(--text-main);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interaktives Training</h1>
+        <p class="subtitle">Wähle die richtige Antwort – sie erscheint direkt in der Lücke.</p>
+
+        <!-- Artikel-Trainer -->
+        <div class="quiz-card">
+            <h2>🎯 Artikel-Trainer (der / die / das)</h2>
+            <div class="quiz-sentence" id="art-sentence">Lade Frage...</div>
+            <div class="options-row" id="art-options"></div>
+            <div class="feedback-text" id="art-fb"></div>
+            <button class="next-step-btn" id="art-next" onclick="loadArticleQuestion()">Nächste Aufgabe ➔</button>
+        </div>
+
+        <!-- Singular / Plural Trainer -->
+        <div class="quiz-card">
+            <h2>📖 Singular & Plural</h2>
+            <div class="quiz-sentence" id="plu-sentence">Lade Frage...</div>
+            <div class="options-row" id="plu-options"></div>
+            <div class="feedback-text" id="plu-fb"></div>
+            <button class="next-step-btn" id="plu-next" onclick="loadPluralQuestion()">Nächste Aufgabe ➔</button>
+        </div>
+    </div>
+
+    <script>
+        const articlePool = [
+            { text: "___ Kölner Dom ist weltberühmt.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
+            { text: "___ Sonne scheint den ganzen Tag.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
+            { text: "___ Auto fährt sehr schnell.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" },
+            { text: "___ Apfel schmeckt frisch.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
+            { text: "___ Tasse steht auf dem Tisch.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
+            { text: "___ Buch ist sehr interessant.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" },
+            { text: "___ Lehrer erklärt die Regel.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
+            { text: "___ Schule beginnt um acht.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
+            { text: "___ Kind spielt im Garten.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" },
+            { text: "___ Hund bellt laut.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" }
+        ];
+
+        const pluralPool = [
+            { text: "Im Garten zwitschern viele ___.", correct: "Vögel", all: ["Vogel", "Vögel"], hint: "Mehrzahl von Vogel" },
+            { text: "Auf dem Tisch stehen drei ___.", correct: "Tassen", all: ["Tasse", "Tassen"], hint: "Mehrzahl von Tasse" },
+            { text: "Im Park laufen mehrere ___.", correct: "Hunde", all: ["Hund", "Hunde"], hint: "Mehrzahl von Hund" },
+            { text: "Die ___ hängen im Schrank.", correct: "Jacken", all: ["Jacke", "Jacken"], hint: "Mehrzahl von Jacke" },
+            { text: "In der Stadt fahren viele ___.", correct: "Autos", all: ["Auto", "Autos"], hint: "Mehrzahl von Auto" },
+            { text: "Die ___ blühen im Frühling.", correct: "Blumen", all: ["Blume", "Blumen"], hint: "Mehrzahl von Blume" },
+            { text: "Viele ___ lernen Deutsch.", correct: "Schüler", all: ["Schüler", "Schülern"], hint: "Mehrzahl bleibt gleich" },
+            { text: "Die ___ sind sehr lecker.", correct: "Äpfel", all: ["Apfel", "Äpfel"], hint: "Mehrzahl von Apfel" }
+        ];
+
+        function loadArticleQuestion() {
+            const item = articlePool[Math.floor(Math.random() * articlePool.length)];
+            const sentenceEl = document.getElementById('art-sentence');
+            const optionsEl = document.getElementById('art-options');
+            const fb = document.getElementById('art-fb');
+            const nextBtn = document.getElementById('art-next');
+
+            sentenceEl.innerHTML = `Satz: „<span class="blank-slot" id="art-slot">_____</span> ${item.text.replace("___ ", "")}“`;
+            fb.textContent = "";
+            nextBtn.style.display = "none";
+
+            optionsEl.innerHTML = "";
+            item.all.sort(() => Math.random() - 0.5).forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-choice';
+                btn.textContent = opt;
+                btn.onclick = () => {
+                    const slot = document.getElementById('art-slot');
+                    slot.textContent = opt;
+                    const correct = opt === item.correct;
+                    slot.style.color = correct ? '#0d9488' : '#e11d48';
+                    fb.style.color = correct ? '#0d9488' : '#e11d48';
+                    fb.textContent = correct ? "Richtig! Gut gemacht." : `Falsch. Tipp: ${item.hint}`;
+                    if (correct) nextBtn.style.display = "inline-block";
+                };
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        function loadPluralQuestion() {
+            const item = pluralPool[Math.floor(Math.random() * pluralPool.length)];
+            const sentenceEl = document.getElementById('plu-sentence');
+            const optionsEl = document.getElementById('plu-options');
+            const fb = document.getElementById('plu-fb');
+            const nextBtn = document.getElementById('plu-next');
+
+            sentenceEl.innerHTML = `Satz: „${item.text.replace("___", '<span class="blank-slot" id="plu-slot">_____</span>')}“`;
+            fb.textContent = "";
+            nextBtn.style.display = "none";
+
+            optionsEl.innerHTML = "";
+            item.all.sort(() => Math.random() - 0.5).forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-choice';
+                btn.textContent = opt;
+                btn.onclick = () => {
+                    const slot = document.getElementById('plu-slot');
+                    slot.textContent = opt;
+                    const correct = opt === item.correct;
+                    slot.style.color = correct ? '#0d9488' : '#e11d48';
+                    fb.style.color = correct ? '#0d9488' : '#e11d48';
+                    fb.textContent = correct ? "Richtig! Perfekte Form." : `Falsch. Tipp: ${item.hint}`;
+                    if (correct) nextBtn.style.display = "inline-block";
+                };
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        // Start
+        loadArticleQuestion();
+        loadPluralQuestion();
+    </script>
+</body>
+</html>
