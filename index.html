@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deutsch mit Xander Fox</title>
+    <title>Deutsch mit Alex</title>
 
     <style>
         :root {
@@ -32,7 +32,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Minimalistischer, heller Header mit Amazon & Kaffee */
+        /* Minimalistischer, unaufdringlicher Header */
         header {
             background: #ffffff;
             border-bottom: 1px solid var(--border-color);
@@ -57,14 +57,8 @@
             letter-spacing: -0.3px;
         }
 
-        .header-links {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        /* Dezente Mikro-Buttons für Kaffee & Wunschliste */
-        .header-btn {
+        /* Dezent minimalistischer Kaffee-Hinweis */
+        .coffee-mini {
             font-size: 0.75rem;
             color: var(--text-muted);
             text-decoration: none;
@@ -78,7 +72,7 @@
             transition: all 0.2s ease;
         }
 
-        .header-btn:hover {
+        .coffee-mini:hover {
             background: var(--bg-card);
             color: var(--primary);
             border-color: var(--primary);
@@ -221,7 +215,7 @@
 
         .blank-slot {
             display: inline-block;
-            min-width: 45px;
+            min-width: 50px;
             border-bottom: 2px solid var(--primary);
             text-align: center;
             color: var(--primary);
@@ -273,7 +267,7 @@
             font-weight: 600;
         }
 
-        /* Kompass & Mikroausdrücke */
+        /* Kompass & Redewendungen Liste */
         .grammar-box {
             background: var(--bg-card);
             border-left: 3px solid var(--primary);
@@ -389,15 +383,11 @@
 
 <header>
     <div class="header-inner">
-        <h1>Deutsch mit Xander Fox</h1>
-        <div class="header-links">
-            <a href="https://www.amazon.de" target="_blank" class="header-btn">
-                🎁 Wunschliste
-            </a>
-            <a href="https://www.paypal.com/paypalme/XanderFox" target="_blank" class="header-btn">
-                ☕ Kaffee
-            </a>
-        </div>
+        <h1>Deutsch mit Alex</h1>
+        <!-- Dezent minimalistischer Kaffee-Hinweis -->
+        <a href="https://www.paypal.com/paypalme/XanderFox" target="_blank" class="coffee-mini">
+            ☕ Kaffee spendieren
+        </a>
     </div>
 </header>
 
@@ -405,24 +395,23 @@
 <nav class="nav-bar">
     <button class="tab-btn active" onclick="switchTab('about', this)">Über mich</button>
     <button class="tab-btn" onclick="switchTab('exercises', this)">Übungen</button>
-    <button class="tab-btn" onclick="switchTab('quiz', this)">Quiz</button>
     <button class="tab-btn" onclick="switchTab('compass', this)">Kompass</button>
     <button class="tab-btn" onclick="switchTab('materials', this)">Material</button>
 </nav>
 
 <div class="container">
 
-    <!-- SEKTION 1: ÜBER MICH -->
+    <!-- SEKTION 1: ÜBER MICH (Kompakt, Foto links) -->
     <section id="about" class="section active">
         <div class="card">
             <h2>Über mich</h2>
             <div class="about-grid">
                 <div class="profile-img-wrap">
-                    <img src="https://github.com/XanderFoxy/Deutsch/blob/main/Bilder2/9ob2nzt2.jpeg?raw=true" alt="Xander Fox">
+                    <img src="https://github.com/XanderFoxy/Deutsch/blob/main/Bilder2/9ob2nzt2.jpeg?raw=true" alt="Alex">
                 </div>
                 <div class="about-text">
-                    <p>Ich bin Xander Fox. Ich helfe dir dabei, die deutsche Sprache logisch, praxisnah und ohne unnötige Komplexität zu meistern.</p>
-                    <p>Klares Design, echter Alltagsbezug und direkte Verständlichkeit stehen hier im Mittelpunkt.</p>
+                    <p>Ich bin Alex, 46 Jahre alt, und helfe dir dabei, die deutsche Sprache logisch, praxisnah und ohne unnötige Komplexität zu meistern.</p>
+                    <p>Mein Ansatz: Klare Strukturen, echte Alltagsbeispiele und ein strukturierter Lernpfad, damit du sofort sicher sprichst.</p>
                 </div>
             </div>
 
@@ -439,11 +428,11 @@
         </div>
     </section>
 
-    <!-- SEKTION 2: ÜBUNGEN (Riesiger, echter Zufallspool ohne Wiederholungs-Hänger) -->
+    <!-- SEKTION 2: ÜBUNGEN (Endlos-Zufalls-Trainer mit vielen Beispielen) -->
     <section id="exercises" class="section">
         <div class="card">
             <h2>Interaktives Training</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Echte Zufallsauswahl mit vielen verschiedenen Beispielen für maximalen Lerneffekt.</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Wähle die korrekte Form – klicke dich durch unzählige Beispielsätze.</p>
         </div>
 
         <!-- Artikel Trainer -->
@@ -465,81 +454,57 @@
         </div>
     </section>
 
-    <!-- SEKTION 3: QUIZ (Vollwertiges Extra-Quiz) -->
-    <section id="quiz" class="section">
-        <div class="card">
-            <h2>Wissens-Quiz</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Teste dein Gesamtverständnis der deutschen Grammatik und des Vokabulars.</p>
-        </div>
-
-        <div class="quiz-card">
-            <h3>🧠 Grammatik-Schnelltest</h3>
-            <div class="quiz-sentence" id="general-quiz-question">Lade Frage...</div>
-            <div class="options-row" id="general-quiz-options"></div>
-            <div class="feedback-text" id="general-quiz-fb"></div>
-            <button class="next-step-btn" id="general-quiz-next" onclick="loadGeneralQuiz()">Nächste Frage ➔</button>
-        </div>
-    </section>
-
-    <!-- SEKTION 4: KOMPASS & MIKROAUSDRÜCKE -->
+    <!-- SEKTION 3: KOMPASS & REDEWENDUNGEN -->
     <section id="compass" class="section">
         <div class="card">
             <h2>Der Deutsch-Kompass</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Mikroausdrücke, Nuancen und die wichtigsten Alltags-Redewendungen.</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Feinheiten, Grammatik-Kniffe und die wichtigsten deutschen Redewendungen.</p>
 
-            <h3 style="font-size: 0.95rem; margin-bottom: 8px;">Mikroausdrücke & Nuancen</h3>
+            <h3 style="font-size: 0.95rem; margin-bottom: 8px;">Wichtige Alltags-Ausdrücke</h3>
             <div class="grammar-box">
                 <strong>Das Wort „na“</strong>
-                <p>Sehr flexibel im Alltag: Als lockere Begrüßung („Na, wie läuft's?“) oder als dezenter Aufforderungsimpuls („Na komm schon!“).</p>
+                <p>Sehr flexibel im Alltag: Als lockere Begrüßung („Na, wie geht's?“) oder als Ausdruck von Ungeduld („Na komm schon!“).</p>
             </div>
             <div class="grammar-box">
                 <strong>Das Wort „tja“</strong>
-                <p>Ein typisches non-verbales Seufzen in Lautform. Drückt drastische Ratlosigkeit, Resignation oder stumme Akzeptanz aus („Tja, da kann man nichts machen.“).</p>
+                <p>Ein typisch deutsches Seufzen, das Ratlosigkeit, Resignation oder Akzeptanz einer unperfekten Situation ausdrückt („Tja, da kann man nichts machen.“).</p>
             </div>
             <div class="grammar-box">
                 <strong>Das Wort „doch“</strong>
-                <p>Das Multitalent: Dient als affirmative Antwort auf verneinte Fragen („Gehst du nicht mit? – Doch!“), zur Bekräftigung („Das ist doch genial!“).</p>
-            </div>
-            <div class="grammar-box">
-                <strong>Das Wort „halt“ / „eben“</strong>
-                <p>Signalisiert Unvermeidbarkeit oder pure Tatsachenfeststellung („Das ist halt so“), ohne emotional zu werten.</p>
+                <p>Wird für den Widerspruch bei verneinten Fragen („– Kommst du nicht? – Doch!“), zur Bekräftigung („Das ist doch toll!“) oder zur Beruhigung genutzt.</p>
             </div>
 
             <h3 style="font-size: 0.95rem; margin: 16px 0 8px 0;">Top Redewendungen</h3>
             <div class="idiom-grid">
                 <div class="idiom-card">
                     <strong>Jemandem die Daumen drücken</strong>
-                    <span>Bedeutung: Jemandem Glück für eine bevorstehende Prüfung oder Situation wünschen.</span>
+                    <span>Bedeutung: Jemandem viel Glück für eine anstehende Aufgabe wünschen.</span>
                 </div>
                 <div class="idiom-card">
                     <strong>Da liegt der Hund begraben</strong>
-                    <span>Bedeutung: Das ist der genaue Kern des Problems oder die wahre Ursache.</span>
+                    <span>Bedeutung: Das ist der Kern des Problems oder die wahre Ursache.</span>
                 </div>
                 <div class="idiom-card">
                     <strong>Tomaten auf den Augen haben</strong>
-                    <span>Bedeutung: Offensichtliche Dinge völlig übersehen.</span>
+                    <span>Bedeutung: Offensichtliche Dinge total übersehen.</span>
                 </div>
                 <div class="idiom-card">
                     <strong>Die Kirche im Dorf lassen</strong>
-                    <span>Bedeutung: Nicht übertreiben, sondern auf dem Teppich bleiben.</span>
+                    <span>Bedeutung: Nicht übertreiben, sondern realistisch bleiben.</span>
                 </div>
                 <div class="idiom-card">
                     <strong>Jemanden auf den Arm nehmen</strong>
-                    <span>Bedeutung: Jemanden humorvoll reinlegen oder veräppeln.</span>
+                    <span>Bedeutung: Jemanden humorvoll reinlegen oder scherzen.</span>
                 </div>
                 <div class="idiom-card">
                     <strong>Ins Gras beißen</strong>
-                    <span>Bedeutung: Sterben (historische Metapher aus der Schlacht).</span>
-                </div>
-                <div class="idiom-card">
-                    <strong>Sich etwas durch den Kopf gehen lassen</strong>
-                    <span>Bedeutung: Über ein Angebot oder eine Idee in Ruhe nachdenken.</span>
+                    <span>Bedeutung: Sterben (bildliche Redewendung aus Schlachten).</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SEKTION 5: MATERIALIEN -->
+    <!-- SEKTION 4: MATERIALIEN -->
     <section id="materials" class="section">
         <div class="card">
             <h2>Lernmaterialien</h2>
@@ -560,7 +525,7 @@
 </div>
 
 <footer>
-    Deutsch mit Xander Fox &bull; Modern & Kompakt
+    Deutsch mit Alex &bull; Kompakt & Direkt
 </footer>
 
 <!-- BILD VIEWER -->
@@ -579,48 +544,33 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- RIESIGER, ECHTER ZUFALLS-POOL (Keine Endlosschleife / Exakte Lückenfüllung) ---
+    // --- UMFANGREICHE DATENBANK FÜR ENDLOS-TRAINING ---
     const articlePool = [
         { text: "___ Kölner Dom ist weltberühmt.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
         { text: "___ Sonne scheint heute den ganzen Tag.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" },
         { text: "___ Auto fährt extrem schnell auf der Autobahn.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral (sächlich)" },
         { text: "___ Apfel schmeckt sehr frisch und knackig.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
-        { text: "___ Tasse steht sicher auf dem Holztisch.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" },
-        { text: "___ Buch enthält extrem spannende Geschichten.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral (sächlich)" },
-        { text: "___ Hund läuft fröhlich über die Wiese.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" },
-        { text: "___ Katze schläft gemütlich auf dem Sofa.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" },
-        { text: "___ Wasser ist heute angenehm kühl.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral (sächlich)" },
-        { text: "___ Mond leuchtet hell in der Nacht.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin (männlich)" }
+        { text: "___ Tasse steht sicher auf dem Tisch.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin (weiblich)" },
+        { text: "___ Buch enthält spannende Geschichten.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral (sächlich)" }
     ];
 
     const pluralPool = [
         { text: "Im Garten zwitschern heute viele ___.", correct: "Vögel", all: ["Vogel", "Vögel"], hint: "Mehrzahl von Vogel" },
         { text: "Auf dem Tisch stehen drei rote ___.", correct: "Tassen", all: ["Tasse", "Tassen"], hint: "Mehrzahl von Tasse" },
         { text: "Im Park laufen mehrere schnelle ___.", correct: "Hunde", all: ["Hund", "Hunde"], hint: "Mehrzahl von Hund" },
-        { text: "Die ___ hängen ordentlich im Kleiderschrank.", correct: "Jacken", all: ["Jacke", "Jacken"], hint: "Mehrzahl von Jacke" },
-        { text: "In der großen Stadt fahren viele rote ___.", correct: "Autos", all: ["Auto", "Autos"], hint: "Mehrzahl von Auto" },
-        { text: "Im Wald stehen riesige, alte ___.", correct: "Bäume", all: ["Baum", "Bäume"], hint: "Mehrzahl von Baum" },
-        { text: "Zum Geburtstag gab es leckere ___.", correct: "Kuchen", all: ["Kuchen"], hint: "Singular und Plural oft gleich (hier Plural)" },
-        { text: "Die ___ blühen im Frühling wunderschön.", correct: "Blumen", all: ["Blume", "Blumen"], hint: "Mehrzahl von Blume" }
-    ];
-
-    const generalQuizPool = [
-        { q: "Welches Verb passt: „Ich ___ jeden Tag Deutsch.“", correct: "lerne", all: ["lernen", "lerne", "lernt"], hint: "Form für 'Ich'" },
-        { q: "Wie lautet das Perfekt von 'gehen'?", correct: "bin gegangen", all: ["habe gegangen", "bin gegangen", "ist gegangen"], hint: "Bewegungsverb nutzt 'sein'" },
-        { q: "Welcher Satz ist im Akkusativ korrekt?", correct: "Ich sehe den Mann.", all: ["Ich sehe der Mann.", "Ich sehe dem Mann.", "Ich sehe den Mann."], hint: "Maskulin verändert sich im Akkusativ zu 'den'" },
-        { q: "Wie fragt man nach einer Uhrzeit?", correct: "Wie viel Uhr ist es?", all: ["Wie viel Uhr ist es?", "Was ist für eine Uhr?", "Wie spät Uhr?"], hint: "Klassische Formulierung" }
+        { text: "Die ___ hängen im Kleiderschrank.", correct: "Jacken", all: ["Jacke", "Jacken"], hint: "Mehrzahl von Jacke" },
+        { text: "In der Stadt fahren viele rote ___.", correct: "Autos", all: ["Auto", "Autos"], hint: "Mehrzahl von Auto" }
     ];
 
     function loadArticleQuestion() {
         const item = articlePool[Math.floor(Math.random() * articlePool.length)];
         const container = document.getElementById('art-options');
-        const formattedSentence = item.text.replace("___", '<span class="blank-slot">_____</span>');
-        document.getElementById('art-sentence').innerHTML = `Satz: „${formattedSentence}“`;
+        document.getElementById('art-sentence').innerHTML = `Satz: „<span class="blank-slot">_____</span> ${item.text.replace("___ ", "")}“`;
         document.getElementById('art-fb').textContent = "";
         document.getElementById('art-next').style.display = "none";
         
         container.innerHTML = "";
-         [...item.all].sort(() => Math.random() - 0.5).forEach(opt => {
+        item.all.sort(() => Math.random() - 0.5).forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'opt-choice';
             btn.textContent = opt;
@@ -637,13 +587,12 @@
     function loadPluralQuestion() {
         const item = pluralPool[Math.floor(Math.random() * pluralPool.length)];
         const container = document.getElementById('plu-options');
-        const formattedSentence = item.text.replace("___", '<span class="blank-slot">_____</span>');
-        document.getElementById('plu-sentence').innerHTML = `Satz: „${formattedSentence}“`;
+        document.getElementById('plu-sentence').innerHTML = `Satz: „${item.text.replace("___", '<span class="blank-slot">_____</span>')}“`;
         document.getElementById('plu-fb').textContent = "";
         document.getElementById('plu-next').style.display = "none";
         
         container.innerHTML = "";
-        [...item.all].sort(() => Math.random() - 0.5).forEach(opt => {
+        item.all.sort(() => Math.random() - 0.5).forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'opt-choice';
             btn.textContent = opt;
@@ -657,32 +606,9 @@
         });
     }
 
-    function loadGeneralQuiz() {
-        const item = generalQuizPool[Math.floor(Math.random() * generalQuizPool.length)];
-        const container = document.getElementById('general-quiz-options');
-        document.getElementById('general-quiz-question').textContent = item.q;
-        document.getElementById('general-quiz-fb').textContent = "";
-        document.getElementById('general-quiz-next').style.display = "none";
-
-        container.innerHTML = "";
-        [...item.all].sort(() => Math.random() - 0.5).forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'opt-choice';
-            btn.textContent = opt;
-            btn.onclick = () => {
-                const correct = opt === item.correct;
-                document.getElementById('general-quiz-fb').style.color = correct ? '#0d9488' : '#e11d48';
-                document.getElementById('general-quiz-fb').textContent = correct ? "Richtig! Ausgezeichnet." : `Falsch. Tipp: ${item.hint}`;
-                if(correct) document.getElementById('general-quiz-next').style.display = "inline-block";
-            };
-            container.appendChild(btn);
-        });
-    }
-
     // Initialisierung beim Start
     loadArticleQuestion();
     loadPluralQuestion();
-    loadGeneralQuiz();
 
     // Viewer Skript
     function openViewer(src) {
