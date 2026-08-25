@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deutsch mit Alex</title>
-
     <style>
         :root {
             --bg-main: #ffffff;
@@ -13,8 +12,6 @@
             --text-main: #0f172a;
             --text-muted: #475569;
             --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --accent-green: #0d9488;
             --radius: 12px;
         }
 
@@ -28,21 +25,21 @@
             font-family: system-ui, -apple-system, sans-serif;
             background: var(--bg-main);
             color: var(--text-main);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* Header */
         header {
             background: #ffffff;
             border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
             padding: 10px 16px;
+            flex-shrink: 0;
         }
 
         .header-inner {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -52,28 +49,23 @@
         header h1 {
             font-size: 1.15rem;
             font-weight: 700;
-            color: var(--text-main);
         }
 
         .coffee-mini {
             font-size: 0.75rem;
             color: var(--text-muted);
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
-            background: #ffffff;
         }
 
         .coffee-mini:hover {
-            background: var(--bg-card);
             color: var(--primary);
             border-color: var(--primary);
         }
 
+        /* Navigation */
         .nav-bar {
             display: flex;
             background: #ffffff;
@@ -81,12 +73,13 @@
             padding: 6px 12px;
             gap: 6px;
             overflow-x: auto;
+            flex-shrink: 0;
         }
 
         .tab-btn {
             background: transparent;
             border: none;
-            padding: 8px 12px;
+            padding: 8px 14px;
             font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-muted);
@@ -95,254 +88,21 @@
             white-space: nowrap;
         }
 
-        .tab-btn.active, .tab-btn:hover {
+        .tab-btn.active {
             background: var(--bg-card);
             color: var(--primary);
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 16px;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .card {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 18px;
-            margin-bottom: 16px;
-        }
-
-        .card h2, .card h3 {
-            font-size: 1.05rem;
-            margin-bottom: 10px;
-        }
-
-        .about-grid {
-            display: flex;
-            gap: 14px;
-            align-items: flex-start;
-        }
-
-        .profile-img-wrap {
-            width: 95px;
-            height: 95px;
-            border-radius: 50%;
+        /* Content Bereich mit iframe */
+        .content {
+            flex: 1;
             overflow: hidden;
-            flex-shrink: 0;
-            border: 2px solid var(--border-color);
         }
 
-        .profile-img-wrap img {
+        .content iframe {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-        }
-
-        .about-text p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .links-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .link-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 8px;
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 600;
-        }
-
-        .quiz-card {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 14px;
-        }
-
-        .quiz-sentence {
-            font-size: 0.95rem;
-            margin-bottom: 14px;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-
-        .blank-slot {
-            display: inline-block;
-            min-width: 60px;
-            border-bottom: 2px solid var(--primary);
-            text-align: center;
-            color: var(--primary);
-            font-weight: bold;
-            padding: 0 6px;
-        }
-
-        .options-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .opt-choice {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 1;
-            min-width: 80px;
-            text-align: center;
-        }
-
-        .opt-choice:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .feedback-text {
-            margin-top: 12px;
-            font-size: 0.88rem;
-            font-weight: 600;
-        }
-
-        .next-step-btn {
-            margin-top: 12px;
-            background: var(--text-main);
-            color: white;
             border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: none;
-            font-weight: 600;
-        }
-
-        .grammar-box {
-            background: var(--bg-card);
-            border-left: 3px solid var(--primary);
-            padding: 12px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 10px;
-            font-size: 0.88rem;
-        }
-
-        .grammar-box strong {
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .grammar-box p {
-            color: var(--text-muted);
-            font-size: 0.82rem;
-        }
-
-        .idiom-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .idiom-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 10px 12px;
-            border-radius: 8px;
-        }
-
-        .idiom-card strong {
-            font-size: 0.88rem;
-            color: var(--primary);
-            display: block;
-        }
-
-        .idiom-card span {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .mat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .mat-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .mat-item img {
-            width: 100%;
-            aspect-ratio: 16/9;
-            object-fit: cover;
-        }
-
-        .mat-title {
-            padding: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            padding: 24px 16px;
-            border-top: 1px solid var(--border-color);
-            margin-top: 20px;
-        }
-
-        .viewer {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.95);
-            z-index: 1000;
-            padding: 20px;
-            text-align: center;
-        }
-        .viewer.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .viewer img { max-width: 100%; max-height: 80vh; border-radius: 8px; }
-        .close-viewer {
-            margin-top: 15px;
-            background: white;
-            color: var(--text-main);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -358,215 +118,21 @@
 </header>
 
 <nav class="nav-bar">
-    <button class="tab-btn active" onclick="switchTab('about', this)">Über mich</button>
-    <button class="tab-btn" onclick="switchTab('exercises', this)">Übungen</button>
-    <button class="tab-btn" onclick="switchTab('compass', this)">Kompass</button>
-    <button class="tab-btn" onclick="switchTab('materials', this)">Material</button>
+    <button class="tab-btn active" onclick="loadPage('ueber-mich.html', this)">Über mich</button>
+    <button class="tab-btn" onclick="loadPage('uebungen.html', this)">Übungen</button>
+    <button class="tab-btn" onclick="loadPage('kompass.html', this)">Kompass</button>
+    <button class="tab-btn" onclick="loadPage('materialien.html', this)">Material</button>
 </nav>
 
-<div class="container">
-
-    <section id="about" class="section active">
-        <div class="card">
-            <h2>Über mich</h2>
-            <div class="about-grid">
-                <div class="profile-img-wrap">
-                    <img src="https://github.com/XanderFoxy/Deutsch/blob/main/Bilder2/9ob2nzt2.jpeg?raw=true" alt="Alex">
-                </div>
-                <div class="about-text">
-                    <p>Ich bin Alex, 46 Jahre alt, und helfe dir dabei, die deutsche Sprache logisch, praxisnah und ohne unnötige Komplexität zu meistern.</p>
-                    <p>Mein Ansatz: Klare Strukturen, echte Alltagsbeispiele und ein strukturierter Lernpfad.</p>
-                </div>
-            </div>
-            <div class="links-grid">
-                <a href="https://m.youtube.com/playlist?list=PLza1DhjwP_bew29ZGGnpEuq-vgugL0dhR" target="_blank" class="link-btn">YouTube</a>
-                <a href="https://www.tiktok.com/@xander_fox_official" target="_blank" class="link-btn">TikTok</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="exercises" class="section">
-        <div class="card">
-            <h2>Interaktives Training</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">Wähle die richtige Antwort – sie erscheint direkt in der Lücke.</p>
-        </div>
-
-        <!-- Artikel Trainer -->
-        <div class="quiz-card">
-            <h3>🎯 Artikel-Trainer (der / die / das)</h3>
-            <div class="quiz-sentence" id="art-sentence">Lade Frage...</div>
-            <div class="options-row" id="art-options"></div>
-            <div class="feedback-text" id="art-fb"></div>
-            <button class="next-step-btn" id="art-next" onclick="loadArticleQuestion()">Nächste Aufgabe ➔</button>
-        </div>
-
-        <!-- Singular / Plural Trainer -->
-        <div class="quiz-card">
-            <h3>📖 Singular & Plural</h3>
-            <div class="quiz-sentence" id="plu-sentence">Lade Frage...</div>
-            <div class="options-row" id="plu-options"></div>
-            <div class="feedback-text" id="plu-fb"></div>
-            <button class="next-step-btn" id="plu-next" onclick="loadPluralQuestion()">Nächste Aufgabe ➔</button>
-        </div>
-    </section>
-
-    <section id="compass" class="section">
-        <div class="card">
-            <h2>Der Deutsch-Kompass</h2>
-            <div class="grammar-box">
-                <strong>Das Wort „na“</strong>
-                <p>Lockere Begrüßung („Na, wie geht's?“) oder Ungeduld („Na komm schon!“).</p>
-            </div>
-            <div class="grammar-box">
-                <strong>Das Wort „doch“</strong>
-                <p>Widerspruch bei verneinten Fragen („Doch!“), Bekräftigung oder Beruhigung.</p>
-            </div>
-            <div class="idiom-grid" style="margin-top:16px;">
-                <div class="idiom-card">
-                    <strong>Jemandem die Daumen drücken</strong>
-                    <span>Jemandem Glück wünschen.</span>
-                </div>
-                <div class="idiom-card">
-                    <strong>Tomaten auf den Augen haben</strong>
-                    <span>Offensichtliche Dinge übersehen.</span>
-                </div>
-                <div class="idiom-card">
-                    <strong>Die Kirche im Dorf lassen</strong>
-                    <span>Nicht übertreiben.</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="materials" class="section">
-        <div class="card">
-            <h2>Lernmaterialien</h2>
-            <div class="mat-grid">
-                <div class="mat-item" onclick="openViewer('Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png')">
-                    <img src="Bilder2/IMG_1206.jpeg" alt="Peter und der Wolf">
-                    <div class="mat-title">Peter & der Wolf</div>
-                </div>
-                <div class="mat-item" onclick="openViewer('Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png')">
-                    <img src="Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png" alt="A1">
-                    <div class="mat-title">Erste Schritte (A1)</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-</div>
-
-<footer>Deutsch mit Alex</footer>
-
-<div class="viewer" id="viewer" onclick="closeViewer()">
-    <img id="viewerImg" src="" alt="Vollbild">
-    <button class="close-viewer">Schließen</button>
+<div class="content">
+    <iframe id="contentFrame" src="ueber-mich.html" title="Inhalt"></iframe>
 </div>
 
 <script>
-    function switchTab(id, btn) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    function loadPage(page, btn) {
+        document.getElementById('contentFrame').src = page;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
         btn.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // Erweiterte Datenbanken
-    const articlePool = [
-        { text: "___ Kölner Dom ist weltberühmt.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
-        { text: "___ Sonne scheint den ganzen Tag.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
-        { text: "___ Auto fährt sehr schnell.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" },
-        { text: "___ Apfel schmeckt frisch.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
-        { text: "___ Tasse steht auf dem Tisch.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
-        { text: "___ Buch ist sehr interessant.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" },
-        { text: "___ Lehrer erklärt die Regel.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
-        { text: "___ Schule beginnt um acht.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
-        { text: "___ Kind spielt im Garten.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" },
-        { text: "___ Hund bellt laut.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" }
-    ];
-
-    const pluralPool = [
-        { text: "Im Garten zwitschern viele ___.", correct: "Vögel", all: ["Vogel", "Vögel"], hint: "Mehrzahl von Vogel" },
-        { text: "Auf dem Tisch stehen drei ___.", correct: "Tassen", all: ["Tasse", "Tassen"], hint: "Mehrzahl von Tasse" },
-        { text: "Im Park laufen mehrere ___.", correct: "Hunde", all: ["Hund", "Hunde"], hint: "Mehrzahl von Hund" },
-        { text: "Die ___ hängen im Schrank.", correct: "Jacken", all: ["Jacke", "Jacken"], hint: "Mehrzahl von Jacke" },
-        { text: "In der Stadt fahren viele ___.", correct: "Autos", all: ["Auto", "Autos"], hint: "Mehrzahl von Auto" },
-        { text: "Die ___ blühen im Frühling.", correct: "Blumen", all: ["Blume", "Blumen"], hint: "Mehrzahl von Blume" },
-        { text: "Viele ___ lernen Deutsch.", correct: "Schüler", all: ["Schüler", "Schülern"], hint: "Mehrzahl bleibt gleich" },
-        { text: "Die ___ sind sehr lecker.", correct: "Äpfel", all: ["Apfel", "Äpfel"], hint: "Mehrzahl von Apfel" }
-    ];
-
-    function loadArticleQuestion() {
-        const item = articlePool[Math.floor(Math.random() * articlePool.length)];
-        const sentenceEl = document.getElementById('art-sentence');
-        const optionsEl = document.getElementById('art-options');
-        const fb = document.getElementById('art-fb');
-        const nextBtn = document.getElementById('art-next');
-
-        sentenceEl.innerHTML = `Satz: „<span class="blank-slot" id="art-slot">_____</span> ${item.text.replace("___ ", "")}“`;
-        fb.textContent = "";
-        nextBtn.style.display = "none";
-
-        optionsEl.innerHTML = "";
-        item.all.sort(() => Math.random() - 0.5).forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'opt-choice';
-            btn.textContent = opt;
-            btn.onclick = () => {
-                const slot = document.getElementById('art-slot');
-                slot.textContent = opt;
-                const correct = opt === item.correct;
-                slot.style.color = correct ? '#0d9488' : '#e11d48';
-                fb.style.color = correct ? '#0d9488' : '#e11d48';
-                fb.textContent = correct ? "Richtig! Gut gemacht." : `Falsch. Tipp: ${item.hint}`;
-                if (correct) nextBtn.style.display = "inline-block";
-            };
-            optionsEl.appendChild(btn);
-        });
-    }
-
-    function loadPluralQuestion() {
-        const item = pluralPool[Math.floor(Math.random() * pluralPool.length)];
-        const sentenceEl = document.getElementById('plu-sentence');
-        const optionsEl = document.getElementById('plu-options');
-        const fb = document.getElementById('plu-fb');
-        const nextBtn = document.getElementById('plu-next');
-
-        sentenceEl.innerHTML = `Satz: „${item.text.replace("___", '<span class="blank-slot" id="plu-slot">_____</span>')}“`;
-        fb.textContent = "";
-        nextBtn.style.display = "none";
-
-        optionsEl.innerHTML = "";
-        item.all.sort(() => Math.random() - 0.5).forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'opt-choice';
-            btn.textContent = opt;
-            btn.onclick = () => {
-                const slot = document.getElementById('plu-slot');
-                slot.textContent = opt;
-                const correct = opt === item.correct;
-                slot.style.color = correct ? '#0d9488' : '#e11d48';
-                fb.style.color = correct ? '#0d9488' : '#e11d48';
-                fb.textContent = correct ? "Richtig! Perfekte Form." : `Falsch. Tipp: ${item.hint}`;
-                if (correct) nextBtn.style.display = "inline-block";
-            };
-            optionsEl.appendChild(btn);
-        });
-    }
-
-    // Start
-    loadArticleQuestion();
-    loadPluralQuestion();
-
-    function openViewer(src) {
-        document.getElementById('viewerImg').src = src;
-        document.getElementById('viewer').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeViewer() {
-        document.getElementById('viewer').classList.remove('active');
-        document.body.style.overflow = '';
     }
 </script>
 
