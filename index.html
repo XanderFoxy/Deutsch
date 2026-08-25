@@ -1,324 +1,142 @@
-/* ========================================
-   Deutsch mit Alex – Gemeinsames Stylesheet
-   ======================================== */
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deutsch mit Alex</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Nur Framework-spezifische Sachen */
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            background: #f1f5f9;
+        }
 
-:root {
-    --bg-main: #f8fafc;
-    --bg-card: #ffffff;
-    --border: #e2e8f0;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --primary: #2563eb;
-    --primary-dark: #1e40af;
-    --accent-green: #0d9488;
-    --accent-red: #e11d48;
-    --radius: 12px;
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
+        header {
+            background: #ffffff;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 10px 14px;
+            flex-shrink: 0;
+        }
 
-/* Reset & Basis */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+        .header-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg-main);
-    color: var(--text-main);
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-    padding: 16px;
-}
+        header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 0;
+        }
 
-/* Container */
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-}
+        .coffee-mini {
+            font-size: 0.75rem;
+            color: #b45309;
+            text-decoration: none;
+            padding: 5px 11px;
+            border-radius: 20px;
+            border: 1px solid #fcd34d;
+            background: #fffbeb;
+            font-weight: 600;
+        }
 
-/* Überschriften */
-h1 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin-bottom: 6px;
-}
+        /* Navigation – schmal und mobil-freundlich */
+        .nav-bar {
+            display: flex;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 6px 8px;
+            gap: 4px;
+            overflow-x: auto;
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+        }
 
-h2 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin: 24px 0 12px 0;
-}
+        .nav-bar::-webkit-scrollbar {
+            display: none;
+        }
 
-h3 {
-    font-size: 1.0rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
+        .tab-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 7px 12px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            border-radius: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
 
-.subtitle {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-bottom: 18px;
-}
+        .tab-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
 
-/* Karten / Boxen */
-.card,
-.box,
-.quiz-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow);
-}
+        .content {
+            flex: 1;
+            overflow: hidden;
+            padding: 10px;
+        }
 
-/* Texte */
-p {
-    font-size: 0.92rem;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-}
+        .content-frame-wrap {
+            height: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        }
 
-/* Links / Buttons */
-.link-btn,
-.opt-choice,
-.next-step-btn {
-    display: inline-block;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.15s ease;
-}
+        .content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
 
-.link-btn {
-    background: var(--bg-main);
-    border: 1px solid var(--border);
-    color: var(--text-main);
-    padding: 10px;
-    text-align: center;
-    font-size: 0.85rem;
-}
+<header>
+    <div class="header-inner">
+        <h1>Deutsch mit Alex</h1>
+        <a href="https://www.paypal.com/paypalme/XanderFox" target="_blank" class="coffee-mini">
+            ☕ Kaffee
+        </a>
+    </div>
+</header>
 
-.link-btn:hover {
-    background: #f1f5f9;
-    border-color: var(--primary);
-    color: var(--primary);
-}
+<nav class="nav-bar">
+    <button class="tab-btn active" onclick="loadPage('ueber-mich.html', this)">Über mich</button>
+    <button class="tab-btn" onclick="loadPage('uebungen.html', this)">Übungen</button>
+    <button class="tab-btn" onclick="loadPage('kompass.html', this)">Kompass</button>
+    <button class="tab-btn" onclick="loadPage('materialien.html', this)">Material</button>
+</nav>
 
-/* Quiz / Übungen */
-.quiz-sentence {
-    font-size: 0.95rem;
-    margin-bottom: 14px;
-    font-weight: 500;
-    line-height: 1.6;
-}
+<div class="content">
+    <div class="content-frame-wrap">
+        <iframe id="contentFrame" src="ueber-mich.html" title="Inhalt"></iframe>
+    </div>
+</div>
 
-.blank-slot {
-    display: inline-block;
-    min-width: 60px;
-    border-bottom: 2px solid var(--primary);
-    text-align: center;
-    color: var(--primary);
-    font-weight: bold;
-    padding: 0 6px;
-}
+<script>
+    function loadPage(page, btn) {
+        document.getElementById('contentFrame').src = page;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+</script>
 
-.options-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.opt-choice {
-    background: #ffffff;
-    border: 1px solid var(--border);
-    padding: 8px 14px;
-    font-size: 0.9rem;
-    flex: 1;
-    min-width: 80px;
-    text-align: center;
-    color: var(--text-main);
-}
-
-.opt-choice:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
-.feedback-text {
-    margin-top: 12px;
-    font-size: 0.88rem;
-    font-weight: 600;
-}
-
-.next-step-btn {
-    margin-top: 12px;
-    background: var(--text-main);
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    font-size: 0.85rem;
-    display: none;
-}
-
-/* Kompass / Erklärungen */
-.grammar-box {
-    background: var(--bg-main);
-    border-left: 3px solid var(--primary);
-    padding: 12px 14px;
-    border-radius: 0 8px 8px 0;
-    margin-bottom: 10px;
-}
-
-.grammar-box strong {
-    display: block;
-    margin-bottom: 3px;
-    color: var(--text-main);
-}
-
-.grammar-box p {
-    font-size: 0.85rem;
-    margin: 0;
-}
-
-.example {
-    background: #ffffff;
-    border-left: 3px solid var(--primary);
-    padding: 8px 12px;
-    margin: 8px 0;
-    font-size: 0.87rem;
-    border-radius: 0 6px 6px 0;
-}
-
-.idiom {
-    background: #ffffff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
-    margin-bottom: 10px;
-}
-
-.idiom strong {
-    color: var(--primary);
-    font-size: 0.92rem;
-    display: block;
-    margin-bottom: 3px;
-}
-
-.idiom span {
-    font-size: 0.84rem;
-    color: var(--text-muted);
-}
-
-.note {
-    background: #fef9c3;
-    border: 1px solid #fde047;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 0.87rem;
-    margin: 14px 0;
-}
-
-/* Materialien Grid */
-.mat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.mat-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.15s;
-}
-
-.mat-item:hover {
-    transform: translateY(-2px);
-}
-
-.mat-item img {
-    width: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    display: block;
-}
-
-.mat-title {
-    padding: 10px 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-align: center;
-}
-
-/* Über mich */
-.about-grid {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-}
-
-.profile-img-wrap {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 2px solid var(--border);
-}
-
-.profile-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.links-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 18px;
-}
-
-/* Viewer */
-.viewer {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.95);
-    z-index: 1000;
-    padding: 20px;
-    text-align: center;
-}
-
-.viewer.active {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.viewer img {
-    max-width: 100%;
-    max-height: 80vh;
-    border-radius: 8px;
-}
-
-.close-viewer {
-    margin-top: 15px;
-    background: white;
-    color: var(--text-main);
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-}
+</body>
+</html>
