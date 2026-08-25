@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lernmaterialien – Deutsch mit Alex</title>
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --bg-card: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #2563eb;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .mat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .mat-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .mat-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .mat-item img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+        }
+
+        .mat-title {
+            padding: 10px 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Viewer */
+        .viewer {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 1000;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .viewer.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewer img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+        }
+
+        .close-viewer {
+            margin-top: 15px;
+            background: white;
+            color: var(--text-main);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lernmaterialien</h1>
+        <p class="subtitle">Klicke auf eine Grafik, um sie im Großformat zu öffnen.</p>
+
+        <div class="mat-grid">
+            <div class="mat-item" onclick="openViewer('Bilder2/08F0448F-C2C5-44E1-B80D-7BA5E0525FE9.png')">
+                <img src="Bilder2/IMG_1206.jpeg" alt="Peter und der Wolf">
+                <div class="mat-title">Peter & der Wolf</div>
+            </div>
+
+            <div class="mat-item" onclick="openViewer('Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png')">
+                <img src="Bilder2/9C6B2BCE-2AE7-486A-B0F0-D62D1D3701EA.png" alt="Erste Schritte A1">
+                <div class="mat-title">Erste Schritte (A1)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bild-Viewer -->
+    <div class="viewer" id="viewer" onclick="closeViewer()">
+        <img id="viewerImg" src="" alt="Vollbild">
+        <button class="close-viewer">Schließen</button>
+    </div>
+
+    <script>
+        function openViewer(src) {
+            document.getElementById('viewerImg').src = src;
+            document.getElementById('viewer').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeViewer() {
+            document.getElementById('viewer').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    </script>
+</body>
+</html>
