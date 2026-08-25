@@ -4,87 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Übungen – Deutsch mit Alex</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root {
-            --bg-main: #ffffff;
-            --bg-card: #f8fafc;
-            --border-color: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --primary: #2563eb;
-            --accent-green: #0d9488;
-            --radius: 12px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        /* Nur ergänzende Styles für diese Seite */
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: var(--bg-main);
-            color: var(--text-main);
-            line-height: 1.5;
             padding: 16px;
+            background: #ffffff;
         }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-size: 1.3rem;
-            margin-bottom: 6px;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
-
         .quiz-card {
             background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
             padding: 18px;
             margin-bottom: 18px;
         }
-
         .quiz-card h2 {
             font-size: 1.05rem;
             margin-bottom: 12px;
+            color: #1e40af;
         }
-
         .quiz-sentence {
             font-size: 0.95rem;
             margin-bottom: 14px;
             font-weight: 500;
             line-height: 1.6;
         }
-
         .blank-slot {
             display: inline-block;
             min-width: 60px;
-            border-bottom: 2px solid var(--primary);
+            border-bottom: 2px solid #2563eb;
             text-align: center;
-            color: var(--primary);
+            color: #2563eb;
             font-weight: bold;
             padding: 0 6px;
         }
-
         .options-row {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-
         .opt-choice {
             background: #ffffff;
-            border: 1px solid var(--border-color);
+            border: 1px solid #e2e8f0;
             padding: 8px 14px;
             border-radius: 8px;
             font-size: 0.9rem;
@@ -94,21 +55,18 @@
             min-width: 80px;
             text-align: center;
         }
-
         .opt-choice:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: #2563eb;
+            color: #2563eb;
         }
-
         .feedback-text {
             margin-top: 12px;
             font-size: 0.88rem;
             font-weight: 600;
         }
-
         .next-step-btn {
             margin-top: 12px;
-            background: var(--text-main);
+            background: #0f172a;
             color: white;
             border: none;
             padding: 8px 14px;
@@ -118,6 +76,11 @@
             display: none;
             font-weight: 600;
         }
+        .subtitle {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -125,7 +88,7 @@
         <h1>Interaktives Training</h1>
         <p class="subtitle">Wähle die richtige Antwort – sie erscheint direkt in der Lücke.</p>
 
-        <!-- Artikel-Trainer -->
+        <!-- 1. Artikel-Trainer -->
         <div class="quiz-card">
             <h2>🎯 Artikel-Trainer (der / die / das)</h2>
             <div class="quiz-sentence" id="art-sentence">Lade Frage...</div>
@@ -134,7 +97,7 @@
             <button class="next-step-btn" id="art-next" onclick="loadArticleQuestion()">Nächste Aufgabe ➔</button>
         </div>
 
-        <!-- Singular / Plural Trainer -->
+        <!-- 2. Singular / Plural -->
         <div class="quiz-card">
             <h2>📖 Singular & Plural</h2>
             <div class="quiz-sentence" id="plu-sentence">Lade Frage...</div>
@@ -142,9 +105,30 @@
             <div class="feedback-text" id="plu-fb"></div>
             <button class="next-step-btn" id="plu-next" onclick="loadPluralQuestion()">Nächste Aufgabe ➔</button>
         </div>
+
+        <!-- 3. Wort-Alternativen -->
+        <div class="quiz-card">
+            <h2>🔄 Wort-Alternativen</h2>
+            <p style="font-size:0.88rem; color:#64748b; margin-bottom:12px;">Welches Wort passt als Alternative?</p>
+            <div class="quiz-sentence" id="alt-sentence">Lade Frage...</div>
+            <div class="options-row" id="alt-options"></div>
+            <div class="feedback-text" id="alt-fb"></div>
+            <button class="next-step-btn" id="alt-next" onclick="loadAltQuestion()">Nächste Aufgabe ➔</button>
+        </div>
+
+        <!-- 4. kennen vs. wissen -->
+        <div class="quiz-card">
+            <h2>🧠 kennen oder wissen?</h2>
+            <p style="font-size:0.88rem; color:#64748b; margin-bottom:12px;">Wähle das passende Verb.</p>
+            <div class="quiz-sentence" id="kw-sentence">Lade Frage...</div>
+            <div class="options-row" id="kw-options"></div>
+            <div class="feedback-text" id="kw-fb"></div>
+            <button class="next-step-btn" id="kw-next" onclick="loadKwQuestion()">Nächste Aufgabe ➔</button>
+        </div>
     </div>
 
     <script>
+        // ========== DATEN ==========
         const articlePool = [
             { text: "___ Kölner Dom ist weltberühmt.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
             { text: "___ Sonne scheint den ganzen Tag.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
@@ -155,7 +139,12 @@
             { text: "___ Lehrer erklärt die Regel.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
             { text: "___ Schule beginnt um acht.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
             { text: "___ Kind spielt im Garten.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" },
-            { text: "___ Hund bellt laut.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" }
+            { text: "___ Hund bellt laut.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
+            { text: "___ Tür ist offen.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
+            { text: "___ Fenster ist geschlossen.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" },
+            { text: "___ Mann wartet draußen.", correct: "Der", all: ["Der", "Die", "Das"], hint: "Maskulin" },
+            { text: "___ Frau liest ein Buch.", correct: "Die", all: ["Der", "Die", "Das"], hint: "Feminin" },
+            { text: "___ Mädchen lacht fröhlich.", correct: "Das", all: ["Der", "Die", "Das"], hint: "Neutral" }
         ];
 
         const pluralPool = [
@@ -166,17 +155,48 @@
             { text: "In der Stadt fahren viele ___.", correct: "Autos", all: ["Auto", "Autos"], hint: "Mehrzahl von Auto" },
             { text: "Die ___ blühen im Frühling.", correct: "Blumen", all: ["Blume", "Blumen"], hint: "Mehrzahl von Blume" },
             { text: "Viele ___ lernen Deutsch.", correct: "Schüler", all: ["Schüler", "Schülern"], hint: "Mehrzahl bleibt gleich" },
-            { text: "Die ___ sind sehr lecker.", correct: "Äpfel", all: ["Apfel", "Äpfel"], hint: "Mehrzahl von Apfel" }
+            { text: "Die ___ sind sehr lecker.", correct: "Äpfel", all: ["Apfel", "Äpfel"], hint: "Mehrzahl von Apfel" },
+            { text: "Die ___ stehen vor dem Haus.", correct: "Bäume", all: ["Baum", "Bäume"], hint: "Mehrzahl von Baum" },
+            { text: "Ich habe zwei ___.", correct: "Brüder", all: ["Bruder", "Brüder"], hint: "Mehrzahl von Bruder" },
+            { text: "Die ___ sind geschlossen.", correct: "Läden", all: ["Laden", "Läden"], hint: "Mehrzahl von Laden" },
+            { text: "Wir brauchen mehr ___.", correct: "Stühle", all: ["Stuhl", "Stühle"], hint: "Mehrzahl von Stuhl" }
         ];
 
-        function loadArticleQuestion() {
-            const item = articlePool[Math.floor(Math.random() * articlePool.length)];
-            const sentenceEl = document.getElementById('art-sentence');
-            const optionsEl = document.getElementById('art-options');
-            const fb = document.getElementById('art-fb');
-            const nextBtn = document.getElementById('art-next');
+        const altPool = [
+            { text: "Kannst du das bitte ___?", correct: "erledigen", all: ["machen", "erledigen", "tun"], hint: "\"erledigen\" klingt hier natürlicher und präziser." },
+            { text: "Ich muss noch die Hausaufgaben ___.", correct: "machen", all: ["machen", "tun", "erledigen"], hint: "Bei Hausaufgaben sagt man meist \"machen\"." },
+            { text: "Was soll ich jetzt ___?", correct: "tun", all: ["machen", "tun", "erledigen"], hint: "\"Was soll ich tun?\" ist die klassische Formulierung." },
+            { text: "Wir müssen das Problem schnell ___.", correct: "lösen", all: ["machen", "lösen", "tun"], hint: "Probleme löst man." },
+            { text: "Kannst du mir einen Gefallen ___?", correct: "tun", all: ["machen", "tun", "erledigen"], hint: "Man sagt: einen Gefallen tun." },
+            { text: "Ich habe das Fenster ___.", correct: "geöffnet", all: ["gemacht", "geöffnet", "getan"], hint: "Fenster öffnet man." },
+            { text: "Lass uns einen Spaziergang ___.", correct: "machen", all: ["machen", "tun", "erledigen"], hint: "Man macht einen Spaziergang." },
+            { text: "Das muss ich noch ___.", correct: "erledigen", all: ["machen", "erledigen", "tun"], hint: "\"erledigen\" passt gut bei offenen Aufgaben." }
+        ];
 
-            sentenceEl.innerHTML = `Satz: „<span class="blank-slot" id="art-slot">_____</span> ${item.text.replace("___ ", "")}“`;
+        const kwPool = [
+            { text: "Ich ___ seine Telefonnummer nicht.", correct: "weiß", all: ["kenne", "weiß"], hint: "Fakten und Informationen → wissen" },
+            { text: "___ du diesen Mann?", correct: "Kennst", all: ["Kennst", "Weißt"], hint: "Personen und Orte → kennen" },
+            { text: "Ich ___ Berlin sehr gut.", correct: "kenne", all: ["kenne", "weiß"], hint: "Städte und Orte → kennen" },
+            { text: "___ du, wie spät es ist?", correct: "Weißt", all: ["Kennst", "Weißt"], hint: "Informationen → wissen" },
+            { text: "Sie ___ die Antwort nicht.", correct: "weiß", all: ["kennt", "weiß"], hint: "Wissen um Fakten" },
+            { text: "Ich ___ das Buch schon.", correct: "kenne", all: ["kenne", "weiß"], hint: "Bücher, Filme, Personen → kennen" },
+            { text: "___ du den Weg zum Bahnhof?", correct: "Kennst", all: ["Kennst", "Weißt"], hint: "Wege und Orte → kennen" },
+            { text: "Ich ___ nicht, ob er kommt.", correct: "weiß", all: ["kenne", "weiß"], hint: "Unsicherheit über Fakten → wissen" },
+            { text: "Wir ___ uns seit der Schule.", correct: "kennen", all: ["kennen", "wissen"], hint: "Personen → kennen" },
+            { text: "___ du, dass er umgezogen ist?", correct: "Weißt", all: ["Kennst", "Weißt"], hint: "Informationen → wissen" }
+        ];
+
+        // ========== FUNKTIONEN ==========
+        function createQuestion(pool, sentenceId, optionsId, fbId, nextId, slotId) {
+            const item = pool[Math.floor(Math.random() * pool.length)];
+            const sentenceEl = document.getElementById(sentenceId);
+            const optionsEl = document.getElementById(optionsId);
+            const fb = document.getElementById(fbId);
+            const nextBtn = document.getElementById(nextId);
+
+            // Lücke einsetzen
+            let html = item.text.replace("___", `<span class="blank-slot" id="${slotId}">_____</span>`);
+            sentenceEl.innerHTML = `Satz: „${html}“`;
             fb.textContent = "";
             nextBtn.style.display = "none";
 
@@ -186,7 +206,7 @@
                 btn.className = 'opt-choice';
                 btn.textContent = opt;
                 btn.onclick = () => {
-                    const slot = document.getElementById('art-slot');
+                    const slot = document.getElementById(slotId);
                     slot.textContent = opt;
                     const correct = opt === item.correct;
                     slot.style.color = correct ? '#0d9488' : '#e11d48';
@@ -198,38 +218,24 @@
             });
         }
 
+        function loadArticleQuestion() {
+            createQuestion(articlePool, 'art-sentence', 'art-options', 'art-fb', 'art-next', 'art-slot');
+        }
         function loadPluralQuestion() {
-            const item = pluralPool[Math.floor(Math.random() * pluralPool.length)];
-            const sentenceEl = document.getElementById('plu-sentence');
-            const optionsEl = document.getElementById('plu-options');
-            const fb = document.getElementById('plu-fb');
-            const nextBtn = document.getElementById('plu-next');
-
-            sentenceEl.innerHTML = `Satz: „${item.text.replace("___", '<span class="blank-slot" id="plu-slot">_____</span>')}“`;
-            fb.textContent = "";
-            nextBtn.style.display = "none";
-
-            optionsEl.innerHTML = "";
-            item.all.sort(() => Math.random() - 0.5).forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'opt-choice';
-                btn.textContent = opt;
-                btn.onclick = () => {
-                    const slot = document.getElementById('plu-slot');
-                    slot.textContent = opt;
-                    const correct = opt === item.correct;
-                    slot.style.color = correct ? '#0d9488' : '#e11d48';
-                    fb.style.color = correct ? '#0d9488' : '#e11d48';
-                    fb.textContent = correct ? "Richtig! Perfekte Form." : `Falsch. Tipp: ${item.hint}`;
-                    if (correct) nextBtn.style.display = "inline-block";
-                };
-                optionsEl.appendChild(btn);
-            });
+            createQuestion(pluralPool, 'plu-sentence', 'plu-options', 'plu-fb', 'plu-next', 'plu-slot');
+        }
+        function loadAltQuestion() {
+            createQuestion(altPool, 'alt-sentence', 'alt-options', 'alt-fb', 'alt-next', 'alt-slot');
+        }
+        function loadKwQuestion() {
+            createQuestion(kwPool, 'kw-sentence', 'kw-options', 'kw-fb', 'kw-next', 'kw-slot');
         }
 
         // Start
         loadArticleQuestion();
         loadPluralQuestion();
+        loadAltQuestion();
+        loadKwQuestion();
     </script>
 </body>
 </html>
