@@ -53,597 +53,688 @@ h1{font-size:1.3rem;color:#1e40af;margin-bottom:4px}
 </head>
 <body>
 <div class="container">
-<h1>Interaktives Training</h1>
-<p class="subtitle">9 Kategorien · Zufall ohne Wiederholung · 100 echte Beispiele pro Pool</p>
-<div id="error-box"></div>
-<div class="difficulty-bar">
-<button type="button" class="diff-btn active" data-level="leicht">Leicht (10)</button>
-<button type="button" class="diff-btn" data-level="mittel">Mittel (20)</button>
-<button type="button" class="diff-btn" data-level="schwer">Schwer (30)</button>
+  <h1>Interaktives Training</h1>
+  <p class="subtitle">9 Kategorien · Zufall ohne Wiederholung · fehlerfreie Prozentwertung</p>
+  <div id="error-box"></div>
+
+  <div class="difficulty-bar">
+    <button type="button" class="diff-btn active" data-level="leicht">Leicht (10)</button>
+    <button type="button" class="diff-btn" data-level="mittel">Mittel (20)</button>
+    <button type="button" class="diff-btn" data-level="schwer">Schwer (30)</button>
+  </div>
+
+  <div class="controls">
+    <label class="hint-toggle">
+      <input type="checkbox" id="multiHintToggle">
+      Hinweis bei mehreren richtigen Antworten
+    </label>
+  </div>
+
+  <div id="cards"></div>
+  <div id="restore-area" style="margin-bottom:16px;font-size:.85rem;color:#64748b"></div>
+
+  <div class="score-box">
+    <h2>Deine Auswertung</h2>
+    <div id="score-lines"></div>
+    <div class="score-total">Gesamt: <span id="score-total">–</span></div>
+    <div class="bonus-note" id="bonus-note"></div>
+    <div class="reward" id="reward-text"></div>
+    <div class="profile" id="profile-text"></div>
+  </div>
 </div>
-<div class="controls">
-<label class="hint-toggle">
-<input type="checkbox" id="multiHintToggle">
-Hinweis bei mehreren richtigen Antworten
-</label>
-</div>
-<div id="cards"></div>
-<div id="restore-area" style="margin-bottom:16px;font-size:.85rem;color:#64748b"></div>
-<div class="score-box">
-<h2>Deine Auswertung</h2>
-<div id="score-lines"></div>
-<div class="score-total">Gesamt: <span id="score-total">–</span></div>
-<div class="bonus-note" id="bonus-note"></div>
-<div class="reward" id="reward-text"></div>
-<div class="profile" id="profile-text"></div>
-</div>
-</div>
+
 <div class="modal-bg" id="modal">
-<div class="modal">
-<h3 id="modal-title"></h3>
-<div id="modal-body"></div>
-<button type="button" class="modal-close" id="modal-close">Schließen</button>
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <div id="modal-body"></div>
+    <button type="button" class="modal-close" id="modal-close">Schließen</button>
+  </div>
 </div>
-</div>
+
 <script>
 (function () {
-"use strict";
-var difficulty = "leicht";
-var questionsPerRound = 10;
-var showMultiHint = false;
-var cats = ["art", "plu", "alt", "kw", "ob", "als", "err", "tri", "red"];
-var names = {
-art: "Artikel",
-plu: "Singular/Plural",
-alt: "Wort-Alternativen",
-kw: "kennen/wissen",
-ob: "ob/wenn",
-als: "als/wie",
-err: "Typische Fehler",
-tri: "Deutschland-Wissen",
-red: "Redewendungen"
-};
-var titles = {
-art: "🎯 Artikel-Trainer",
-plu: "📖 Singular & Plural",
-alt: "🔄 Wort-Alternativen",
-kw: "🧠 kennen oder wissen?",
-ob: "❓ ob oder wenn?",
-als: "⚖️ als oder wie?",
-err: "🚫 Typische Fehler",
-tri: "🇩🇪 Deutschland-Wissen",
-red: "💬 Redewendungen"
-};
-var hasSlot = {
-art: true, plu: true, alt: true, kw: true, ob: true, als: true,
-err: false, tri: false, red: false
-};
-var state = {};
-cats.forEach(function (c) {
-state[c] = { index: 0, correct: 0, bonus: 0, used: [], collapsed: false, finished: false };
-});
-var infos = {
-art: "<p><b>der / die / das</b></p><ul><li><b>der</b> = maskulin</li><li><b>die</b> = feminin</li><li><b>das</b> = neutral</li></ul>",
-plu: "<p><b>Singular</b> = Einzahl, <b>Plural</b> = Mehrzahl. Achte auf Signalwörter und die Verbform.</p>",
-alt: "<p>Manche Wörter kann man im Kontext ersetzen. Mehrere Antworten können richtig sein.</p>",
-kw: "<p><b>kennen</b> = Personen, Orte, Dinge
-<b>wissen</b> = Fakten und Informationen</p>",
-ob: "<p><b>wenn</b> = Bedingung
-<b>ob</b> = Unsicherheit / indirekte Frage</p>",
-als: "<p><b>als</b> = Ungleichheit (größer als)
-<b>wie</b> = Gleichheit (so groß wie)</p>",
-err: "<p>Häufige Fehler: einzigste, frägt, ladet, falscher Fall usw.</p>",
-tri: "<p>Allgemeinwissen zu Deutschland. Manchmal sind mehrere Antworten richtig.</p>",
-red: "<p>Wähle die passende Bedeutung der Redewendung.</p>"
-};
-// ========== EXAKT 100 BEISPIELE PRO POOL (VOLLSTÄNDIG AUS EINEM GUSS) ==========
-function makeArt() {
-var raw = [
-["Der", "Kölner Dom"], ["Die", "Sonne"], ["Das", "Auto"], ["Der", "Apfel"], ["Die", "Tasse"],
-["Das", "Buch"], ["Der", "Lehrer"], ["Die", "Schule"], ["Das", "Kind"], ["Der", "Hund"],
-["Die", "Tür"], ["Das", "Fenster"], ["Der", "Mann"], ["Die", "Frau"], ["Das", "Mädchen"],
-["Der", "Bus"], ["Die", "Straße"], ["Das", "Problem"], ["Der", "Zug"], ["Die", "Frage"],
-["Das", "Wetter"], ["Der", "Schlüssel"], ["Die", "Antwort"], ["Das", "Bild"], ["Der", "Computer"],
-["Die", "Musik"], ["Das", "Ergebnis"], ["Der", "Tisch"], ["Die", "Lampe"], ["Das", "Haus"],
-["Der", "Mond"], ["Die", "Nacht"], ["Das", "Jahr"], ["Der", "Freund"], ["Die", "Freundin"],
-["Das", "Handy"], ["Der", "Kaffee"], ["Die", "Milch"], ["Das", "Brot"], ["Der", "Stuhl"],
-["Die", "Zeitung"], ["Das", "Radio"], ["Der", "Arzt"], ["Die", "Klinik"], ["Das", "Krankenhaus"],
-["Der", "Baum"], ["Die", "Blume"], ["Das", "Blatt"], ["Der", "Fluss"], ["Die", "Brücke"],
-["Das", "Dorf"], ["Der", "Berg"], ["Die", "Stadt"], ["Das", "Land"], ["Der", "Film"],
-["Die", "Serie"], ["Das", "Spiel"], ["Der", "Brief"], ["Die", "Postkarte"], ["Das", "Paket"],
-["Der", "Stift"], ["Die", "Tafel"], ["Das", "Heft"], ["Der", "Morgen"], ["Die", "Woche"],
-["Das", "Wochenende"], ["Der", "Fehler"], ["Die", "Lösung"], ["Das", "Beispiel"], ["Der", "Gast"],
-["Die", "Party"], ["Das", "Geschenk"], ["Der", "Regen"], ["Die", "Sonne"], ["Das", "Gewitter"],
-["Der", "Koffer"], ["Die", "Tasche"], ["Das", "Ticket"], ["Der", "Flughafen"], ["Die", "Bahn"],
-["Der", "Markt"], ["Die", "Bank"], ["Das", "Geschäft"], ["Der", "Park"], ["Das", "Museum"],
-["Der", "Zoo"], ["Die", "Ausstellung"], ["Das", "Konzert"], ["Der", "Briefträger"], ["Die", "Nachbarin"],
-["Das", "Gebäude"], ["Der", "Kühlschrank"], ["Die", "Küche"], ["Das", "Wohnzimmer"], ["Der", "Teppich"],
-["Die", "Couch"], ["Das", "Bett"], ["Der", "Spiegel"], ["Die", "Seife"], ["Das", "Handtuch"],
-["Der", "Garten"], ["Die", "Hecke"], ["Das", "Tor"], ["Der", "Zaun"], ["Die", "Garage"]
-];
-var end = [
-"ist weltberühmt.", "scheint hell.", "fährt schnell.", "schmeckt gut.", "steht hier.",
-"ist interessant.", "erklärt die Regel.", "beginnt um acht.", "spielt draußen.", "bellt laut.",
-"ist offen.", "ist zu.", "wartet draußen.", "liest ein Buch.", "lacht.",
-"kommt gleich.", "ist gesperrt.", "ist gelöst.", "hat Verspätung.", "war schwer."
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var w = raw[i];
-var e = end[i % end.length];
-pool.push({
-text: "___ " + w[1] + " " + e,
-correct: [w[0]],
-all: ["Der", "Die", "Das"],
-hint: w[0] === "Der" ? "Maskulin" : w[0] === "Die" ? "Feminin" : "Neutral"
-});
-}
-return pool;
-}
-function makePlu() {
-var raw = [
-["Vogel", "Vögel"], ["Tasse", "Tassen"], ["Hund", "Hunde"], ["Jacke", "Jacken"], ["Auto", "Autos"],
-["Blume", "Blumen"], ["Apfel", "Äpfel"], ["Baum", "Bäume"], ["Bruder", "Brüder"], ["Buch", "Bücher"],
-["Haus", "Häuser"], ["Kind", "Kinder"], ["Maus", "Mäuse"], ["Stuhl", "Stühle"], ["Laden", "Läden"],
-["Flugzeug", "Flugzeuge"], ["Schuh", "Schuhe"], ["Blatt", "Blätter"], ["Fisch", "Fische"], ["Tür", "Türen"],
-["Berg", "Berge"], ["Straße", "Straßen"], ["Glas", "Gläser"], ["Stift", "Stifte"], ["Decke", "Decken"],
-["Ei", "Eier"], ["Freund", "Freunde"], ["Freundin", "Freundinnen"], ["Ticket", "Tickets"], ["Wald", "Wälder"],
-["Hose", "Hosen"], ["Zug", "Züge"], ["Kirsche", "Kirschen"], ["Gast", "Gäste"], ["Gasse", "Gassen"],
-["Licht", "Lichter"], ["Nase", "Nasen"], ["Regal", "Regale"], ["Flasche", "Flaschen"], ["Paket", "Pakete"],
-["Nachbar", "Nachbarn"], ["Ampel", "Ampeln"], ["Bus", "Busse"], ["Boden", "Böden"], ["Suppe", "Suppen"],
-["Getränk", "Getränke"], ["Stadt", "Städte"], ["Land", "Länder"], ["Mann", "Männer"], ["Frau", "Frauen"]
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var p = raw[i % raw.length];
-var isPlu = i >= 50;
-pool.push({
-text: isPlu ? "Hier sind viele ___." : "Hier ist ein/eine ___.",
-correct: [isPlu ? p[1] : p[0]],
-all: [p[0], p[1]],
-hint: isPlu ? "Plural" : "Singular"
-});
-}
-return pool;
-}
-function makeAlt() {
-var base = [
-{ text: "Kannst du bitte die Tür ___?", correct: ["öffnen", "aufmachen"], all: ["öffnen", "aufmachen", "schließen"], hint: "öffnen = aufmachen" },
-{ text: "Ich muss das Fenster ___.", correct: ["schließen", "zumachen"], all: ["schließen", "zumachen", "öffnen"], hint: "schließen = zumachen" },
-{ text: "Lass uns etwas zu essen ___.", correct: ["kochen", "zubereiten"], all: ["kochen", "zubereiten", "backen"], hint: "kochen/zubereiten" },
-{ text: "Sie möchte einen Kuchen ___.", correct: ["backen"], all: ["backen", "kochen", "braten"], hint: "backen" },
-{ text: "Wir ___ jeden Morgen im Park.", correct: ["laufen", "joggen"], all: ["laufen", "joggen", "rennen"], hint: "laufen/joggen" },
-{ text: "Das Kind ___ schnell über den Hof.", correct: ["rennt", "läuft"], all: ["rennt", "läuft", "geht"], hint: "rennen/laufen" },
-{ text: "Ich ___ heute zum Supermarkt.", correct: ["gehe"], all: ["gehe", "laufe", "renne"], hint: "gehen" },
-{ text: "Kannst du mir das Buch ___?", correct: ["geben", "reichen"], all: ["geben", "reichen", "nehmen"], hint: "geben/reichen" },
-{ text: "Er hat das Geschenk ___.", correct: ["bekommen", "erhalten"], all: ["bekommen", "erhalten", "genommen"], hint: "bekommen/erhalten" },
-{ text: "Ich möchte dieses Handy ___.", correct: ["kaufen"], all: ["kaufen", "verkaufen", "leihen"], hint: "kaufen" }
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var t = base[i % base.length];
-pool.push({ text: t.text + " (Variante " + (Math.floor(i / base.length) + 1) + ")", correct: t.correct, all: t.all, hint: t.hint });
-}
-return pool;
-}
-function makeKw() {
-var base = [
-{ text: "Ich ___ seine Telefonnummer nicht.", correct: ["weiß"], all: ["kenne", "weiß"], hint: "Fakten → wissen" },
-{ text: "___ du diesen Mann?", correct: ["Kennst"], all: ["Kennst", "Weißt"], hint: "Personen → kennen" },
-{ text: "Ich ___ Berlin sehr gut.", correct: ["kenne"], all: ["kenne", "weiß"], hint: "Orte → kennen" },
-{ text: "___ du, wie spät es ist?", correct: ["Weißt"], all: ["Kennst", "Weißt"], hint: "Info → wissen" },
-{ text: "Sie ___ die Antwort nicht.", correct: ["weiß"], all: ["kennt", "weiß"], hint: "wissen" },
-{ text: "Ich ___ das Buch schon.", correct: ["kenne"], all: ["kenne", "weiß"], hint: "kennen" },
-{ text: "___ du den Weg zum Bahnhof?", correct: ["Kennst"], all: ["Kennst", "Weißt"], hint: "kennen" },
-{ text: "Ich ___ nicht, ob er kommt.", correct: ["weiß"], all: ["kenne", "weiß"], hint: "wissen" },
-{ text: "Wir ___ uns seit der Schule.", correct: ["kennen"], all: ["kennen", "wissen"], hint: "kennen" },
-{ text: "___ du, dass er umgezogen ist?", correct: ["Weißt"], all: ["Kennst", "Weißt"], hint: "wissen" }
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var t = base[i % base.length];
-pool.push({ text: t.text, correct: t.correct, all: t.all, hint: t.hint });
-}
-return pool;
-}
-function makeOb() {
-var base = [
-{ text: "Ich weiß nicht, ___ er kommt.", correct: ["ob"], all: ["ob", "wenn"], hint: "Unsicherheit → ob" },
-{ text: "___ es regnet, bleiben wir zu Hause.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "Bedingung → wenn" },
-{ text: "Sie fragt, ___ wir Zeit haben.", correct: ["ob"], all: ["ob", "wenn"], hint: "Frage → ob" },
-{ text: "___ du Hunger hast, gibt es Pizza.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "Bedingung → wenn" },
-{ text: "Ich bin unsicher, ___ das stimmt.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
-{ text: "___ er anruft, sag Bescheid.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
-{ text: "Weißt du, ___ der Zug pünktlich ist?", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
-{ text: "___ ich Zeit habe, helfe ich dir.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
-{ text: "Es ist egal, ___ du mitkommst oder nicht.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
-{ text: "___ das Wetter schön ist, gehen wir wandern.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" }
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var t = base[i % base.length];
-pool.push({ text: t.text, correct: t.correct, all: t.all, hint: t.hint });
-}
-return pool;
-}
-function makeAls() {
-var base = [
-{ text: "Er ist größer ___ sein Bruder.", correct: ["als"], all: ["als", "wie"], hint: "Ungleichheit → als" },
-{ text: "Sie singt so schön ___ eine Opernsängerin.", correct: ["wie"], all: ["als", "wie"], hint: "Gleichheit → wie" },
-{ text: "Ich bin älter ___ du.", correct: ["als"], all: ["als", "wie"], hint: "als" },
-{ text: "Das Auto ist so teuer ___ ein Haus.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
-{ text: "Heute ist es kälter ___ gestern.", correct: ["als"], all: ["als", "wie"], hint: "als" },
-{ text: "Er läuft so schnell ___ ein Gepard.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
-{ text: "Mein Handy ist neuer ___ deins.", correct: ["als"], all: ["als", "wie"], hint: "als" },
-{ text: "Sie sieht aus ___ ihre Mutter.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
-{ text: "Das war einfacher ___ gedacht.", correct: ["als"], all: ["als", "wie"], hint: "als" },
-{ text: "Er spricht so gut ___ ein Muttersprachler.", correct: ["wie"], all: ["als", "wie"], hint: "wie" }
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var t = base[i % base.length];
-pool.push({ text: t.text, correct: t.correct, all: t.all, hint: t.hint });
-}
-return pool;
-}
-function makeErr() {
-var base = [
-{ text: "Welcher Satz ist richtig?", correct: ["Das ist das einzige Problem."], all: ["Das ist das einzigste Problem.", "Das ist das einzige Problem."], hint: "einzig nicht steigerbar" },
-{ text: "Welcher Satz ist richtig?", correct: ["Er fragt mich etwas."], all: ["Er frägt mich etwas.", "Er fragt mich etwas."], hint: "fragt" },
-{ text: "Welcher Satz ist richtig?", correct: ["Mein Handy lädt gerade."], all: ["Mein Handy ladet gerade.", "Mein Handy lädt gerade."], hint: "lädt" },
-{ text: "Welcher Satz ist richtig?", correct: ["Der Kuchen backt im Ofen."], all: ["Der Kuchen bäckt im Ofen.", "Der Kuchen backt im Ofen."], hint: "backt" },
-{ text: "Welcher Satz ist richtig?", correct: ["Ich bin größer als du."], all: ["Ich bin größer wie du.", "Ich bin größer als du."], hint: "als" },
-{ text: "Welcher Satz ist richtig?", correct: ["Er ist so groß wie sein Vater."], all: ["Er ist so groß als sein Vater.", "Er ist so groß wie sein Vater."], hint: "wie" },
-{ text: "Welcher Satz ist richtig?", correct: ["Wegen des Regens bleiben wir hier."], all: ["Wegen dem Regen bleiben wir hier.", "Wegen des Regens bleiben wir hier."], hint: "Genitiv" },
-{ text: "Welcher Satz ist richtig?", correct: ["Er hat den Ball gefangen."], all: ["Er hat den Ball gefangt.", "Er hat den Ball gefangen."], hint: "gefangen" },
-{ text: "Welcher Satz ist richtig?", correct: ["Sie hat angerufen."], all: ["Sie hat angeruft.", "Sie hat angerufen."], hint: "angerufen" },
-{ text: "Welcher Satz ist richtig?", correct: ["Ich bin gestern schwimmen gegangen."], all: ["Ich habe gestern schwimmen gegangen.", "Ich bin gestern schwimmen gegangen."], hint: "sein" }
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var t = base[i % base.length];
-pool.push({ text: t.text, correct: t.correct, all: t.all, hint: t.hint });
-}
-return pool;
-}
-function makeTri() {
-var base = [
-{ text: "Wie viele Bundesländer hat Deutschland?", correct: ["16"], all: ["12", "14", "16", "18"], hint: "16" },
-{ text: "In welcher Stadt steht der Kölner Dom?", correct: ["Köln"], all: ["Berlin", "München", "Köln", "Hamburg"], hint: "Köln" },
-{ text: "Was ist die Hauptstadt von Deutschland?", correct: ["Berlin"], all: ["Berlin", "München", "Hamburg", "Frankfurt"], hint: "Berlin" },
-{ text: "Welcher Fluss fließt durch Köln?", correct: ["Rhein"], all: ["Elbe", "Rhein", "Donau", "Main"], hint: "Rhein" },
-{ text: "In welchem Landesteil liegt Bayern?", correct: ["Süden"], all: ["Norden", "Süden", "Osten", "Westen"], hint: "Süden" },
-{ text: "Welche Stadt hat den größten Hafen?", correct: ["Hamburg"], all: ["Hamburg", "Bremen", "Kiel", "Rostock"], hint: "Hamburg" },
-{ text: "Was feiert man am 3. Oktober?", correct: ["Tag der Deutschen Einheit"], all: ["Tag der Deutschen Einheit", "Oktoberfest", "Weihnachten", "Ostern"], hint: "Einheit" },
-{ text: "Welche Farbe hat die Flagge nicht?", correct: ["Blau"], all: ["Schwarz", "Rot", "Gold", "Blau"], hint: "Schwarz-Rot-Gold" },
-{ text: "Wo kann man gut wandern?", correct: ["Bayern", "Schwarzwald"], all: ["Bayern", "Schwarzwald", "Ruhrgebiet", "Berlin"], hint: "Bayern/Schwarzwald" },
-{ text: "Was kann man aus Milch machen?", correct: ["Käse", "Joghurt", "Butter"], all: ["Käse", "Joghurt", "Butter", "Brot"], hint: "Milchprodukte" }
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var t = base[i % base.length];
-pool.push({ text: t.text, correct: t.correct, all: t.all, hint: t.hint });
-}
-return pool;
-}
-function makeRed() {
-var base = [
-{ text: "Was bedeutet „Jemandem die Daumen drücken“?", correct: ["Jemandem Glück wünschen"], all: ["Jemandem Glück wünschen", "Jemanden ärgern", "Jemanden ignorieren", "Jemanden loben"], hint: "Glück" },
-{ text: "Was bedeutet „Tomaten auf den Augen haben“?", correct: ["Offensichtliche Dinge übersehen"], all: ["Offensichtliche Dinge übersehen", "Sehr müde sein", "Gerne Tomaten essen", "Wütend sein"], hint: "übersehen" },
-{ text: "Was bedeutet „Die Kirche im Dorf lassen“?", correct: ["Nicht übertreiben"], all: ["Nicht übertreiben", "In die Kirche gehen", "Laut sein", "Schnell entscheiden"], hint: "maßvoll" },
-{ text: "Was bedeutet „Jemanden auf den Arm nehmen“?", correct: ["Jemanden scherzhaft veralbern"], all: ["Jemanden scherzhaft veralbern", "Jemanden tragen", "Jemanden trösten", "Jemanden beleidigen"], hint: "scherzen" },
-{ text: "Was bedeutet „Nur Bahnhof verstehen“?", correct: ["Überhaupt nichts verstehen"], all: ["Überhaupt nichts verstehen", "Den Weg kennen", "Gerne reisen", "Laut sprechen"], hint: "nichts verstehen" },
-{ text: "Was bedeutet „Da liegt der Hund begraben“?", correct: ["Das ist die eigentliche Ursache"], all: ["Das ist die eigentliche Ursache", "Ein Hund ist gestorben", "Es ist gefährlich", "Man muss graben"], hint: "Ursache" },
-{ text: "Was bedeutet „Die Nase voll haben“?", correct: ["Genug von etwas haben"], all: ["Genug von etwas haben", "Erkältet sein", "Hungrig sein", "Stolz sein"], hint: "genervt" },
-{ text: "Was bedeutet „Aus dem Häuschen geraten“?", correct: ["Sehr aufgeregt/begeistert sein"], all: ["Sehr aufgeregt/begeistert sein", "Das Haus verlassen", "Wütend werden", "Einschlafen"], hint: "begeistert" },
-{ text: "Was bedeutet „Ins Gras beißen“?", correct: ["Sterben (bildlich)"], all: ["Sterben (bildlich)", "Picknicken", "Sport machen", "Sich irren"], hint: "sterben" },
-{ text: "Was bedeutet „Etwas auf dem Schirm haben“?", correct: ["Etwas im Blick haben"], all: ["Etwas im Blick haben", "Fernsehen", "Etwas vergessen", "Etwas fotografieren"], hint: "im Blick" }
-];
-var pool = [];
-for (var i = 0; i < 100; i++) {
-var t = base[i % base.length];
-pool.push({ text: t.text, correct: t.correct, all: t.all, hint: t.hint });
-}
-return pool;
-}
-var pools = {
-art: makeArt(),
-plu: makePlu(),
-alt: makeAlt(),
-kw: makeKw(),
-ob: makeOb(),
-als: makeAls(),
-err: makeErr(),
-tri: makeTri(),
-red: makeRed()
-};
-// ========== UI AUFBAU ==========
-function buildCards() {
-var root = document.getElementById("cards");
-root.innerHTML = "";
-cats.forEach(function (c) {
-var card = document.createElement("div");
-card.className = "quiz-card";
-card.id = "card-" + c;
-card.innerHTML =
-"<h2>" + titles[c] + " <button type="button" class="info-btn" data-info="" + c + "">ⓘ</button></h2>" +
-"<div class="progress-info" id="" + c + "-progress">Frage 1 / " + questionsPerRound + "</div>" +
-"<div class="multi-hint" id="" + c + "-multi"></div>" +
-"<div class="quiz-sentence" id="" + c + "-sentence">…</div>" +
-"<div class="options-row" id="" + c + "-options"></div>" +
-"<div class="feedback-text" id="" + c + "-fb"></div>" +
-"<div class="card-actions"><button type="button" class="skip-btn" data-skip="" + c + "">Kategorie ausblenden</button></div>";
-root.appendChild(card);
-});
-}
-function shuffle(arr) {
-var a = arr.slice();
-for (var i = a.length - 1; i > 0; i--) {
-var j = Math.floor(Math.random() * (i + 1));
-var t = a[i]; a[i] = a[j]; a[j] = t;
-}
-return a;
-}
-function getUniqueItem(pool, used) {
-var avail = [];
-var i;
-for (i = 0; i < pool.length; i++) {
-if (used.indexOf(i) === -1) avail.push(i);
-}
-if (!avail.length) {
-used.length = 0;
-for (i = 0; i < pool.length; i++) avail.push(i);
-}
-var idx = avail[Math.floor(Math.random() * avail.length)];
-used.push(idx);
-return pool[idx];
-}
-function showQuestion(type) {
-var st = state[type];
-if (st.collapsed) return;
-var pool = pools[type];
-var sentenceEl = document.getElementById(type + "-sentence");
-var optionsEl = document.getElementById(type + "-options");
-var fbEl = document.getElementById(type + "-fb");
-var progEl = document.getElementById(type + "-progress");
-var multiEl = document.getElementById(type + "-multi");
-if (st.index >= questionsPerRound) {
-st.finished = true;
-sentenceEl.innerHTML = "<strong>Fertig!</strong> " + st.correct + " richtig" + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
-optionsEl.innerHTML = "";
-fbEl.textContent = "";
-progEl.textContent = "Abgeschlossen · " + st.correct + "/" + questionsPerRound + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
-multiEl.classList.remove("show");
-updateScores();
-return;
-}
-var item = getUniqueItem(pool, st.used);
-var html = item.text;
-if (hasSlot[type]) {
-html = item.text.replace("", "<span class="blank-slot" id="" + type + "-slot">__</span>");
-sentenceEl.innerHTML = "Satz: „" + html + "“";
-} else {
-sentenceEl.textContent = item.text;
-}
-fbEl.textContent = "";
-progEl.textContent = "Frage " + (st.index + 1) + " / " + questionsPerRound + " · Richtig: " + st.correct + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
-if (showMultiHint && item.correct.length > 1) {
-multiEl.textContent = "Mehrere Antworten können richtig sein – finde möglichst alle.";
-multiEl.classList.add("show");
-} else {
-multiEl.classList.remove("show");
-}
-optionsEl.innerHTML = "";
-var isMulti = item.correct.length > 1;
-var selected = [];
-shuffle(item.all).forEach(function (opt) {
-var btn = document.createElement("button");
-btn.type = "button";
-btn.className = "opt-choice";
-btn.textContent = opt;
-btn.onclick = function () {
-if (btn.disabled) return;
-if (isMulti) {
-if (selected.indexOf(opt) !== -1) return;
-selected.push(opt);
-var ok = item.correct.indexOf(opt) !== -1;
-btn.classList.add(ok ? "correct" : "wrong");
-btn.disabled = true;
-var foundAll = item.correct.every(function (c) { return selected.indexOf(c) !== -1; });
-var hasWrong = selected.some(function (s) { return item.correct.indexOf(s) === -1; });
-if (hasWrong) {
-Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) {
-b.disabled = true;
-if (item.correct.indexOf(b.textContent) !== -1) b.classList.add("correct");
-});
-fbEl.style.color = "#e11d48";
-fbEl.textContent = "Falsch. Richtig: " + item.correct.join(", ");
-setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1200);
-} else if (foundAll) {
-Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) { b.disabled = true; });
-st.correct += 1;
-if (item.correct.length > 1) st.bonus += 1;
-fbEl.style.color = "#0d9488";
-fbEl.textContent = item.correct.length > 1 ? "Super! Alle gefunden (+1 Bonus)" : "Richtig!";
-setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1000);
-}
-} else {
-Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) { b.disabled = true; });
-var isOk = item.correct.indexOf(opt) !== -1;
-if (hasSlot[type]) {
-var slot = document.getElementById(type + "-slot");
-if (slot) {
-slot.textContent = opt;
-slot.style.color = isOk ? "#0d9488" : "#e11d48";
-}
-}
-btn.classList.add(isOk ? "correct" : "wrong");
-Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) {
-if (item.correct.indexOf(b.textContent) !== -1) b.classList.add("correct");
-});
-fbEl.style.color = isOk ? "#0d9488" : "#e11d48";
-fbEl.textContent = isOk ? "Richtig!" : ("Falsch. Tipp: " + item.hint);
-if (isOk) st.correct++;
-setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1000);
-}
-};
-optionsEl.appendChild(btn);
-});
-}
-function loadAll() {
-cats.forEach(function (c) {
-if (!state[c].collapsed) showQuestion(c);
-});
-}
-function setDifficulty(level) {
-difficulty = level;
-questionsPerRound = level === "leicht" ? 10 : level === "mittel" ? 20 : 30;
-document.querySelectorAll(".diff-btn").forEach(function (b) {
-b.classList.toggle("active", b.getAttribute("data-level") === level);
-});
-cats.forEach(function (c) {
-state[c] = {
-index: 0, correct: 0, bonus: 0, used: [],
-collapsed: state[c].collapsed, finished: false
-};
-});
-loadAll();
-updateScores();
-renderRestore();
-}
-function collapseCat(type) {
-state[type].collapsed = true;
-var card = document.getElementById("card-" + type);
-if (card) card.classList.add("collapsed");
-renderRestore();
-updateScores();
-}
-function expandCat(type) {
-state[type].collapsed = false;
-var card = document.getElementById("card-" + type);
-if (card) card.classList.remove("collapsed");
-if (state[type].index === 0 && !state[type].finished) showQuestion(type);
-renderRestore();
-updateScores();
-}
-function renderRestore() {
-var area = document.getElementById("restore-area");
-var collapsed = cats.filter(function (c) { return state[c].collapsed; });
-if (!collapsed.length) {
-area.innerHTML = "";
-return;
-}
-area.innerHTML = "Ausgeblendet: " + collapsed.map(function (c) {
-return "<button type="button" class="skip-btn" data-expand="" + c + "">" + names[c] + " wieder einblenden</button>";
-}).join(" · ");
-}
-// ========== NEUES, FEIN ABGESTUFTes BEWERTUNGSSYSTEM (0% bis über 100%) ==========
-function getReward(p) {
-if (p > 100) return "🦸 Deutsch-Superheld/in – Außergewöhnliche Extra-Leistung mit Bonuspunkten!";
-if (p === 100) return "🏆 Perfekt – Absolute Meisterleistung!";
-if (p >= 90) return "🌟 Brillantes Niveau – Fast fehlerfrei!";
-if (p >= 80) return "💪 Sehr starkes Ergebnis – Fundiertes Können!";
-if (p >= 70) return "👍 Solide Leistung – Guter Wissensstand!";
-if (p >= 60) return "📚 Solides Mittelfeld – Stetiger Fortschritt!";
-if (p >= 50) return "⚖️ Ausgeglichener Schnitt – Die Basis sitzt!";
-if (p >= 40) return "🌱 Auf dem Weg – Regelmäßiges Üben bringt Sicherheit.";
-if (p >= 30) return "🧭 Orientierungsphase – Erste Grundlagen sind da.";
-if (p >= 20) return "☕️ Einstiegsphase – Gemütlich warm werden.";
-if (p > 0) return "🪴 Frischer Start – Weiter dranbleiben!";
-return "⏳ Noch keine Aufgaben gewertet.";
-}
-function getProfile(active, avg) {
-if (!active.length) return "";
-var set = {};
-active.forEach(function (c) { set[c] = true; });
-var labels = [];
-if ((set.ob || set.als || set.kw) && avg >= 70) labels.push("Logik-Fuchs");
-if ((set.art || set.plu || set.err) && avg >= 70) labels.push("Grammatik-Profi");
-if (set.tri && avg >= 70) labels.push("Deutschland-Kenner");
-if (set.red && avg >= 70) labels.push("Redewendungs-Profi");
-if (set.alt && avg >= 70) labels.push("Wortschatz-Flexer");
-if (labels.length >= 3 && avg >= 80) return "Profil: 🌟 Allrounder – flexibel in mehreren Bereichen";
-if (!labels.length) return "Profil: 🎯 Fokus-Lerner – du konzentrierst dich gezielt auf deine gewählten Kategorien.";
-return "Profil: " + labels.join(" · ");
-}
-function updateScores() {
-var lines = document.getElementById("score-lines");
-lines.innerHTML = "";
-var totalCorrect = 0, totalPossible = 0, totalBonus = 0;
-var active = [];
-cats.forEach(function (c) {
-var st = state[c];
-if (st.collapsed) return;
-if (st.index === 0 && !st.finished) return;
-active.push(c);
-var bonusStr = st.bonus ? " (+" + st.bonus + " Bonus)" : "";
-var percent = Math.round(((st.correct + st.bonus) / questionsPerRound) * 100);
-lines.innerHTML += "<div class="score-line"><span>" + names[c] + "</span><span>" + st.correct + "/" + questionsPerRound + bonusStr + " · " + percent + "%</span></div>";
-totalCorrect += st.correct + st.bonus;
-totalPossible += questionsPerRound;
-totalBonus += st.bonus;
-});
-if (!totalPossible) {
-document.getElementById("score-total").textContent = "–";
-document.getElementById("bonus-note").textContent = "";
-document.getElementById("reward-text").textContent = "";
-document.getElementById("profile-text").textContent = "";
-return;
-}
-var totalPercent = Math.round((totalCorrect / totalPossible) * 100);
-document.getElementById("score-total").textContent = totalCorrect + "/" + totalPossible + " · " + totalPercent + "%";
-document.getElementById("bonus-note").textContent = totalBonus ? ("Davon Bonuspunkte: " + totalBonus) : "";
-document.getElementById("reward-text").textContent = getReward(totalPercent);
-document.getElementById("profile-text").textContent = getProfile(active, totalPercent);
-}
-function showInfo(key) {
-document.getElementById("modal-title").textContent = names[key] || "Info";
-document.getElementById("modal-body").innerHTML = infos[key] || "";
-document.getElementById("modal").classList.add("open");
-}
-function closeInfo() {
-document.getElementById("modal").classList.remove("open");
-}
-function bindEvents() {
-document.querySelectorAll(".diff-btn").forEach(function (btn) {
-btn.addEventListener("click", function () {
-setDifficulty(btn.getAttribute("data-level"));
-});
-});
-document.getElementById("multiHintToggle").addEventListener("change", function () {
-showMultiHint = this.checked;
-});
-document.getElementById("cards").addEventListener("click", function (e) {
-var t = e.target;
-if (t.classList.contains("info-btn")) {
-showInfo(t.getAttribute("data-info"));
-}
-if (t.classList.contains("skip-btn") && t.getAttribute("data-skip")) {
-collapseCat(t.getAttribute("data-skip"));
-}
-});
-document.getElementById("restore-area").addEventListener("click", function (e) {
-var t = e.target;
-if (t.classList.contains("skip-btn") && t.getAttribute("data-expand")) {
-expandCat(t.getAttribute("data-expand"));
-}
-});
-document.getElementById("modal-close").addEventListener("click", closeInfo);
-document.getElementById("modal").addEventListener("click", function (e) {
-if (e.target === this) closeInfo();
-});
-}
-try {
-buildCards();
-bindEvents();
-loadAll();
-updateScores();
-} catch (err) {
-var box = document.getElementById("error-box");
-box.style.display = "block";
-box.textContent = "Fehler beim Laden: " + err.message;
-console.error(err);
-}
+  "use strict";
+
+  var difficulty = "leicht";
+  var questionsPerRound = 10;
+  var showMultiHint = false;
+
+  var cats = ["art", "plu", "alt", "kw", "ob", "als", "err", "tri", "red"];
+  var names = {
+    art: "Artikel",
+    plu: "Singular/Plural",
+    alt: "Wort-Alternativen",
+    kw: "kennen/wissen",
+    ob: "ob/wenn",
+    als: "als/wie",
+    err: "Typische Fehler",
+    tri: "Deutschland-Wissen",
+    red: "Redewendungen"
+  };
+  var titles = {
+    art: "🎯 Artikel-Trainer",
+    plu: "📖 Singular & Plural",
+    alt: "🔄 Wort-Alternativen",
+    kw: "🧠 kennen oder wissen?",
+    ob: "❓ ob oder wenn?",
+    als: "⚖️ als oder wie?",
+    err: "🚫 Typische Fehler",
+    tri: "🇩🇪 Deutschland-Wissen",
+    red: "💬 Redewendungen"
+  };
+  var hasSlot = {
+    art: true, plu: true, alt: true, kw: true, ob: true, als: true,
+    err: false, tri: false, red: false
+  };
+
+  var state = {};
+  cats.forEach(function (c) {
+    state[c] = { index: 0, correct: 0, bonus: 0, used: [], collapsed: false, finished: false };
+  });
+
+  var infos = {
+    art: "<p><b>der / die / das</b></p><ul><li><b>der</b> = maskulin</li><li><b>die</b> = feminin</li><li><b>das</b> = neutral</li></ul>",
+    plu: "<p><b>Singular</b> = Einzahl, <b>Plural</b> = Mehrzahl. Achte auf Signalwörter und die Verbform.</p>",
+    alt: "<p>Manche Wörter kann man im Kontext ersetzen. Mehrere Antworten können richtig sein.</p>",
+    kw: "<p><b>kennen</b> = Personen, Orte, Dinge<br><b>wissen</b> = Fakten und Informationen</p>",
+    ob: "<p><b>wenn</b> = Bedingung<br><b>ob</b> = Unsicherheit / indirekte Frage</p>",
+    als: "<p><b>als</b> = Ungleichheit (größer als)<br><b>wie</b> = Gleichheit (so groß wie)</p>",
+    err: "<p>Häufige Fehler: einzigste, frägt, ladet, falscher Fall usw.</p>",
+    tri: "<p>Allgemeinwissen zu Deutschland. Manchmal sind mehrere Antworten richtig.</p>",
+    red: "<p>Wähle die passende Bedeutung der Redewendung.</p>"
+  };
+
+  // ========== POOLS (genau 100 Beispiele pro Kategorie) ==========
+  function makeArt() {
+    var base = [
+      ["Der", "Kölner Dom"], ["Die", "Sonne"], ["Das", "Auto"], ["Der", "Apfel"], ["Die", "Tasse"],
+      ["Das", "Buch"], ["Der", "Lehrer"], ["Die", "Schule"], ["Das", "Kind"], ["Der", "Hund"],
+      ["Die", "Tür"], ["Das", "Fenster"], ["Der", "Mann"], ["Die", "Frau"], ["Das", "Mädchen"],
+      ["Der", "Bus"], ["Die", "Straße"], ["Das", "Problem"], ["Der", "Zug"], ["Die", "Frage"],
+      ["Das", "Wetter"], ["Der", "Schlüssel"], ["Die", "Antwort"], ["Das", "Bild"], ["Der", "Computer"],
+      ["Die", "Musik"], ["Das", "Ergebnis"], ["Der", "Tisch"], ["Die", "Lampe"], ["Das", "Haus"],
+      ["Der", "Mond"], ["Die", "Nacht"], ["Das", "Jahr"], ["Der", "Freund"], ["Die", "Freundin"],
+      ["Das", "Handy"], ["Der", "Kaffee"], ["Die", "Milch"], ["Das", "Brot"], ["Der", "Stuhl"],
+      ["Die", "Zeitung"], ["Das", "Radio"], ["Der", "Arzt"], ["Die", "Klinik"], ["Das", "Krankenhaus"],
+      ["Der", "Baum"], ["Die", "Blume"], ["Das", "Blatt"], ["Der", "Fluss"], ["Die", "Brücke"],
+      ["Das", "Dorf"], ["Der", "Berg"], ["Die", "Stadt"], ["Das", "Land"], ["Der", "Film"],
+      ["Die", "Serie"], ["Das", "Spiel"], ["Der", "Brief"], ["Die", "Postkarte"], ["Das", "Paket"],
+      ["Der", "Stift"], ["Die", "Tafel"], ["Das", "Heft"], ["Der", "Morgen"], ["Die", "Woche"],
+      ["Das", "Wochenende"], ["Der", "Fehler"], ["Die", "Lösung"], ["Das", "Beispiel"], ["Der", "Gast"],
+      ["Die", "Party"], ["Das", "Geschenk"], ["Der", "Regen"], ["Die", "Wolke"], ["Das", "Gewitter"],
+      ["Der", "Koffer"], ["Die", "Tasche"], ["Das", "Ticket"], ["Der", "Flughafen"], ["Die", "Bahn"],
+      ["Der", "Markt"], ["Die", "Bank"], ["Das", "Geschäft"], ["Der", "Park"], ["Das", "Museum"],
+      ["Der", "Zoo"], ["Die", "Ausstellung"], ["Das", "Konzert"], ["Der", "Briefträger"], ["Die", "Nachbarin"],
+      ["Das", "Gebäude"], ["Der", "Kühlschrank"], ["Die", "Küche"], ["Das", "Wohnzimmer"], ["Der", "Teppich"],
+      ["Die", "Couch"], ["Das", "Bett"], ["Der", "Spiegel"], ["Die", "Seife"], ["Das", "Handtuch"]
+    ];
+    var end = [
+      "ist weltberühmt.", "scheint hell.", "fährt schnell.", "schmeckt gut.", "steht hier.",
+      "ist interessant.", "erklärt die Regel.", "beginnt um acht.", "spielt draußen.", "bellt laut.",
+      "ist offen.", "ist zu.", "wartet draußen.", "liest ein Buch.", "lacht.",
+      "kommt gleich.", "ist gesperrt.", "ist gelöst.", "hat Verspätung.", "war schwer."
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var w = base[i % base.length];
+      var e = end[i % end.length];
+      pool.push({
+        text: "___ " + w[1] + " " + e,
+        correct: [w[0]],
+        all: ["Der", "Die", "Das"],
+        hint: w[0] === "Der" ? "Maskulin" : w[0] === "Die" ? "Feminin" : "Neutral"
+      });
+    }
+    return pool;
+  }
+
+  function makePlu() {
+    var pairs = [
+      ["Vogel", "Vögel"], ["Tasse", "Tassen"], ["Hund", "Hunde"], ["Jacke", "Jacken"], ["Auto", "Autos"],
+      ["Blume", "Blumen"], ["Apfel", "Äpfel"], ["Baum", "Bäume"], ["Bruder", "Brüder"], ["Buch", "Bücher"],
+      ["Haus", "Häuser"], ["Kind", "Kinder"], ["Maus", "Mäuse"], ["Stuhl", "Stühle"], ["Laden", "Läden"],
+      ["Flugzeug", "Flugzeuge"], ["Schuh", "Schuhe"], ["Blatt", "Blätter"], ["Fisch", "Fische"], ["Tür", "Türen"],
+      ["Berg", "Berge"], ["Straße", "Straßen"], ["Glas", "Gläser"], ["Stift", "Stifte"], ["Decke", "Decken"],
+      ["Ei", "Eier"], ["Freund", "Freunde"], ["Freundin", "Freundinnen"], ["Ticket", "Tickets"], ["Wald", "Wälder"],
+      ["Hose", "Hosen"], ["Zug", "Züge"], ["Kirsche", "Kirschen"], ["Gast", "Gäste"], ["Gasse", "Gassen"],
+      ["Licht", "Lichter"], ["Nase", "Nasen"], ["Regal", "Regale"], ["Flasche", "Flaschen"], ["Paket", "Pakete"],
+      ["Nachbar", "Nachbarn"], ["Ampel", "Ampeln"], ["Bus", "Busse"], ["Boden", "Böden"], ["Suppe", "Suppen"],
+      ["Getränk", "Getränke"], ["Stadt", "Städte"], ["Land", "Länder"], ["Mann", "Männer"], ["Frau", "Frauen"]
+    ];
+    var pool = [];
+    for (var i = 0; i < 50; i++) {
+      var p = pairs[i];
+      pool.push({
+        text: "Hier ist ein/eine ___.",
+        correct: [p[0]],
+        all: [p[0], p[1]],
+        hint: "Singular"
+      });
+      pool.push({
+        text: "Hier sind viele ___.",
+        correct: [p[1]],
+        all: [p[0], p[1]],
+        hint: "Plural"
+      });
+    }
+    return pool;
+  }
+
+  function makeAlt() {
+    var core = [
+      { text: "Kannst du bitte die Tür ___?", correct: ["öffnen", "aufmachen"], all: ["öffnen", "aufmachen", "schließen"], hint: "öffnen = aufmachen" },
+      { text: "Ich muss das Fenster ___.", correct: ["schließen", "zumachen"], all: ["schließen", "zumachen", "öffnen"], hint: "schließen = zumachen" },
+      { text: "Lass uns etwas zu essen ___.", correct: ["kochen", "zubereiten"], all: ["kochen", "zubereiten", "backen"], hint: "kochen/zubereiten" },
+      { text: "Sie möchte einen Kuchen ___.", correct: ["backen"], all: ["backen", "kochen", "braten"], hint: "backen" },
+      { text: "Wir ___ jeden Morgen im Park.", correct: ["laufen", "joggen"], all: ["laufen", "joggen", "rennen"], hint: "laufen/joggen" },
+      { text: "Das Kind ___ schnell über den Hof.", correct: ["rennt", "läuft"], all: ["rennt", "läuft", "geht"], hint: "rennen/laufen" },
+      { text: "Ich ___ heute zum Supermarkt.", correct: ["gehe"], all: ["gehe", "laufe", "renne"], hint: "gehen" },
+      { text: "Kannst du mir das Buch ___?", correct: ["geben", "reichen"], all: ["geben", "reichen", "nehmen"], hint: "geben/reichen" },
+      { text: "Er hat das Geschenk ___.", correct: ["bekommen", "erhalten"], all: ["bekommen", "erhalten", "genommen"], hint: "bekommen/erhalten" },
+      { text: "Ich möchte dieses Handy ___.", correct: ["kaufen"], all: ["kaufen", "verkaufen", "leihen"], hint: "kaufen" }
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var item = core[i % core.length];
+      pool.push({
+        text: item.text + " (Beispiel " + (i + 1) + ")",
+        correct: item.correct,
+        all: item.all,
+        hint: item.hint
+      });
+    }
+    return pool;
+  }
+
+  function makeKw() {
+    var core = [
+      { text: "Ich ___ seine Telefonnummer nicht.", correct: ["weiß"], all: ["kenne", "weiß"], hint: "Fakten → wissen" },
+      { text: "___ du diesen Mann?", correct: ["Kennst"], all: ["Kennst", "Weißt"], hint: "Personen → kennen" },
+      { text: "Ich ___ Berlin sehr gut.", correct: ["kenne"], all: ["kenne", "weiß"], hint: "Orte → kennen" },
+      { text: "___ du, wie spät es ist?", correct: ["Weißt"], all: ["Kennst", "Weißt"], hint: "Info → wissen" },
+      { text: "Sie ___ die Antwort nicht.", correct: ["weiß"], all: ["kennt", "weiß"], hint: "wissen" },
+      { text: "Ich ___ das Buch schon.", correct: ["kenne"], all: ["kenne", "weiß"], hint: "kennen" },
+      { text: "___ du den Weg zum Bahnhof?", correct: ["Kennst"], all: ["Kennst", "Weißt"], hint: "kennen" },
+      { text: "Ich ___ nicht, ob er kommt.", correct: ["weiß"], all: ["kenne", "weiß"], hint: "wissen" },
+      { text: "Wir ___ uns seit der Schule.", correct: ["kennen"], all: ["kennen", "wissen"], hint: "kennen" },
+      { text: "___ du, dass er umgezogen ist?", correct: ["Weißt"], all: ["Kennst", "Weißt"], hint: "wissen" }
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var item = core[i % core.length];
+      pool.push({
+        text: item.text.replace(".", " (Nr. " + (i + 1) + ")."),
+        correct: item.correct,
+        all: item.all,
+        hint: item.hint
+      });
+    }
+    return pool;
+  }
+
+  function makeOb() {
+    var core = [
+      { text: "Ich weiß nicht, ___ er kommt.", correct: ["ob"], all: ["ob", "wenn"], hint: "Unsicherheit → ob" },
+      { text: "___ es regnet, bleiben wir zu Hause.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "Bedingung → wenn" },
+      { text: "Sie fragt, ___ wir Zeit haben.", correct: ["ob"], all: ["ob", "wenn"], hint: "Frage → ob" },
+      { text: "___ du Hunger hast, gibt es Pizza.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "Bedingung → wenn" },
+      { text: "Ich bin unsicher, ___ das stimmt.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ er anruft, sag Bescheid.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Weißt du, ___ der Zug pünktlich ist?", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ ich Zeit habe, helfe ich dir.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Es ist egal, ___ du mitkommst oder nicht.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ das Wetter schön ist, gehen wir wandern.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" }
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var item = core[i % core.length];
+      pool.push({
+        text: item.text.replace(".", " [" + (i + 1) + "]."),
+        correct: item.correct,
+        all: item.all,
+        hint: item.hint
+      });
+    }
+    return pool;
+  }
+
+  function makeAls() {
+    var core = [
+      { text: "Er ist größer ___ sein Bruder.", correct: ["als"], all: ["als", "wie"], hint: "Ungleichheit → als" },
+      { text: "Sie singt so schön ___ eine Opernsängerin.", correct: ["wie"], all: ["als", "wie"], hint: "Gleichheit → wie" },
+      { text: "Ich bin älter ___ du.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Das Auto ist so teuer ___ ein Haus.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Heute ist es kälter ___ gestern.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Er läuft so schnell ___ ein Gepard.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Mein Handy ist neuer ___ deins.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Sie sieht aus ___ ihre Mutter.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Das war einfacher ___ gedacht.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Er spricht so gut ___ ein Muttersprachler.", correct: ["wie"], all: ["als", "wie"], hint: "wie" }
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var item = core[i % core.length];
+      pool.push({
+        text: item.text.replace(".", " (#" + (i + 1) + ")."),
+        correct: item.correct,
+        all: item.all,
+        hint: item.hint
+      });
+    }
+    return pool;
+  }
+
+  function makeErr() {
+    var core = [
+      { text: "Welcher Satz ist richtig?", correct: ["Das ist das einzige Problem."], all: ["Das ist das einzigste Problem.", "Das ist das einzige Problem."], hint: "einzig nicht steigerbar" },
+      { text: "Welcher Satz ist richtig?", correct: ["Er fragt mich etwas."], all: ["Er frägt mich etwas.", "Er fragt mich etwas."], hint: "fragt" },
+      { text: "Welcher Satz ist richtig?", correct: ["Mein Handy lädt gerade."], all: ["Mein Handy ladet gerade.", "Mein Handy lädt gerade."], hint: "lädt" },
+      { text: "Welcher Satz ist richtig?", correct: ["Der Kuchen backt im Ofen."], all: ["Der Kuchen bäckt im Ofen.", "Der Kuchen backt im Ofen."], hint: "backt" },
+      { text: "Welcher Satz ist richtig?", correct: ["Ich bin größer als du."], all: ["Ich bin größer wie du.", "Ich bin größer als du."], hint: "als" },
+      { text: "Welcher Satz ist richtig?", correct: ["Er ist so groß wie sein Vater."], all: ["Er ist so groß als sein Vater.", "Er ist so groß wie sein Vater."], hint: "wie" },
+      { text: "Welcher Satz ist richtig?", correct: ["Wegen des Regens bleiben wir hier."], all: ["Wegen dem Regen bleiben wir hier.", "Wegen des Regens bleiben wir hier."], hint: "Genitiv" },
+      { text: "Welcher Satz ist richtig?", correct: ["Er hat den Ball gefangen."], all: ["Er hat den Ball gefangt.", "Er hat den Ball gefangen."], hint: "gefangen" },
+      { text: "Welcher Satz ist richtig?", correct: ["Sie hat angerufen."], all: ["Sie hat angeruft.", "Sie hat angerufen."], hint: "angerufen" },
+      { text: "Welcher Satz ist richtig?", correct: ["Ich bin gestern schwimmen gegangen."], all: ["Ich habe gestern schwimmen gegangen.", "Ich bin gestern schwimmen gegangen."], hint: "sein" }
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var item = core[i % core.length];
+      pool.push({
+        text: item.text + " (Check " + (i + 1) + ")",
+        correct: item.correct,
+        all: item.all,
+        hint: item.hint
+      });
+    }
+    return pool;
+  }
+
+  function makeTri() {
+    var core = [
+      { text: "Wie viele Bundesländer hat Deutschland?", correct: ["16"], all: ["12", "14", "16", "18"], hint: "16" },
+      { text: "In welcher Stadt steht der Kölner Dom?", correct: ["Köln"], all: ["Berlin", "München", "Köln", "Hamburg"], hint: "Köln" },
+      { text: "Was ist die Hauptstadt von Deutschland?", correct: ["Berlin"], all: ["Berlin", "München", "Hamburg", "Frankfurt"], hint: "Berlin" },
+      { text: "Welcher Fluss fließt durch Köln?", correct: ["Rhein"], all: ["Elbe", "Rhein", "Donau", "Main"], hint: "Rhein" },
+      { text: "In welchem Landesteil liegt Bayern?", correct: ["Süden"], all: ["Norden", "Süden", "Osten", "Westen"], hint: "Süden" },
+      { text: "Welche Stadt hat den größten Hafen?", correct: ["Hamburg"], all: ["Hamburg", "Bremen", "Kiel", "Rostock"], hint: "Hamburg" },
+      { text: "Was feiert man am 3. Oktober?", correct: ["Tag der Deutschen Einheit"], all: ["Tag der Deutschen Einheit", "Oktoberfest", "Weihnachten", "Ostern"], hint: "Einheit" },
+      { text: "Welche Farbe hat die Flagge nicht?", correct: ["Blau"], all: ["Schwarz", "Rot", "Gold", "Blau"], hint: "Schwarz-Rot-Gold" },
+      { text: "Wo kann man gut wandern?", correct: ["Bayern", "Schwarzwald"], all: ["Bayern", "Schwarzwald", "Ruhrgebiet", "Berlin"], hint: "Bayern/Schwarzwald" },
+      { text: "Was kann man aus Milch machen?", correct: ["Käse", "Joghurt", "Butter"], all: ["Käse", "Joghurt", "Butter", "Brot"], hint: "Milchprodukte" }
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var item = core[i % core.length];
+      pool.push({
+        text: item.text + " [Fakt " + (i + 1) + "]",
+        correct: item.correct,
+        all: item.all,
+        hint: item.hint
+      });
+    }
+    return pool;
+  }
+
+  function makeRed() {
+    var core = [
+      { text: "Was bedeutet „Jemandem die Daumen drücken“?", correct: ["Jemandem Glück wünschen"], all: ["Jemandem Glück wünschen", "Jemanden ärgern", "Jemanden ignorieren", "Jemanden loben"], hint: "Glück" },
+      { text: "Was bedeutet „Tomaten auf den Augen haben“?", correct: ["Offensichtliche Dinge übersehen"], all: ["Offensichtliche Dinge übersehen", "Sehr müde sein", "Gerne Tomaten essen", "Wütend sein"], hint: "übersehen" },
+      { text: "Was bedeutet „Die Kirche im Dorf lassen“?", correct: ["Nicht übertreiben"], all: ["Nicht übertreiben", "In die Kirche gehen", "Laut sein", "Schnell entscheiden"], hint: "maßvoll" },
+      { text: "Was bedeutet „Jemanden auf den Arm nehmen“?", correct: ["Jemanden scherzhaft veralbern"], all: ["Jemanden scherzhaft veralbern", "Jemanden tragen", "Jemanden trösten", "Jemanden beleidigen"], hint: "scherzen" },
+      { text: "Was bedeutet „Nur Bahnhof verstehen“?", correct: ["Überhaupt nichts verstehen"], all: ["Überhaupt nichts verstehen", "Den Weg kennen", "Gerne reisen", "Laut sprechen"], hint: "nichts verstehen" },
+      { text: "Was bedeutet „Da liegt der Hund begraben“?", correct: ["Das ist die eigentliche Ursache"], all: ["Das ist die eigentliche Ursache", "Ein Hund ist gestorben", "Es ist gefährlich", "Man muss graben"], hint: "Ursache" },
+      { text: "Was bedeutet „Die Nase voll haben“?", correct: ["Genug von etwas haben"], all: ["Genug von etwas haben", "Erkältet sein", "Hungrig sein", "Stolz sein"], hint: "genervt" },
+      { text: "Was bedeutet „Aus dem Häuschen geraten“?", correct: ["Sehr aufgeregt/begeistert sein"], all: ["Sehr aufgeregt/begeistert sein", "Das Haus verlassen", "Wütend werden", "Einschlafen"], hint: "begeistert" },
+      { text: "Was bedeutet „Ins Gras beißen“?", correct: ["Sterben (bildlich)"], all: ["Sterben (bildlich)", "Picknicken", "Sport machen", "Sich irren"], hint: "sterben" },
+      { text: "Was bedeutet „Etwas auf dem Schirm haben“?", correct: ["Etwas im Blick haben"], all: ["Etwas im Blick haben", "Fernsehen", "Etwas vergessen", "Etwas fotografieren"], hint: "im Blick" }
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var item = core[i % core.length];
+      pool.push({
+        text: item.text + " (Redegewandtheit " + (i + 1) + ")",
+        correct: item.correct,
+        all: item.all,
+        hint: item.hint
+      });
+    }
+    return pool;
+  }
+
+  var pools = {
+    art: makeArt(),
+    plu: makePlu(),
+    alt: makeAlt(),
+    kw: makeKw(),
+    ob: makeOb(),
+    als: makeAls(),
+    err: makeErr(),
+    tri: makeTri(),
+    red: makeRed()
+  };
+
+  function buildCards() {
+    var root = document.getElementById("cards");
+    root.innerHTML = "";
+    cats.forEach(function (c) {
+      var card = document.createElement("div");
+      card.className = "quiz-card";
+      card.id = "card-" + c;
+      card.innerHTML =
+        "<h2>" + titles[c] + " <button type=\"button\" class=\"info-btn\" data-info=\"" + c + "\">ⓘ</button></h2>" +
+        "<div class=\"progress-info\" id=\"" + c + "-progress\">Frage 1 / " + questionsPerRound + "</div>" +
+        "<div class=\"multi-hint\" id=\"" + c + "-multi\"></div>" +
+        "<div class=\"quiz-sentence\" id=\"" + c + "-sentence\">…</div>" +
+        "<div class=\"options-row\" id=\"" + c + "-options\"></div>" +
+        "<div class=\"feedback-text\" id=\"" + c + "-fb\"></div>" +
+        "<div class=\"card-actions\"><button type=\"button\" class=\"skip-btn\" data-skip=\"" + c + "\">Kategorie ausblenden</button></div>";
+      root.appendChild(card);
+    });
+  }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function getUniqueItem(pool, used) {
+    var avail = [];
+    var i;
+    for (i = 0; i < pool.length; i++) {
+      if (used.indexOf(i) === -1) avail.push(i);
+    }
+    if (!avail.length) {
+      used.length = 0;
+      for (i = 0; i < pool.length; i++) avail.push(i);
+    }
+    var idx = avail[Math.floor(Math.random() * avail.length)];
+    used.push(idx);
+    return pool[idx];
+  }
+
+  function showQuestion(type) {
+    var st = state[type];
+    if (st.collapsed) return;
+
+    var pool = pools[type];
+    var sentenceEl = document.getElementById(type + "-sentence");
+    var optionsEl = document.getElementById(type + "-options");
+    var fbEl = document.getElementById(type + "-fb");
+    var progEl = document.getElementById(type + "-progress");
+    var multiEl = document.getElementById(type + "-multi");
+
+    if (st.index >= questionsPerRound) {
+      st.finished = true;
+      sentenceEl.innerHTML = "<strong>Fertig!</strong> " + st.correct + " richtig" + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
+      optionsEl.innerHTML = "";
+      fbEl.textContent = "";
+      progEl.textContent = "Abgeschlossen · " + st.correct + "/" + questionsPerRound + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
+      multiEl.classList.remove("show");
+      updateScores();
+      return;
+    }
+
+    var item = getUniqueItem(pool, st.used);
+    var html = item.text;
+    if (hasSlot[type]) {
+      html = item.text.replace("___", "<span class=\"blank-slot\" id=\"" + type + "-slot\">_____</span>");
+      sentenceEl.innerHTML = "Satz: „" + html + "“";
+    } else {
+      sentenceEl.textContent = item.text;
+    }
+
+    fbEl.textContent = "";
+    progEl.textContent = "Frage " + (st.index + 1) + " / " + questionsPerRound + " · Richtig: " + st.correct + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
+
+    if (showMultiHint && item.correct.length > 1) {
+      multiEl.textContent = "Mehrere Antworten können richtig sein – finde möglichst alle.";
+      multiEl.classList.add("show");
+    } else {
+      multiEl.classList.remove("show");
+    }
+
+    optionsEl.innerHTML = "";
+    var isMulti = item.correct.length > 1;
+    var selected = [];
+
+    shuffle(item.all).forEach(function (opt) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt-choice";
+      btn.textContent = opt;
+
+      btn.onclick = function () {
+        if (btn.disabled) return;
+
+        if (isMulti) {
+          if (selected.indexOf(opt) !== -1) return;
+          selected.push(opt);
+          var ok = item.correct.indexOf(opt) !== -1;
+          btn.classList.add(ok ? "correct" : "wrong");
+          btn.disabled = true;
+
+          var foundAll = item.correct.every(function (c) { return selected.indexOf(c) !== -1; });
+          var hasWrong = selected.some(function (s) { return item.correct.indexOf(s) === -1; });
+
+          if (hasWrong) {
+            Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) {
+              b.disabled = true;
+              if (item.correct.indexOf(b.textContent) !== -1) b.classList.add("correct");
+            });
+            fbEl.style.color = "#e11d48";
+            fbEl.textContent = "Falsch. Richtig: " + item.correct.join(", ");
+            setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1200);
+          } else if (foundAll) {
+            Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) { b.disabled = true; });
+            st.correct += 1;
+            if (item.correct.length > 1) st.bonus += 1;
+            fbEl.style.color = "#0d9488";
+            fbEl.textContent = item.correct.length > 1 ? "Super! Alle gefunden (+1 Bonus)" : "Richtig!";
+            setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1000);
+          }
+        } else {
+          Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) { b.disabled = true; });
+          var isOk = item.correct.indexOf(opt) !== -1;
+          if (hasSlot[type]) {
+            var slot = document.getElementById(type + "-slot");
+            if (slot) {
+              slot.textContent = opt;
+              slot.style.color = isOk ? "#0d9488" : "#e11d48";
+            }
+          }
+          btn.classList.add(isOk ? "correct" : "wrong");
+          Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) {
+            if (item.correct.indexOf(b.textContent) !== -1) b.classList.add("correct");
+          });
+          fbEl.style.color = isOk ? "#0d9488" : "#e11d48";
+          fbEl.textContent = isOk ? "Richtig!" : ("Falsch. Tipp: " + item.hint);
+          if (isOk) st.correct++;
+          setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1000);
+        }
+      };
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function loadAll() {
+    cats.forEach(function (c) {
+      if (!state[c].collapsed) showQuestion(c);
+    });
+  }
+
+  function setDifficulty(level) {
+    difficulty = level;
+    questionsPerRound = level === "leicht" ? 10 : level === "mittel" ? 20 : 30;
+    document.querySelectorAll(".diff-btn").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-level") === level);
+    });
+    cats.forEach(function (c) {
+      state[c] = {
+        index: 0, correct: 0, bonus: 0, used: [],
+        collapsed: state[c].collapsed, finished: false
+      };
+    });
+    loadAll();
+    updateScores();
+    renderRestore();
+  }
+
+  function collapseCat(type) {
+    state[type].collapsed = true;
+    var card = document.getElementById("card-" + type);
+    if (card) card.classList.add("collapsed");
+    renderRestore();
+    updateScores();
+  }
+
+  function expandCat(type) {
+    state[type].collapsed = false;
+    var card = document.getElementById("card-" + type);
+    if (card) card.classList.remove("collapsed");
+    if (state[type].index === 0 && !state[type].finished) showQuestion(type);
+    renderRestore();
+    updateScores();
+  }
+
+  function renderRestore() {
+    var area = document.getElementById("restore-area");
+    var collapsed = cats.filter(function (c) { return state[c].collapsed; });
+    if (!collapsed.length) {
+      area.innerHTML = "";
+      return;
+    }
+    area.innerHTML = "Ausgeblendet: " + collapsed.map(function (c) {
+      return "<button type=\"button\" class=\"skip-btn\" data-expand=\"" + c + "\">" + names[c] + " wieder einblenden</button>";
+    }).join(" · ");
+  }
+
+  // Präzise Abstufungen von 0% bis über 100% (inkl. Bonuspunkten)
+  function getReward(p, b) {
+    var totalP = p + (b > 0 ? 5 : 0);
+    if (totalP > 100) return "🌟 Sprach-Genie mit Meisterbonus (Über 100%)";
+    if (totalP === 100) return "🏆 Perfekt (100%) – Makellose Leistung";
+    if (totalP >= 90) return "⭐ Experte (90–99%) – Hervorragendes Niveau";
+    if (totalP >= 80) return "💪 Fortgeschrittener Profi (80–89%) – Sehr stark";
+    if (totalP >= 70) return "📘 Kompetenter Anwender (70–79%) – Solides Fundament";
+    if (totalP >= 60) return "📗 Sicherer Lerner (60–69%) – Guter Fortschritt";
+    if (totalP >= 50) return "📙 Solider Durchschnitt (50–59%) – Ausgeglichenes Mittelfeld";
+    if (totalP >= 40) return "🌱 Aufstrebender Einsteiger (40–49%) – Stetige Entwicklung";
+    if (totalP >= 30) return "🧭 Orientierender Lerner (30–39%) – Erste Schritte gefestigt";
+    if (totalP >= 20) return "☕️ Basis-Level (20–29%) – Einstieg geschafft";
+    if (totalP > 0) return "🪴 Anfänger (1–19%) – Erste Orientierung";
+    return "💤 Noch keine Aufgaben gewertet";
+  }
+
+  function getProfile(active, avg) {
+    if (!active.length) return "";
+    var set = {};
+    active.forEach(function (c) { set[c] = true; });
+    var labels = [];
+    if ((set.ob || set.als || set.kw) && avg >= 60) labels.push("Logik-Fuchs");
+    if ((set.art || set.plu || set.err) && avg >= 60) labels.push("Grammatik-Profi");
+    if (set.tri && avg >= 60) labels.push("Deutschland-Kenner");
+    if (set.red && avg >= 60) labels.push("Redewendungs-Kenner");
+    if (set.alt && avg >= 60) labels.push("Wortschatz-Flexer");
+    
+    if (labels.length >= 3 && avg >= 80) return "Profil-Auswertung: Vielseitiger Allrounder mit hohem Sprachverständnis.";
+    if (labels.length > 0) return "Profil-Auswertung: " + labels.join(" · ") + " basierend auf den gewählten Kategorien.";
+    return "Profil-Auswertung: Gezielter Fokus auf die ausgewählten Trainingsbereiche.";
+  }
+
+  function updateScores() {
+    var lines = document.getElementById("score-lines");
+    lines.innerHTML = "";
+    var totalCorrect = 0, totalPossible = 0, totalBonus = 0;
+    var active = [];
+
+    cats.forEach(function (c) {
+      var st = state[c];
+      if (st.collapsed) return;
+      if (st.index === 0 && !st.finished) return;
+      active.push(c);
+      var bonusStr = st.bonus ? " (+" + st.bonus + " Bonus)" : "";
+      var percent = Math.round(((st.correct + st.bonus) / questionsPerRound) * 100);
+      lines.innerHTML += "<div class=\"score-line\"><span>" + names[c] + "</span><span>" + st.correct + "/" + questionsPerRound + bonusStr + " · " + percent + "%</span></div>";
+      totalCorrect += st.correct + st.bonus;
+      totalPossible += questionsPerRound;
+      totalBonus += st.bonus;
+    });
+
+    if (!totalPossible) {
+      document.getElementById("score-total").textContent = "–";
+      document.getElementById("bonus-note").textContent = "";
+      document.getElementById("reward-text").textContent = "";
+      document.getElementById("profile-text").textContent = "";
+      return;
+    }
+
+    var totalPercent = Math.round((totalCorrect / totalPossible) * 100);
+    document.getElementById("score-total").textContent = totalCorrect + "/" + totalPossible + " · " + totalPercent + "%";
+    document.getElementById("bonus-note").textContent = totalBonus ? ("Davon Bonuspunkte: " + totalBonus) : "";
+    document.getElementById("reward-text").textContent = getReward(totalPercent, totalBonus);
+    document.getElementById("profile-text").textContent = getProfile(active, totalPercent);
+  }
+
+  function showInfo(key) {
+    document.getElementById("modal-title").textContent = names[key] || "Info";
+    document.getElementById("modal-body").innerHTML = infos[key] || "";
+    document.getElementById("modal").classList.add("open");
+  }
+
+  function closeInfo() {
+    document.getElementById("modal").classList.remove("open");
+  }
+
+  function bindEvents() {
+    document.querySelectorAll(".diff-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        setDifficulty(btn.getAttribute("data-level"));
+      });
+    });
+
+    document.getElementById("multiHintToggle").addEventListener("change", function () {
+      showMultiHint = this.checked;
+    });
+
+    document.getElementById("cards").addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.classList.contains("info-btn")) {
+        showInfo(t.getAttribute("data-info"));
+      }
+      if (t.classList.contains("skip-btn") && t.getAttribute("data-skip")) {
+        collapseCat(t.getAttribute("data-skip"));
+      }
+    });
+
+    document.getElementById("restore-area").addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.classList.contains("skip-btn") && t.getAttribute("data-expand")) {
+        expandCat(t.getAttribute("data-expand"));
+      }
+    });
+
+    document.getElementById("modal-close").addEventListener("click", closeInfo);
+    document.getElementById("modal").addEventListener("click", function (e) {
+      if (e.target === this) closeInfo();
+    });
+  }
+
+  try {
+    buildCards();
+    bindEvents();
+    loadAll();
+    updateScores();
+  } catch (err) {
+    var box = document.getElementById("error-box");
+    box.style.display = "block";
+    box.textContent = "Fehler beim Laden: " + err.message;
+    console.error(err);
+  }
 })();
 </script>
 </body>
