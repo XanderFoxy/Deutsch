@@ -6,23 +6,6 @@
 <title>Übungen – Deutsch mit Alex</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* ============================================================
-   DEUTSCH MIT ALEX – ÜBUNGSSEITE (vollständig)
-   ------------------------------------------------------------
-   - 9 Kategorien à 100 Fragen im Pool
-   - Leicht 10 / Mittel 20 / Schwer 30 Fragen pro Runde
-   - Zufall ohne Wiederholung innerhalb einer Runde
-   - Falsche Antwort = sofort gewertet, Auto-Weiter
-   - Mehrfach-Richtige möglich → alle finden = +1 Bonus
-   - Bonus in Klammern sichtbar und in Gesamtwertung
-   - Kategorien ausblendbar (verschwinden komplett aus Wertung)
-   - Wieder einblendbar
-   - Prozent nur über gespielte Kategorien
-   - Titel-Abstufung (Superheld nur bei außergewöhnlicher Leistung)
-   - Profil je nach gewählten Bereichen + Leistung
-   - Info-Buttons (ⓘ) mit Regeln
-   - Hinweis-Schalter für Mehrfachantworten
-   ============================================================ */
 body{padding:16px;background:#fff;font-family:system-ui,-apple-system,sans-serif;color:#0f172a}
 .container{max-width:620px;margin:0 auto}
 h1{font-size:1.3rem;color:#1e40af;margin-bottom:4px}
@@ -30,9 +13,8 @@ h1{font-size:1.3rem;color:#1e40af;margin-bottom:4px}
 .difficulty-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .diff-btn{flex:1;min-width:90px;padding:9px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600;font-size:.85rem;cursor:pointer;color:#475569}
 .diff-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
-.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.controls{margin-bottom:16px}
 .hint-toggle{font-size:.82rem;color:#475569;display:flex;align-items:center;gap:6px;cursor:pointer}
-.hint-toggle input{accent-color:#2563eb}
 .quiz-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:14px}
 .quiz-card.collapsed{display:none}
 .quiz-card h2{font-size:1.02rem;color:#1e40af;margin-bottom:2px;display:flex;align-items:center;gap:8px}
@@ -48,14 +30,14 @@ h1{font-size:1.3rem;color:#1e40af;margin-bottom:4px}
 .feedback-text{margin-top:8px;font-size:.86rem;font-weight:600}
 .multi-hint{font-size:.78rem;color:#0369a1;margin-bottom:6px;display:none}
 .multi-hint.show{display:block}
-.card-actions{margin-top:8px;display:flex;gap:12px;align-items:center}
-.skip-btn,.info-btn{background:none;border:none;font-size:.78rem;cursor:pointer;color:#94a3b8;text-decoration:underline}
-.skip-btn:hover,.info-btn:hover{color:#475569}
-.info-btn{font-size:.9rem;text-decoration:none;border:1px solid #cbd5e1;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:#2563eb}
+.card-actions{margin-top:8px}
+.skip-btn{background:none;border:none;font-size:.78rem;cursor:pointer;color:#94a3b8;text-decoration:underline}
+.skip-btn:hover{color:#475569}
+.info-btn{font-size:.85rem;border:1px solid #cbd5e1;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:#2563eb;background:#fff;cursor:pointer}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:100;align-items:center;justify-content:center;padding:16px}
 .modal-bg.open{display:flex}
 .modal{background:#fff;border-radius:12px;padding:18px;max-width:420px;width:100%;max-height:80vh;overflow:auto}
-.modal h3{margin-bottom:8px;color:#1e40af}
+.modal h3{margin:0 0 8px;color:#1e40af}
 .modal p,.modal li{font-size:.88rem;color:#334155;line-height:1.45}
 .modal ul{padding-left:18px;margin:6px 0}
 .modal-close{margin-top:12px;background:#0f172a;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600}
@@ -66,1150 +48,719 @@ h1{font-size:1.3rem;color:#1e40af;margin-bottom:4px}
 .reward{margin-top:8px;font-size:1.05rem;font-weight:700;color:#1e40af}
 .profile{margin-top:6px;font-size:.9rem;color:#0369a1}
 .bonus-note{font-size:.8rem;color:#64748b}
+#error-box{display:none;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:12px;border-radius:8px;margin-bottom:16px;font-size:.9rem}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>Interaktives Training</h1>
-<p class="subtitle">9 Kategorien à 100 Fragen · Zufall ohne Wiederholung · faire Prozentwertung nur über das, was du spielst.</p>
+  <h1>Interaktives Training</h1>
+  <p class="subtitle">9 Kategorien · Zufall ohne Wiederholung · faire Prozentwertung</p>
+  <div id="error-box"></div>
 
-<div class="difficulty-bar">
-  <button class="diff-btn active" onclick="setDifficulty('leicht',this)">Leicht (10)</button>
-  <button class="diff-btn" onclick="setDifficulty('mittel',this)">Mittel (20)</button>
-  <button class="diff-btn" onclick="setDifficulty('schwer',this)">Schwer (30)</button>
+  <div class="difficulty-bar">
+    <button type="button" class="diff-btn active" data-level="leicht">Leicht (10)</button>
+    <button type="button" class="diff-btn" data-level="mittel">Mittel (20)</button>
+    <button type="button" class="diff-btn" data-level="schwer">Schwer (30)</button>
+  </div>
+
+  <div class="controls">
+    <label class="hint-toggle">
+      <input type="checkbox" id="multiHintToggle">
+      Hinweis bei mehreren richtigen Antworten
+    </label>
+  </div>
+
+  <div id="cards"></div>
+  <div id="restore-area" style="margin-bottom:16px;font-size:.85rem;color:#64748b"></div>
+
+  <div class="score-box">
+    <h2>Deine Auswertung</h2>
+    <div id="score-lines"></div>
+    <div class="score-total">Gesamt: <span id="score-total">–</span></div>
+    <div class="bonus-note" id="bonus-note"></div>
+    <div class="reward" id="reward-text"></div>
+    <div class="profile" id="profile-text"></div>
+  </div>
 </div>
 
-<div class="controls">
-  <label class="hint-toggle">
-    <input type="checkbox" id="multiHintToggle" onchange="toggleMultiHint()">
-    Hinweis bei mehreren richtigen Antworten anzeigen
-  </label>
-</div>
-
-<div class="quiz-card" id="card-art"><h2>🎯 Artikel-Trainer <button class="info-btn" onclick="showInfo('art')">ⓘ</button></h2><div class="progress-info" id="art-progress">Frage 1 / 10</div><div class="multi-hint" id="art-multi"></div><div class="quiz-sentence" id="art-sentence">Lade...</div><div class="options-row" id="art-options"></div><div class="feedback-text" id="art-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('art')">Kategorie ausblenden</button></div></div>
-<div class="quiz-card" id="card-plu"><h2>📖 Singular & Plural <button class="info-btn" onclick="showInfo('plu')">ⓘ</button></h2><div class="progress-info" id="plu-progress">Frage 1 / 10</div><div class="multi-hint" id="plu-multi"></div><div class="quiz-sentence" id="plu-sentence">Lade...</div><div class="options-row" id="plu-options"></div><div class="feedback-text" id="plu-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('plu')">Kategorie ausblenden</button></div></div>
-<div class="quiz-card" id="card-alt"><h2>🔄 Wort-Alternativen <button class="info-btn" onclick="showInfo('alt')">ⓘ</button></h2><div class="progress-info" id="alt-progress">Frage 1 / 10</div><div class="multi-hint" id="alt-multi"></div><div class="quiz-sentence" id="alt-sentence">Lade...</div><div class="options-row" id="alt-options"></div><div class="feedback-text" id="alt-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('alt')">Kategorie ausblenden</button></div></div>
-<div class="quiz-card" id="card-kw"><h2>🧠 kennen oder wissen? <button class="info-btn" onclick="showInfo('kw')">ⓘ</button></h2><div class="progress-info" id="kw-progress">Frage 1 / 10</div><div class="multi-hint" id="kw-multi"></div><div class="quiz-sentence" id="kw-sentence">Lade...</div><div class="options-row" id="kw-options"></div><div class="feedback-text" id="kw-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('kw')">Kategorie ausblenden</button></div></div>
-<div class="quiz-card" id="card-ob"><h2>❓ ob oder wenn? <button class="info-btn" onclick="showInfo('ob')">ⓘ</button></h2><div class="progress-info" id="ob-progress">Frage 1 / 10</div><div class="multi-hint" id="ob-multi"></div><div class="quiz-sentence" id="ob-sentence">Lade...</div><div class="options-row" id="ob-options"></div><div class="feedback-text" id="ob-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('ob')">Kategorie ausblenden</button></div></div>
-<div class="quiz-card" id="card-als"><h2>⚖️ als oder wie? <button class="info-btn" onclick="showInfo('als')">ⓘ</button></h2><div class="progress-info" id="als-progress">Frage 1 / 10</div><div class="multi-hint" id="als-multi"></div><div class="quiz-sentence" id="als-sentence">Lade...</div><div class="options-row" id="als-options"></div><div class="feedback-text" id="als-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('als')">Kategorie ausblenden</button></div></div>
-<div class="quiz-card" id="card-err"><h2>🚫 Typische Fehler <button class="info-btn" onclick="showInfo('err')">ⓘ</button></h2><div class="progress-info" id="err-progress">Frage 1 / 10</div><div class="multi-hint" id="err-multi"></div><div class="quiz-sentence" id="err-sentence">Lade...</div><div class="options-row" id="err-options"></div><div class="feedback-text" id="err-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('err')">Kategorie ausblenden</button></div></div>
-<div class="quiz-card" id="card-tri"><h2>🇩🇪 Deutschland-Wissen <button class="info-btn" onclick="showInfo('tri')">ⓘ</button></h2><div class="progress-info" id="tri-progress">Frage 1 / 10</div><div class="multi-hint" id="tri-multi"></div><div class="quiz-sentence" id="tri-sentence">Lade...</div><div class="options-row" id="tri-options"></div><div class="feedback-text" id="tri-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('tri')">Kategorie ausblenden</button></div></div>
-<div class="quiz-card" id="card-red"><h2>💬 Redewendungen <button class="info-btn" onclick="showInfo('red')">ⓘ</button></h2><div class="progress-info" id="red-progress">Frage 1 / 10</div><div class="multi-hint" id="red-multi"></div><div class="quiz-sentence" id="red-sentence">Lade...</div><div class="options-row" id="red-options"></div><div class="feedback-text" id="red-fb"></div><div class="card-actions"><button class="skip-btn" onclick="collapseCat('red')">Kategorie ausblenden</button></div></div>
-
-<div id="restore-area" style="margin-bottom:16px;font-size:.85rem;color:#64748b"></div>
-
-<div class="score-box">
-  <h2>Deine Auswertung</h2>
-  <div id="score-lines"></div>
-  <div class="score-total">Gesamt: <span id="score-total">–</span></div>
-  <div class="bonus-note" id="bonus-note"></div>
-  <div class="reward" id="reward-text"></div>
-  <div class="profile" id="profile-text"></div>
-</div>
-</div>
-
-<div class="modal-bg" id="modal" onclick="if(event.target===this)closeInfo()">
-  <div class="modal"><h3 id="modal-title"></h3><div id="modal-body"></div><button class="modal-close" onclick="closeInfo()">Schließen</button></div>
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <div id="modal-body"></div>
+    <button type="button" class="modal-close" id="modal-close">Schließen</button>
+  </div>
 </div>
 
 <script>
-let difficulty='leicht', questionsPerRound=10, showMultiHint=false;
-const cats=['art','plu','alt','kw','ob','als','err','tri','red'];
-const state={}; cats.forEach(c=>state[c]={index:0,correct:0,bonus:0,used:[],collapsed:false,finished:false});
-const names={art:'Artikel',plu:'Singular/Plural',alt:'Wort-Alternativen',kw:'kennen/wissen',ob:'ob/wenn',als:'als/wie',err:'Typische Fehler',tri:'Deutschland-Wissen',red:'Redewendungen'};
+(function () {
+  "use strict";
 
-const infos={
-art:`<p><b>der / die / das</b></p><ul><li><b>der</b> = maskulin</li><li><b>die</b> = feminin</li><li><b>das</b> = neutral</li></ul><p>Viele Wörter muss man lernen. Endungen helfen manchmal (-ung meist die, -chen meist das).</p>`,
-plu:`<p><b>Singular = Einzahl, Plural = Mehrzahl</b></p><p>Achte auf Signalwörter (ein/eine vs. viele/drei) und die Verbform.</p>`,
-alt:`<p><b>Wort-Alternativen</b></p><p>Manche Wörter kann man im gleichen Kontext ersetzen. Wenn mehrere passen, sind mehrere richtig.</p>`,
-kw:`<p><b>kennen vs. wissen</b></p><ul><li><b>kennen</b> = Personen, Orte, Dinge</li><li><b>wissen</b> = Fakten und Informationen</li></ul><p>Standard: „Ich weiß seine Nummer.“</p>`,
-ob:`<p><b>ob vs. wenn</b></p><ul><li><b>wenn</b> = Bedingung/Zeitpunkt</li><li><b>ob</b> = Unsicherheit / indirekte Frage</li></ul>`,
-als:`<p><b>als vs. wie</b></p><ul><li><b>als</b> = Ungleichheit (größer als)</li><li><b>wie</b> = Gleichheit (so groß wie)</li></ul>`,
-err:`<p><b>Typische Fehler</b></p><p>Häufige Alltagsfehler: einzigste, frägt, ladet, falscher Fall usw.</p>`,
-tri:`<p><b>Deutschland-Wissen</b></p><p>Geografie, Kultur, Alltag. Manche Fragen haben mehrere richtige Antworten.</p>`,
-red:`<p><b>Redewendungen</b></p><p>Wähle die passende Bedeutung der Redewendung.</p>`
-};
+  // ========== KONFIG ==========
+  var difficulty = "leicht";
+  var questionsPerRound = 10;
+  var showMultiHint = false;
 
-function showInfo(k){document.getElementById('modal-title').textContent=names[k];document.getElementById('modal-body').innerHTML=infos[k];document.getElementById('modal').classList.add('open');}
-function closeInfo(){document.getElementById('modal').classList.remove('open');}
-function toggleMultiHint(){showMultiHint=document.getElementById('multiHintToggle').checked;}
+  var cats = ["art", "plu", "alt", "kw", "ob", "als", "err", "tri", "red"];
+  var names = {
+    art: "Artikel",
+    plu: "Singular/Plural",
+    alt: "Wort-Alternativen",
+    kw: "kennen/wissen",
+    ob: "ob/wenn",
+    als: "als/wie",
+    err: "Typische Fehler",
+    tri: "Deutschland-Wissen",
+    red: "Redewendungen"
+  };
+  var titles = {
+    art: "🎯 Artikel-Trainer",
+    plu: "📖 Singular & Plural",
+    alt: "🔄 Wort-Alternativen",
+    kw: "🧠 kennen oder wissen?",
+    ob: "❓ ob oder wenn?",
+    als: "⚖️ als oder wie?",
+    err: "🚫 Typische Fehler",
+    tri: "🇩🇪 Deutschland-Wissen",
+    red: "💬 Redewendungen"
+  };
+  var hasSlot = {
+    art: true, plu: true, alt: true, kw: true, ob: true, als: true,
+    err: false, tri: false, red: false
+  };
 
-/* ===================== 100 ARTIKEL ===================== */
-const articlePool=[
-{text:"___ Kölner Dom ist weltberühmt.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Sonne scheint den ganzen Tag.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Auto fährt sehr schnell.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Apfel schmeckt frisch.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Tasse steht auf dem Tisch.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Buch ist interessant.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Lehrer erklärt die Regel.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Schule beginnt um acht.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Kind spielt im Garten.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Hund bellt laut.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Tür ist offen.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Fenster ist zu.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Mann wartet draußen.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Frau liest ein Buch.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Mädchen lacht.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Bus kommt gleich.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Straße ist gesperrt.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Problem ist gelöst.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Zug hat Verspätung.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Frage war schwer.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Wetter ist schön.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Schlüssel liegt hier.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Antwort war richtig.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Bild hängt an der Wand.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Computer funktioniert.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Musik ist zu laut.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Ergebnis überrascht mich.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Tisch ist aus Holz.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Lampe leuchtet hell.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Haus steht am See.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Mond scheint heute Nacht.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Nacht war sehr kalt.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Jahr geht schnell vorbei.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Freund kommt später.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Freundin heißt Anna.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Handy liegt auf dem Tisch.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Kaffee ist heiß.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Milch ist alle.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Brot schmeckt gut.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Stuhl ist kaputt.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Zeitung liegt hier.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Radio läuft im Hintergrund.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Arzt kommt gleich.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Klinik ist neu.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Krankenhaus ist groß.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Baum verliert seine Blätter.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Blume duftet stark.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Blatt ist grün.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Fluss fließt ruhig.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Brücke ist alt.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Dorf liegt im Tal.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Berg ist hoch.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Stadt ist belebt.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Land ist schön.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Film war spannend.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Serie läuft abends.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Spiel hat mir gefallen.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Brief ist angekommen.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Postkarte ist bunt.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Paket ist schwer.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Stift schreibt gut.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Tafel ist sauber.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Heft liegt offen.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Morgen war neblig.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Woche war anstrengend.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Wochenende war erholsam.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Fehler ist peinlich.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Lösung ist einfach.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Beispiel hilft sehr.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Gast kommt um acht.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Party war laut.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Geschenk ist verpackt.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Regen hat aufgehört.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Sonne geht unter.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Gewitter zieht auf.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Koffer ist schwer.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Tasche ist voll.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Ticket liegt bereit.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Flughafen ist groß.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Bahn ist pünktlich.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Markt ist bunt.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Bank ist geschlossen.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Geschäft hat geöffnet.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Park ist grün.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Museum ist interessant.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Zoo ist geöffnet.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Ausstellung läuft noch.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Konzert beginnt um 20 Uhr.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Briefträger kommt morgens.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Nachbarin grüßt freundlich.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Gebäude ist modern.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Kühlschrank ist voll.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Küche ist sauber.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Wohnzimmer ist hell.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Teppich ist weich.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Couch ist bequem.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Bett ist groß.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
-{text:"___ Spiegel hängt schief.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
-{text:"___ Seife riecht gut.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
-{text:"___ Handtuch ist nass.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"}
-];
+  var state = {};
+  cats.forEach(function (c) {
+    state[c] = { index: 0, correct: 0, bonus: 0, used: [], collapsed: false, finished: false };
+  });
 
-/* ===================== 100 SINGULAR/PLURAL ===================== */
-const pluralPool=[
-{text:"Im Garten zwitschert ein ___.",correct:["Vogel"],all:["Vogel","Vögel"],hint:"Singular"},
-{text:"Im Garten zwitschern viele ___.",correct:["Vögel"],all:["Vogel","Vögel"],hint:"Plural"},
-{text:"Auf dem Tisch steht eine ___.",correct:["Tasse"],all:["Tasse","Tassen"],hint:"Singular"},
-{text:"Auf dem Tisch stehen drei ___.",correct:["Tassen"],all:["Tasse","Tassen"],hint:"Plural"},
-{text:"Im Park läuft ein ___.",correct:["Hund"],all:["Hund","Hunde"],hint:"Singular"},
-{text:"Im Park laufen mehrere ___.",correct:["Hunde"],all:["Hund","Hunde"],hint:"Plural"},
-{text:"Die ___ hängt im Schrank.",correct:["Jacke"],all:["Jacke","Jacken"],hint:"Singular"},
-{text:"Die ___ hängen im Schrank.",correct:["Jacken"],all:["Jacke","Jacken"],hint:"Plural"},
-{text:"In der Stadt fährt ein ___.",correct:["Auto"],all:["Auto","Autos"],hint:"Singular"},
-{text:"In der Stadt fahren viele ___.",correct:["Autos"],all:["Auto","Autos"],hint:"Plural"},
-{text:"Die ___ blüht im Frühling.",correct:["Blume"],all:["Blume","Blumen"],hint:"Singular"},
-{text:"Die ___ blühen im Frühling.",correct:["Blumen"],all:["Blume","Blumen"],hint:"Plural"},
-{text:"Der ___ ist rot.",correct:["Apfel"],all:["Apfel","Äpfel"],hint:"Singular"},
-{text:"Die ___ sind rot.",correct:["Äpfel"],all:["Apfel","Äpfel"],hint:"Plural"},
-{text:"Der ___ steht vor dem Haus.",correct:["Baum"],all:["Baum","Bäume"],hint:"Singular"},
-{text:"Die ___ stehen vor dem Haus.",correct:["Bäume"],all:["Baum","Bäume"],hint:"Plural"},
-{text:"Mein ___ heißt Tom.",correct:["Bruder"],all:["Bruder","Brüder"],hint:"Singular"},
-{text:"Meine ___ heißen Tom und Tim.",correct:["Brüder"],all:["Bruder","Brüder"],hint:"Plural"},
-{text:"Das ___ ist neu.",correct:["Buch"],all:["Buch","Bücher"],hint:"Singular"},
-{text:"Die ___ sind neu.",correct:["Bücher"],all:["Buch","Bücher"],hint:"Plural"},
-{text:"Das ___ ist groß.",correct:["Haus"],all:["Haus","Häuser"],hint:"Singular"},
-{text:"Die ___ sind groß.",correct:["Häuser"],all:["Haus","Häuser"],hint:"Plural"},
-{text:"Das ___ spielt draußen.",correct:["Kind"],all:["Kind","Kinder"],hint:"Singular"},
-{text:"Die ___ spielen draußen.",correct:["Kinder"],all:["Kind","Kinder"],hint:"Plural"},
-{text:"Die ___ ist grau.",correct:["Maus"],all:["Maus","Mäuse"],hint:"Singular"},
-{text:"Die ___ sind grau.",correct:["Mäuse"],all:["Maus","Mäuse"],hint:"Plural"},
-{text:"Der ___ ist bequem.",correct:["Stuhl"],all:["Stuhl","Stühle"],hint:"Singular"},
-{text:"Die ___ sind bequem.",correct:["Stühle"],all:["Stuhl","Stühle"],hint:"Plural"},
-{text:"Der ___ ist geschlossen.",correct:["Laden"],all:["Laden","Läden"],hint:"Singular"},
-{text:"Die ___ sind geschlossen.",correct:["Läden"],all:["Laden","Läden"],hint:"Plural"},
-{text:"Das ___ fliegt hoch.",correct:["Flugzeug"],all:["Flugzeug","Flugzeuge"],hint:"Singular"},
-{text:"Die ___ fliegen hoch.",correct:["Flugzeuge"],all:["Flugzeug","Flugzeuge"],hint:"Plural"},
-{text:"Der ___ ist teuer.",correct:["Schuh"],all:["Schuh","Schuhe"],hint:"Singular"},
-{text:"Die ___ sind teuer.",correct:["Schuhe"],all:["Schuh","Schuhe"],hint:"Plural"},
-{text:"Das ___ liegt auf dem Boden.",correct:["Blatt"],all:["Blatt","Blätter"],hint:"Singular"},
-{text:"Die ___ liegen auf dem Boden.",correct:["Blätter"],all:["Blatt","Blätter"],hint:"Plural"},
-{text:"Der ___ schwimmt im See.",correct:["Fisch"],all:["Fisch","Fische"],hint:"Singular"},
-{text:"Die ___ schwimmen im See.",correct:["Fische"],all:["Fisch","Fische"],hint:"Plural"},
-{text:"Die ___ ist kaputt.",correct:["Tür"],all:["Tür","Türen"],hint:"Singular"},
-{text:"Die ___ sind kaputt.",correct:["Türen"],all:["Tür","Türen"],hint:"Plural"},
-{text:"Der ___ ist steil.",correct:["Berg"],all:["Berg","Berge"],hint:"Singular"},
-{text:"Die ___ sind steil.",correct:["Berge"],all:["Berg","Berge"],hint:"Plural"},
-{text:"Das ___ ist süß.",correct:["Bonbon"],all:["Bonbon","Bonbons"],hint:"Singular"},
-{text:"Die ___ sind süß.",correct:["Bonbons"],all:["Bonbon","Bonbons"],hint:"Plural"},
-{text:"Die ___ ist lang.",correct:["Straße"],all:["Straße","Straßen"],hint:"Singular"},
-{text:"Die ___ sind lang.",correct:["Straßen"],all:["Straße","Straßen"],hint:"Plural"},
-{text:"Das ___ ist leer.",correct:["Glas"],all:["Glas","Gläser"],hint:"Singular"},
-{text:"Die ___ sind leer.",correct:["Gläser"],all:["Glas","Gläser"],hint:"Plural"},
-{text:"Der ___ ist scharf.",correct:["Stift"],all:["Stift","Stifte"],hint:"Singular"},
-{text:"Die ___ sind scharf.",correct:["Stifte"],all:["Stift","Stifte"],hint:"Plural"},
-{text:"Die ___ ist weich.",correct:["Decke"],all:["Decke","Decken"],hint:"Singular"},
-{text:"Die ___ sind weich.",correct:["Decken"],all:["Decke","Decken"],hint:"Plural"},
-{text:"Das ___ ist rund.",correct:["Ei"],all:["Ei","Eier"],hint:"Singular"},
-{text:"Die ___ sind rund.",correct:["Eier"],all:["Ei","Eier"],hint:"Plural"},
-{text:"Der ___ ist alt.",correct:["Freund"],all:["Freund","Freunde"],hint:"Singular"},
-{text:"Die ___ sind alt.",correct:["Freunde"],all:["Freund","Freunde"],hint:"Plural"},
-{text:"Die ___ ist neu.",correct:["Freundin"],all:["Freundin","Freundinnen"],hint:"Singular"},
-{text:"Die ___ sind neu.",correct:["Freundinnen"],all:["Freundin","Freundinnen"],hint:"Plural"},
-{text:"Das ___ ist teuer.",correct:["Ticket"],all:["Ticket","Tickets"],hint:"Singular"},
-{text:"Die ___ sind teuer.",correct:["Tickets"],all:["Ticket","Tickets"],hint:"Plural"},
-{text:"Der ___ ist grün.",correct:["Wald"],all:["Wald","Wälder"],hint:"Singular"},
-{text:"Die ___ sind grün.",correct:["Wälder"],all:["Wald","Wälder"],hint:"Plural"},
-{text:"Die ___ ist blau.",correct:["Hose"],all:["Hose","Hosen"],hint:"Singular"},
-{text:"Die ___ sind blau.",correct:["Hosen"],all:["Hose","Hosen"],hint:"Plural"},
-{text:"Der ___ ist schnell.",correct:["Zug"],all:["Zug","Züge"],hint:"Singular"},
-{text:"Die ___ sind schnell.",correct:["Züge"],all:["Zug","Züge"],hint:"Plural"},
-{text:"Die ___ ist süß.",correct:["Kirsche"],all:["Kirsche","Kirschen"],hint:"Singular"},
-{text:"Die ___ sind süß.",correct:["Kirschen"],all:["Kirsche","Kirschen"],hint:"Plural"},
-{text:"Der ___ ist hungrig.",correct:["Gast"],all:["Gast","Gäste"],hint:"Singular"},
-{text:"Die ___ sind hungrig.",correct:["Gäste"],all:["Gast","Gäste"],hint:"Plural"},
-{text:"Die ___ ist eng.",correct:["Gasse"],all:["Gasse","Gassen"],hint:"Singular"},
-{text:"Die ___ sind eng.",correct:["Gassen"],all:["Gasse","Gassen"],hint:"Plural"},
-{text:"Das ___ ist hell.",correct:["Licht"],all:["Licht","Lichter"],hint:"Singular"},
-{text:"Die ___ sind hell.",correct:["Lichter"],all:["Licht","Lichter"],hint:"Plural"},
-{text:"Die ___ tropft.",correct:["Nase"],all:["Nase","Nasen"],hint:"Singular"},
-{text:"Die ___ tropfen.",correct:["Nasen"],all:["Nase","Nasen"],hint:"Plural"},
-{text:"Das ___ ist voll.",correct:["Regal"],all:["Regal","Regale"],hint:"Singular"},
-{text:"Die ___ sind voll.",correct:["Regale"],all:["Regal","Regale"],hint:"Plural"},
-{text:"Der ___ ist spitz.",correct:["Bleistift"],all:["Bleistift","Bleistifte"],hint:"Singular"},
-{text:"Die ___ sind spitz.",correct:["Bleistifte"],all:["Bleistift","Bleistifte"],hint:"Plural"},
-{text:"Die ___ ist leer.",correct:["Flasche"],all:["Flasche","Flaschen"],hint:"Singular"},
-{text:"Die ___ sind leer.",correct:["Flaschen"],all:["Flasche","Flaschen"],hint:"Plural"},
-{text:"Das ___ ist schwer.",correct:["Paket"],all:["Paket","Pakete"],hint:"Singular"},
-{text:"Die ___ sind schwer.",correct:["Pakete"],all:["Paket","Pakete"],hint:"Plural"},
-{text:"Der ___ ist freundlich.",correct:["Nachbar"],all:["Nachbar","Nachbarn"],hint:"Singular"},
-{text:"Die ___ sind freundlich.",correct:["Nachbarn"],all:["Nachbar","Nachbarn"],hint:"Plural"},
-{text:"Die ___ ist geöffnet.",correct:["Bäckerei"],all:["Bäckerei","Bäckereien"],hint:"Singular"},
-{text:"Die ___ sind geöffnet.",correct:["Bäckereien"],all:["Bäckerei","Bäckereien"],hint:"Plural"},
-{text:"Das ___ ist leise.",correct:["Gespräch"],all:["Gespräch","Gespräche"],hint:"Singular"},
-{text:"Die ___ sind leise.",correct:["Gespräche"],all:["Gespräch","Gespräche"],hint:"Plural"},
-{text:"Die ___ ist rot.",correct:["Ampel"],all:["Ampel","Ampeln"],hint:"Singular"},
-{text:"Die ___ sind rot.",correct:["Ampeln"],all:["Ampel","Ampeln"],hint:"Plural"},
-{text:"Der ___ ist voll.",correct:["Bus"],all:["Bus","Busse"],hint:"Singular"},
-{text:"Die ___ sind voll.",correct:["Busse"],all:["Bus","Busse"],hint:"Plural"},
-{text:"Das ___ ist modern.",correct:["Gebäude"],all:["Gebäude","Gebäude"],hint:"Singular"},
-{text:"Die ___ sind modern.",correct:["Gebäude"],all:["Gebäude","Gebäude"],hint:"Plural"},
-{text:"Der ___ ist nass.",correct:["Boden"],all:["Boden","Böden"],hint:"Singular"},
-{text:"Die ___ sind nass.",correct:["Böden"],all:["Boden","Böden"],hint:"Plural"},
-{text:"Die ___ ist warm.",correct:["Suppe"],all:["Suppe","Suppen"],hint:"Singular"},
-{text:"Die ___ sind warm.",correct:["Suppen"],all:["Suppe","Suppen"],hint:"Plural"},
-{text:"Das ___ ist kalt.",correct:["Getränk"],all:["Getränk","Getränke"],hint:"Singular"},
-{text:"Die ___ sind kalt.",correct:["Getränke"],all:["Getränk","Getränke"],hint:"Plural"}
-];
+  var infos = {
+    art: "<p><b>der / die / das</b></p><ul><li><b>der</b> = maskulin</li><li><b>die</b> = feminin</li><li><b>das</b> = neutral</li></ul>",
+    plu: "<p><b>Singular</b> = Einzahl, <b>Plural</b> = Mehrzahl. Achte auf Signalwörter und die Verbform.</p>",
+    alt: "<p>Manche Wörter kann man im Kontext ersetzen. Mehrere Antworten können richtig sein.</p>",
+    kw: "<p><b>kennen</b> = Personen, Orte, Dinge<br><b>wissen</b> = Fakten und Informationen</p>",
+    ob: "<p><b>wenn</b> = Bedingung<br><b>ob</b> = Unsicherheit / indirekte Frage</p>",
+    als: "<p><b>als</b> = Ungleichheit (größer als)<br><b>wie</b> = Gleichheit (so groß wie)</p>",
+    err: "<p>Häufige Fehler: einzigste, frägt, ladet, falscher Fall usw.</p>",
+    tri: "<p>Allgemeinwissen zu Deutschland. Manchmal sind mehrere Antworten richtig.</p>",
+    red: "<p>Wähle die passende Bedeutung der Redewendung.</p>"
+  };
 
-/* ===================== 100 WORT-ALTERNATIVEN ===================== */
-const altPool=[
-{text:"Kannst du bitte die Tür ___?",correct:["öffnen","aufmachen"],all:["öffnen","aufmachen","schließen"],hint:"öffnen = aufmachen"},
-{text:"Ich muss das Fenster ___.",correct:["schließen","zumachen"],all:["schließen","zumachen","öffnen"],hint:"schließen = zumachen"},
-{text:"Lass uns etwas zu essen ___.",correct:["kochen","zubereiten"],all:["kochen","zubereiten","backen"],hint:"kochen/zubereiten"},
-{text:"Sie möchte einen Kuchen ___.",correct:["backen"],all:["backen","kochen","braten"],hint:"Kuchen → backen"},
-{text:"Wir ___ jeden Morgen im Park.",correct:["laufen","joggen"],all:["laufen","joggen","rennen"],hint:"laufen/joggen"},
-{text:"Das Kind ___ schnell über den Hof.",correct:["rennt","läuft"],all:["rennt","läuft","geht"],hint:"schnell → rennen/laufen"},
-{text:"Ich ___ heute zum Supermarkt.",correct:["gehe"],all:["gehe","laufe","renne"],hint:"gehen"},
-{text:"Kannst du mir das Buch ___?",correct:["geben","reichen"],all:["geben","reichen","nehmen"],hint:"geben = reichen"},
-{text:"Er hat das Geschenk ___.",correct:["bekommen","erhalten"],all:["bekommen","erhalten","genommen"],hint:"bekommen = erhalten"},
-{text:"Ich möchte dieses Handy ___.",correct:["kaufen"],all:["kaufen","verkaufen","leihen"],hint:"kaufen"},
-{text:"Sie will ihr altes Auto ___.",correct:["verkaufen"],all:["verkaufen","kaufen","verschenken"],hint:"verkaufen"},
-{text:"Ich muss meiner Freundin eine Nachricht ___.",correct:["schreiben","schicken"],all:["schreiben","schicken","rufen"],hint:"schreiben/schicken"},
-{text:"Er hat mich gestern ___.",correct:["angerufen"],all:["angerufen","geschrieben","besucht"],hint:"angerufen"},
-{text:"Wir müssen das Problem ___.",correct:["lösen"],all:["lösen","machen","finden"],hint:"lösen"},
-{text:"Ich habe den Schlüssel ___.",correct:["gefunden"],all:["gefunden","gesucht","verlegt"],hint:"gefunden"},
-{text:"Sie ___ jeden Tag Sport.",correct:["macht","treibt"],all:["macht","treibt","spielt"],hint:"Sport machen/treiben"},
-{text:"Lass uns eine Pause ___.",correct:["machen"],all:["machen","tun","nehmen"],hint:"Pause machen"},
-{text:"Ich habe einen Fehler ___.",correct:["gemacht"],all:["gemacht","getan","erledigt"],hint:"Fehler machen"},
-{text:"Kannst du das Licht ___?",correct:["anmachen","anschalten"],all:["anmachen","anschalten","ausmachen"],hint:"anmachen/anschalten"},
-{text:"Ich muss noch die Hausaufgaben ___.",correct:["machen","erledigen"],all:["machen","erledigen","tun"],hint:"machen/erledigen"},
-{text:"Er hat seine Arbeit schon ___.",correct:["erledigt","gemacht"],all:["erledigt","gemacht","getan"],hint:"erledigt/gemacht"},
-{text:"Wir ___ um 8 Uhr auf.",correct:["stehen"],all:["stehen","wachen","kommen"],hint:"aufstehen"},
-{text:"Das Baby ist gerade ___.",correct:["eingeschlafen"],all:["eingeschlafen","aufgewacht","aufgestanden"],hint:"eingeschlafen"},
-{text:"Kannst du das bitte ___?",correct:["wiederholen"],all:["wiederholen","erklären","übersetzen"],hint:"wiederholen"},
-{text:"Er hat mir die Regel ___.",correct:["erklärt"],all:["erklärt","gesagt","erzählt"],hint:"erklärt"},
-{text:"Ich möchte die Geschichte ___.",correct:["erzählen"],all:["erzählen","sagen","sprechen"],hint:"erzählen"},
-{text:"Wir müssen uns beeilen und ___.",correct:["losgehen","aufbrechen"],all:["losgehen","aufbrechen","ankommen"],hint:"losgehen/aufbrechen"},
-{text:"Kannst du mir kurz ___?",correct:["helfen"],all:["helfen","retten","unterstützen"],hint:"helfen"},
-{text:"Ich habe lange ___.",correct:["geschlafen"],all:["geschlafen","geruht","gelegen"],hint:"geschlafen"},
-{text:"Bitte ___ die Musik leiser.",correct:["mach","dreh"],all:["mach","dreh","tu"],hint:"leiser machen"},
-{text:"Sie hat die Tür ___.",correct:["zugemacht","geschlossen"],all:["zugemacht","geschlossen","geöffnet"],hint:"schließen/zumachen"},
-{text:"Kannst du das Fenster ___?",correct:["aufmachen","öffnen"],all:["aufmachen","öffnen","schließen"],hint:"öffnen/aufmachen"},
-{text:"Ich ___ das Essen fertig.",correct:["mache","bereite"],all:["mache","bereite","backe"],hint:"fertig machen/zubereiten"},
-{text:"Er ___ das Auto in die Garage.",correct:["stellt","fährt"],all:["stellt","fährt","wirft"],hint:"stellt/fährt"},
-{text:"Wir ___ uns später.",correct:["sehen","treffen"],all:["sehen","treffen","hören"],hint:"sehen/treffen"},
-{text:"Sie hat mir das Paket ___.",correct:["geschickt","gesendet"],all:["geschickt","gesendet","gebracht"],hint:"geschickt/gesendet"},
-{text:"Ich muss den Müll ___.",correct:["rausbringen","wegbringen"],all:["rausbringen","wegbringen","holen"],hint:"rausbringen"},
-{text:"Kannst du die Pflanzen ___?",correct:["gießen","wässern"],all:["gießen","wässern","schneiden"],hint:"gießen/wässern"},
-{text:"Er hat den Termin ___.",correct:["abgesagt","storniert"],all:["abgesagt","storniert","gemacht"],hint:"absagen/stornieren"},
-{text:"Wir ___ das Projekt ab.",correct:["schließen","beenden"],all:["schließen","beenden","öffnen"],hint:"abschließen/beenden"},
-{text:"Sie ___ die Wahrheit.",correct:["sagt","erzählt"],all:["sagt","erzählt","fragt"],hint:"sagen/erzählen"},
-{text:"Ich ___ dich später an.",correct:["rufe","rufe an"],all:["rufe","schreibe","besuche"],hint:"anrufen"},
-{text:"Er hat das Problem ___.",correct:["gelöst","behoben"],all:["gelöst","behoben","gemacht"],hint:"lösen/beheben"},
-{text:"Kannst du mir das ___?",correct:["zeigen","erklären"],all:["zeigen","erklären","verstecken"],hint:"zeigen/erklären"},
-{text:"Wir ___ um 7 Uhr ab.",correct:["fahren","starten"],all:["fahren","starten","ankommen"],hint:"abfahren/starten"},
-{text:"Sie hat den Brief ___.",correct:["geschrieben","verfasst"],all:["geschrieben","verfasst","gelesen"],hint:"schreiben/verfassen"},
-{text:"Ich ___ das Fenster zu.",correct:["mache","schließe"],all:["mache","schließe","öffne"],hint:"zumachen/schließen"},
-{text:"Er ___ die Rechnung.",correct:["bezahlt","begleicht"],all:["bezahlt","begleicht","schreibt"],hint:"bezahlen"},
-{text:"Wir ___ das Treffen ab.",correct:["sagen","sagen ab"],all:["sagen","planen","machen"],hint:"absagen"},
-{text:"Sie ___ den Hund Gassi.",correct:["führt","nimmt"],all:["führt","nimmt","lässt"],hint:"Gassi führen"},
-{text:"Ich ___ den Kaffee heiß.",correct:["trinke","nehme"],all:["trinke","nehme","esse"],hint:"trinken"},
-{text:"Er ___ die Nachrichten.",correct:["liest","schaut"],all:["liest","schaut","schreibt"],hint:"lesen/schauen"},
-{text:"Kannst du das bitte ___?",correct:["aufheben","aufräumen"],all:["aufheben","aufräumen","wegwerfen"],hint:"aufheben/aufräumen"},
-{text:"Wir ___ das Licht aus.",correct:["machen","schalten"],all:["machen","schalten","lassen"],hint:"ausmachen"},
-{text:"Sie hat das Kind ___.",correct:["abgeholt","geholt"],all:["abgeholt","geholt","gebracht"],hint:"abholen"},
-{text:"Ich ___ den Bus um 8.",correct:["nehme","kriege"],all:["nehme","kriege","mache"],hint:"Bus nehmen"},
-{text:"Er ___ die Tür auf.",correct:["macht","stößt"],all:["macht","stößt","schließt"],hint:"aufmachen"},
-{text:"Wir ___ das Fest vor.",correct:["bereiten","planen"],all:["bereiten","planen","feiern"],hint:"vorbereiten"},
-{text:"Sie ___ den Text.",correct:["übersetzt","überträgt"],all:["übersetzt","überträgt","löscht"],hint:"übersetzen"},
-{text:"Ich ___ das Formular aus.",correct:["fülle","schreibe"],all:["fülle","schreibe","lese"],hint:"ausfüllen"},
-{text:"Er ___ den Müll weg.",correct:["bringt","schafft"],all:["bringt","schafft","holt"],hint:"wegbringen"},
-{text:"Kannst du mir ___?",correct:["Bescheid geben","sagen"],all:["Bescheid geben","sagen","schweigen"],hint:"Bescheid geben"},
-{text:"Wir ___ das Thema ab.",correct:["haken","schließen"],all:["haken","schließen","öffnen"],hint:"abhaken"},
-{text:"Sie ___ die Regel.",correct:["erklärt","verdeutlicht"],all:["erklärt","verdeutlicht","bricht"],hint:"erklären"},
-{text:"Ich ___ den Film.",correct:["schaue","sehe"],all:["schaue","sehe","höre"],hint:"schauen/sehen"},
-{text:"Er ___ die Wahrheit.",correct:["sagt","gesteht"],all:["sagt","gesteht","verheimlicht"],hint:"sagen"},
-{text:"Wir ___ uns beeilen.",correct:["müssen","sollten"],all:["müssen","sollten","können"],hint:"müssen"},
-{text:"Sie ___ den Termin.",correct:["verschiebt","verlegt"],all:["verschiebt","verlegt","macht"],hint:"verschieben"},
-{text:"Ich ___ das Paket ab.",correct:["hole","nehme"],all:["hole","nehme","schicke"],hint:"abholen"},
-{text:"Er ___ die Frage.",correct:["beantwortet","klärt"],all:["beantwortet","klärt","stellt"],hint:"beantworten"},
-{text:"Kannst du das ___?",correct:["übernehmen","machen"],all:["übernehmen","machen","lassen"],hint:"übernehmen"},
-{text:"Wir ___ das Gespräch fort.",correct:["setzen","führen"],all:["setzen","führen","beenden"],hint:"fortsetzen"},
-{text:"Sie ___ den Hund.",correct:["füttert","versorgt"],all:["füttert","versorgt","jagt"],hint:"füttern"},
-{text:"Ich ___ die Wäsche auf.",correct:["hänge","mache"],all:["hänge","mache","wasche"],hint:"aufhängen"},
-{text:"Er ___ den Computer aus.",correct:["schaltet","macht"],all:["schaltet","macht","öffnet"],hint:"ausschalten"},
-{text:"Wir ___ das Angebot an.",correct:["nehmen","akzeptieren"],all:["nehmen","akzeptieren","lehnen"],hint:"annehmen"},
-{text:"Sie ___ den Vorschlag ab.",correct:["lehnt","weist"],all:["lehnt","weist","nimmt"],hint:"ablehnen"},
-{text:"Ich ___ den Text Korrektur.",correct:["lese"],all:["lese","schreibe","lösche"],hint:"Korrektur lesen"},
-{text:"Er ___ die Rechnung.",correct:["prüft","kontrolliert"],all:["prüft","kontrolliert","zahlt"],hint:"prüfen"},
-{text:"Kannst du mir das ___?",correct:["besorgen","holen"],all:["besorgen","holen","werfen"],hint:"besorgen"},
-{text:"Wir ___ das Problem an.",correct:["gehen","packen"],all:["gehen","packen","ignorieren"],hint:"anpacken"},
-{text:"Sie ___ den Termin ein.",correct:["hält","nimmt"],all:["hält","nimmt","sagt ab"],hint:"einhalten"},
-{text:"Ich ___ den Anruf entgegen.",correct:["nehme","gehe"],all:["nehme","gehe","lege auf"],hint:"entgegennehmen"},
-{text:"Er ___ die Tür zu.",correct:["wirft","schlägt"],all:["wirft","schlägt","öffnet"],hint:"zuwerfen"},
-{text:"Wir ___ das Licht an.",correct:["machen","schalten"],all:["machen","schalten","löschen"],hint:"anmachen"},
-{text:"Sie ___ den Kaffee ein.",correct:["schenkt","gießt"],all:["schenkt","gießt","trinkt"],hint:"einschenken"},
-{text:"Ich ___ den Tisch.",correct:["decke","mache"],all:["decke","mache","räume"],hint:"decken"},
-{text:"Er ___ das Bett.",correct:["macht","bezieht"],all:["macht","bezieht","schläft"],hint:"Bett machen"},
-{text:"Kannst du das ___?",correct:["reparieren","richten"],all:["reparieren","richten","zerstören"],hint:"reparieren"},
-{text:"Wir ___ das Treffen.",correct:["verschieben","verlegen"],all:["verschieben","verlegen","absagen"],hint:"verschieben"},
-{text:"Sie ___ die Nachricht.",correct:["löscht","entfernt"],all:["löscht","entfernt","schreibt"],hint:"löschen"},
-{text:"Ich ___ den Plan.",correct:["ändere","überarbeite"],all:["ändere","überarbeite","ignoriere"],hint:"ändern"},
-{text:"Er ___ die Regel.",correct:["befolgt","hält ein"],all:["befolgt","hält ein","bricht"],hint:"befolgen"},
-{text:"Wir ___ das Ziel.",correct:["erreichen","schaffen"],all:["erreichen","schaffen","verfehlen"],hint:"erreichen"},
-{text:"Sie ___ den Erfolg.",correct:["feiert","genießt"],all:["feiert","genießt","versteckt"],hint:"feiern"},
-{text:"Ich ___ den Moment.",correct:["genieße","nutze"],all:["genieße","nutze","vergesse"],hint:"genießen"},
-{text:"Er ___ die Chance.",correct:["nutzt","ergreift"],all:["nutzt","ergreift","verpasst"],hint:"nutzen"},
-{text:"Kannst du das ___?",correct:["bestätigen","zusagen"],all:["bestätigen","zusagen","absagen"],hint:"bestätigen"},
-{text:"Wir ___ die Details.",correct:["klären","besprechen"],all:["klären","besprechen","ignorieren"],hint:"klären"},
-{text:"Sie ___ den Vertrag.",correct:["unterschreibt","unterzeichnet"],all:["unterschreibt","unterzeichnet","zerrreißt"],hint:"unterschreiben"},
-{text:"Ich ___ die Unterlagen.",correct:["schicke","sende"],all:["schicke","sende","werfe weg"],hint:"schicken"},
-{text:"Er ___ die Aufgabe.",correct:["übernimmt","macht"],all:["übernimmt","macht","verweigert"],hint:"übernehmen"}
-];
-
-/* ===================== 100 KENNEN/WISSEN ===================== */
-const kwPool=[
-{text:"Ich ___ seine Telefonnummer nicht.",correct:["weiß"],all:["kenne","weiß"],hint:"Fakten → wissen"},
-{text:"___ du diesen Mann?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Personen → kennen"},
-{text:"Ich ___ Berlin sehr gut.",correct:["kenne"],all:["kenne","weiß"],hint:"Orte → kennen"},
-{text:"___ du, wie spät es ist?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Sie ___ die Antwort nicht.",correct:["weiß"],all:["kennt","weiß"],hint:"Fakten → wissen"},
-{text:"Ich ___ das Buch schon.",correct:["kenne"],all:["kenne","weiß"],hint:"Bücher → kennen"},
-{text:"___ du den Weg zum Bahnhof?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Wege → kennen"},
-{text:"Ich ___ nicht, ob er kommt.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"Wir ___ uns seit der Schule.",correct:["kennen"],all:["kennen","wissen"],hint:"Personen → kennen"},
-{text:"___ du, dass er umgezogen ist?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"___ du das Lied?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Lieder → kennen"},
-{text:"Er ___ nicht, was er will.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"Ich ___ die Stadt kaum.",correct:["kenne"],all:["kenne","weiß"],hint:"Orte → kennen"},
-{text:"___ ihr den neuen Kollegen?",correct:["Kennt"],all:["Kennt","Wisst"],hint:"Personen → kennen"},
-{text:"Ich ___ genau, wo er wohnt.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"___ du mein Passwort?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Ich ___ ihn nur vom Sehen.",correct:["kenne"],all:["kenne","weiß"],hint:"Personen → kennen"},
-{text:"Wir ___ nicht, wann der Zug kommt.",correct:["wissen"],all:["kennen","wissen"],hint:"Info → wissen"},
-{text:"___ du dieses Restaurant?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Orte → kennen"},
-{text:"Er ___ die Lösung.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"Ich ___ das Gefühl.",correct:["kenne"],all:["kenne","weiß"],hint:"Gefühle → kennen"},
-{text:"___ du, ob sie da ist?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Sie ___ die Regeln sehr gut.",correct:["kennt"],all:["kennt","weiß"],hint:"Regeln → kennen"},
-{text:"Ich ___ nicht mehr, was er gesagt hat.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"___ ihr euch noch?",correct:["Kennt"],all:["Kennt","Wisst"],hint:"Personen → kennen"},
-{text:"Er ___ viel über Geschichte.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"Ich ___ den Film schon.",correct:["kenne"],all:["kenne","weiß"],hint:"Filme → kennen"},
-{text:"___ du den Grund?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"___ du den Unterschied?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Ich ___ seine Adresse nicht.",correct:["weiß"],all:["kenne","weiß"],hint:"Fakt → wissen"},
-{text:"___ du diese App?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Dinge → kennen"},
-{text:"Ich ___ nicht, wie das geht.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"Sie ___ alle Nachbarn.",correct:["kennt"],all:["kennt","weiß"],hint:"Personen → kennen"},
-{text:"___ du, wer das war?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Ich ___ dieses Gefühl gut.",correct:["kenne"],all:["kenne","weiß"],hint:"Gefühle → kennen"},
-{text:"Er ___ die Antwort auswendig.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"___ du München?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Orte → kennen"},
-{text:"Wir ___ nicht, ob das stimmt.",correct:["wissen"],all:["kennen","wissen"],hint:"Info → wissen"},
-{text:"Ich ___ ihren Bruder.",correct:["kenne"],all:["kenne","weiß"],hint:"Personen → kennen"},
-{text:"___ du, wo mein Schlüssel ist?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Sie ___ die Stadt wie ihre Westentasche.",correct:["kennt"],all:["kennt","weiß"],hint:"Orte → kennen"},
-{text:"Ich ___ nicht, was ich sagen soll.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"___ du diesen Schauspieler?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Personen → kennen"},
-{text:"Er ___ die Wahrheit.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"Ich ___ das Problem.",correct:["kenne"],all:["kenne","weiß"],hint:"vertraut sein → kennen"},
-{text:"___ du, wie man das schreibt?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Wir ___ uns seit Jahren.",correct:["kennen"],all:["kennen","wissen"],hint:"Personen → kennen"},
-{text:"Sie ___ nicht, ob er kommt.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"___ du das Rezept?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Dinge → kennen"},
-{text:"Ich ___ die Lösung nicht.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"Er ___ alle Regeln.",correct:["kennt"],all:["kennt","weiß"],hint:"Regeln → kennen"},
-{text:"___ du, wann der Bus kommt?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Ich ___ diesen Geruch.",correct:["kenne"],all:["kenne","weiß"],hint:"Dinge → kennen"},
-{text:"Sie ___ viel über Politik.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"___ du meinen Cousin?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Personen → kennen"},
-{text:"Wir ___ nicht den genauen Termin.",correct:["wissen"],all:["kennen","wissen"],hint:"Info → wissen"},
-{text:"Ich ___ das Lied aus dem Radio.",correct:["kenne"],all:["kenne","weiß"],hint:"Lieder → kennen"},
-{text:"___ du, ob es regnet?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Er ___ die Gefahr.",correct:["kennt"],all:["kennt","weiß"],hint:"vertraut → kennen"},
-{text:"Ich ___ nicht, wie spät es ist.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"___ du diese Straße?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Orte → kennen"},
-{text:"Sie ___ die Antwort schon.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"Ich ___ ihn vom Verein.",correct:["kenne"],all:["kenne","weiß"],hint:"Personen → kennen"},
-{text:"___ du, was das bedeutet?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Wir ___ das Museum gut.",correct:["kennen"],all:["kennen","wissen"],hint:"Orte → kennen"},
-{text:"Er ___ nicht, warum.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"___ du das Spiel?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Dinge → kennen"},
-{text:"Ich ___ die Nummer auswendig.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"Sie ___ viele Sprachen.",correct:["kann"],all:["kennt","weiß","kann"],hint:"Sprachen → können"},
-{text:"___ du, wer angerufen hat?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Ich ___ dieses Café.",correct:["kenne"],all:["kenne","weiß"],hint:"Orte → kennen"},
-{text:"Er ___ die Geschichte.",correct:["kennt"],all:["kennt","weiß"],hint:"vertraut → kennen"},
-{text:"___ du, ob sie Zeit hat?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Wir ___ den Lehrer seit der ersten Klasse.",correct:["kennen"],all:["kennen","wissen"],hint:"Personen → kennen"},
-{text:"Ich ___ nicht den Namen.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"___ du diesen Autor?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Personen → kennen"},
-{text:"Sie ___ die Lösung bereits.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"Ich ___ das Gebäude.",correct:["kenne"],all:["kenne","weiß"],hint:"Dinge → kennen"},
-{text:"___ du, wie das Wort heißt?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Er ___ alle Kollegen.",correct:["kennt"],all:["kennt","weiß"],hint:"Personen → kennen"},
-{text:"Ich ___ nicht, ob das erlaubt ist.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"___ du das Gefühl?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Gefühle → kennen"},
-{text:"Wir ___ die Regel.",correct:["kennen"],all:["kennen","wissen"],hint:"Regeln → kennen"},
-{text:"Sie ___ nicht den Weg.",correct:["kennt"],all:["kennt","weiß"],hint:"Wege → kennen"},
-{text:"___ du, dass er krank ist?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Ich ___ diesen Geruch von zu Hause.",correct:["kenne"],all:["kenne","weiß"],hint:"Dinge → kennen"},
-{text:"Er ___ die Antwort nicht.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"___ du meine Schwester?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Personen → kennen"},
-{text:"Ich ___ genau, was du meinst.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
-{text:"Sie ___ die Stadt kaum.",correct:["kennt"],all:["kennt","weiß"],hint:"Orte → kennen"},
-{text:"___ du, wann wir anfangen?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Wir ___ uns flüchtig.",correct:["kennen"],all:["kennen","wissen"],hint:"Personen → kennen"},
-{text:"Ich ___ das Problem gut.",correct:["kenne"],all:["kenne","weiß"],hint:"vertraut → kennen"},
-{text:"___ du den Text?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Dinge → kennen"},
-{text:"Er ___ nicht, was passiert ist.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"Ich ___ diesen Song.",correct:["kenne"],all:["kenne","weiß"],hint:"Lieder → kennen"},
-{text:"___ du, ob das stimmt?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
-{text:"Sie ___ alle Details.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
-{text:"Ich ___ den Unterschied.",correct:["kenne"],all:["kenne","weiß"],hint:"vertraut → kennen"},
-{text:"___ du diesen Trick?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Dinge → kennen"},
-{text:"Wir ___ nicht den genauen Preis.",correct:["wissen"],all:["kennen","wissen"],hint:"Info → wissen"}
-];
-
-/* ===================== 100 OB/WENN (gemischt) ===================== */
-const obPool=[
-{text:"Ich weiß nicht, ___ er kommt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ es regnet, bleiben wir zu Hause.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sie fragt, ___ wir Zeit haben.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ du Hunger hast, gibt es Pizza.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich bin unsicher, ___ das stimmt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ er anruft, sag Bescheid.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Weißt du, ___ der Zug pünktlich ist?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ ich Zeit habe, helfe ich dir.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Es ist egal, ___ du mitkommst oder nicht.",correct:["ob"],all:["ob","wenn"],hint:"ob … oder"},
-{text:"___ das Wetter schön ist, gehen wir wandern.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich frage mich, ___ sie das weiß.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du willst, können wir uns später treffen.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sag mir, ___ du einverstanden bist.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ er krank ist, bleibt er im Bett.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Niemand weiß, ___ das funktioniert.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du fertig bist, ruf mich an.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich bin gespannt, ___ er die Prüfung besteht.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ es kalt wird, ziehe ich eine Jacke an.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sie überlegt, ___ sie absagen soll.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das Buch gelesen hast, verstehst du die Geschichte.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Kannst du mir sagen, ___ der Laden offen ist?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ ich dich sehe, freue ich mich.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Es ist unklar, ___ wir rechtzeitig ankommen.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du Hilfe brauchst, melde dich.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich weiß nicht, ___ das die beste Lösung ist.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ er pünktlich kommt, können wir anfangen.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Frag sie, ___ sie mitspielen will.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ das stimmt, müssen wir handeln.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Er hat nicht gesagt, ___ er kommt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du müde bist, leg dich hin.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich bin mir nicht sicher, ___ ich das schaffe.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das Fenster öffnest, wird es kühler.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Weißt du, ___ sie schon da ist?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ ich Urlaub habe, fahre ich ans Meer.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Es interessiert mich, ___ das wahr ist.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das Auto nimmst, kommst du schneller an.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sag mir bitte, ___ du zustimmst.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ es schneit, bleiben die Schulen zu.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich weiß nicht, ___ ich richtig liege.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das tust, riskierst du viel.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Kannst du herausfinden, ___ er Zeit hat?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ ich fertig bin, rufe ich dich an.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sie fragt sich, ___ das erlaubt ist.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das Buch brauchst, leihe ich es dir.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Niemand weiß genau, ___ das passiert ist.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ er die Wahrheit sagt, glauben wir ihm.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich bin neugierig, ___ sie absagt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das Licht ausmachst, spare ich Strom.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Weißt du, ___ der Film gut ist?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ ich Hunger habe, koche ich etwas.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Es ist unsicher, ___ wir gewinnen.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das tust, bin ich froh.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Frag ihn, ___ er mitkommt.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ das Telefon klingelt, geh bitte ran.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich weiß nicht, ___ ich das schaffen kann.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das verstehst, erklärst du es mir.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sie möchte wissen, ___ das möglich ist.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ er pünktlich ist, starten wir.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Es ist unklar, ___ das stimmt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das hörst, freust du dich.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Kannst du sagen, ___ er da war?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ ich das sehe, muss ich lachen.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich bin unsicher, ___ ich kommen kann.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das machst, helfe ich dir.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Er fragt, ___ wir einverstanden sind.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ es dunkel wird, gehen wir nach Hause.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Niemand weiß, ___ das der Fall ist.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das willst, machen wir es so.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich möchte wissen, ___ das funktioniert.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ er das hört, wird er wütend.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sie ist unsicher, ___ sie absagen soll.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das brauchst, nimm es.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Weißt du, ___ sie schon gegessen hat?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ ich das schaffe, bin ich stolz.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Es ist fraglich, ___ das reicht.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das siehst, verstehst du es.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Frag nach, ___ der Termin noch frei ist.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ er das tut, riskiert er viel.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich weiß nicht, ___ ich recht habe.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das hörst, freu dich.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sie möchte wissen, ___ wir kommen.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ das passiert, ruf mich an.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Es ist ungewiss, ___ er gewinnt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das liest, verstehst du mich.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Kannst du prüfen, ___ das stimmt?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ ich das sehe, denke ich an dich.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Er ist unsicher, ___ er absagen soll.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das tust, danke ich dir.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich frage mich, ___ das der richtige Weg ist.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ es regnet, nehmen wir den Bus.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Weißt du, ___ sie Bescheid weiß?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ du das brauchst, sag Bescheid.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Niemand weiß, ___ das noch gilt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ er das hört, lacht er.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Sie ist gespannt, ___ wir gewinnen.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ du das machst, bin ich zufrieden.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Ich weiß nicht, ___ ich mitkommen soll.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
-{text:"___ das klappt, feiern wir.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
-{text:"Frag nach, ___ Plätze frei sind.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
-{text:"___ du das verstehst, ist alles klar.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"}
-];
-
-/* ===================== 100 ALS/WIE ===================== */
-const alsPool=[
-{text:"Er ist größer ___ sein Bruder.",correct:["als"],all:["als","wie"],hint:"Ungleichheit → als"},
-{text:"Sie singt so schön ___ eine Opernsängerin.",correct:["wie"],all:["als","wie"],hint:"Gleichheit → wie"},
-{text:"Ich bin älter ___ du.",correct:["als"],all:["als","wie"],hint:"älter → als"},
-{text:"Das Auto ist so teuer ___ ein Haus.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Heute ist es kälter ___ gestern.",correct:["als"],all:["als","wie"],hint:"kälter → als"},
-{text:"Er läuft so schnell ___ ein Gepard.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Mein Handy ist neuer ___ deins.",correct:["als"],all:["als","wie"],hint:"neuer → als"},
-{text:"Sie sieht aus ___ ihre Mutter.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Das war einfacher ___ gedacht.",correct:["als"],all:["als","wie"],hint:"einfacher → als"},
-{text:"Er spricht Deutsch so gut ___ ein Muttersprachler.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Ich habe mehr Bücher ___ du.",correct:["als"],all:["als","wie"],hint:"mehr … als"},
-{text:"Das Wetter ist heute genauso schön ___ gestern.",correct:["wie"],all:["als","wie"],hint:"genauso … wie"},
-{text:"Sie ist jünger ___ ihre Schwester.",correct:["als"],all:["als","wie"],hint:"jünger → als"},
-{text:"Er arbeitet so hart ___ sein Vater.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das Ergebnis war besser ___ erwartet.",correct:["als"],all:["als","wie"],hint:"besser → als"},
-{text:"Du bist so nett ___ immer.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Ich trinke lieber Tee ___ Kaffee.",correct:["als"],all:["als","wie"],hint:"lieber … als"},
-{text:"Das Haus sieht aus ___ ein Schloss.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Er kam später ___ vereinbart.",correct:["als"],all:["als","wie"],hint:"später → als"},
-{text:"Sie tanzt so elegant ___ eine Tänzerin.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Mein Bruder ist größer ___ ich.",correct:["als"],all:["als","wie"],hint:"größer → als"},
-{text:"Das schmeckt so gut ___ bei meiner Oma.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Die Prüfung war schwieriger ___ letztes Jahr.",correct:["als"],all:["als","wie"],hint:"schwieriger → als"},
-{text:"Er benimmt sich ___ ein Kind.",correct:["wie"],all:["als","wie"],hint:"sich benehmen wie"},
-{text:"Ich habe weniger Geld ___ du.",correct:["als"],all:["als","wie"],hint:"weniger … als"},
-{text:"Sie spricht so leise ___ ein Flüstern.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war teurer ___ geplant.",correct:["als"],all:["als","wie"],hint:"teurer → als"},
-{text:"Du siehst aus ___ jemand, der nicht geschlafen hat.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Er ist klüger ___ die meisten.",correct:["als"],all:["als","wie"],hint:"klüger → als"},
-{text:"Das fühlt sich an ___ Seide.",correct:["wie"],all:["als","wie"],hint:"sich anfühlen wie"},
-{text:"Ich bin schneller ___ er.",correct:["als"],all:["als","wie"],hint:"schneller → als"},
-{text:"Sie ist so freundlich ___ immer.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war schlimmer ___ gedacht.",correct:["als"],all:["als","wie"],hint:"schlimmer → als"},
-{text:"Er sieht aus ___ sein Vater.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Ich habe mehr Zeit ___ gestern.",correct:["als"],all:["als","wie"],hint:"mehr … als"},
-{text:"Das klingt so schön ___ ein Lied.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Sie ist kleiner ___ ihre Freundin.",correct:["als"],all:["als","wie"],hint:"kleiner → als"},
-{text:"Er benimmt sich so ___ ein Gentleman.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war leichter ___ erwartet.",correct:["als"],all:["als","wie"],hint:"leichter → als"},
-{text:"Du bist so mutig ___ ein Held.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Ich bin ruhiger ___ vorher.",correct:["als"],all:["als","wie"],hint:"ruhiger → als"},
-{text:"Das riecht so gut ___ frisches Brot.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Sie ist besser ___ ich im Tennis.",correct:["als"],all:["als","wie"],hint:"besser → als"},
-{text:"Er spricht so klar ___ ein Nachrichtensprecher.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war teurer ___ das andere.",correct:["als"],all:["als","wie"],hint:"teurer → als"},
-{text:"Du siehst aus ___ eine Schauspielerin.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Ich habe weniger Stress ___ früher.",correct:["als"],all:["als","wie"],hint:"weniger … als"},
-{text:"Das schmeckt so ___ Schokolade.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Sie ist älter ___ sie aussieht.",correct:["als"],all:["als","wie"],hint:"älter → als"},
-{text:"Er läuft so ___ der Wind.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war schwieriger ___ gedacht.",correct:["als"],all:["als","wie"],hint:"schwieriger → als"},
-{text:"Du bist so klug ___ immer.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Ich bin zufriedener ___ vorher.",correct:["als"],all:["als","wie"],hint:"zufriedener → als"},
-{text:"Das fühlt sich an ___ Samt.",correct:["wie"],all:["als","wie"],hint:"sich anfühlen wie"},
-{text:"Sie ist freundlicher ___ er.",correct:["als"],all:["als","wie"],hint:"freundlicher → als"},
-{text:"Er sieht aus ___ ein Model.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Das war billiger ___ erwartet.",correct:["als"],all:["als","wie"],hint:"billiger → als"},
-{text:"Du klingst so ___ deine Mutter.",correct:["wie"],all:["als","wie"],hint:"klingen wie"},
-{text:"Ich habe mehr Glück ___ du.",correct:["als"],all:["als","wie"],hint:"mehr … als"},
-{text:"Das sieht aus ___ neu.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Sie ist schneller ___ alle anderen.",correct:["als"],all:["als","wie"],hint:"schneller → als"},
-{text:"Er benimmt sich so ___ ein Profi.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war besser ___ nichts.",correct:["als"],all:["als","wie"],hint:"besser → als"},
-{text:"Du bist so ruhig ___ ein See.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Ich bin müder ___ gestern.",correct:["als"],all:["als","wie"],hint:"müder → als"},
-{text:"Das riecht so ___ Sommer.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Sie ist talentierter ___ er.",correct:["als"],all:["als","wie"],hint:"talentierter → als"},
-{text:"Er spricht so ___ ein Lehrer.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war länger ___ geplant.",correct:["als"],all:["als","wie"],hint:"länger → als"},
-{text:"Du siehst aus ___ frisch verliebt.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Ich habe weniger Angst ___ früher.",correct:["als"],all:["als","wie"],hint:"weniger … als"},
-{text:"Das klingt so ___ Musik.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Sie ist stärker ___ ich dachte.",correct:["als"],all:["als","wie"],hint:"stärker → als"},
-{text:"Er benimmt sich so ___ immer.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war kürzer ___ erwartet.",correct:["als"],all:["als","wie"],hint:"kürzer → als"},
-{text:"Du bist so warmherzig ___ deine Oma.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Ich bin glücklicher ___ zuvor.",correct:["als"],all:["als","wie"],hint:"glücklicher → als"},
-{text:"Das fühlt sich an ___ Freiheit.",correct:["wie"],all:["als","wie"],hint:"sich anfühlen wie"},
-{text:"Sie ist höflicher ___ die anderen.",correct:["als"],all:["als","wie"],hint:"höflicher → als"},
-{text:"Er sieht aus ___ er hat gewonnen.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Das war einfacher ___ das letzte Mal.",correct:["als"],all:["als","wie"],hint:"einfacher → als"},
-{text:"Du klingst so ___ ein Profi.",correct:["wie"],all:["als","wie"],hint:"klingen wie"},
-{text:"Ich habe mehr Energie ___ gestern.",correct:["als"],all:["als","wie"],hint:"mehr … als"},
-{text:"Das schmeckt so ___ zu Hause.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Sie ist ruhiger ___ vorher.",correct:["als"],all:["als","wie"],hint:"ruhiger → als"},
-{text:"Er benimmt sich so ___ ein Freund.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war schöner ___ erwartet.",correct:["als"],all:["als","wie"],hint:"schöner → als"},
-{text:"Du bist so geduldig ___ ein Lehrer.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Ich bin wacher ___ heute Morgen.",correct:["als"],all:["als","wie"],hint:"wacher → als"},
-{text:"Das riecht so ___ der Frühling.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Sie ist offener ___ früher.",correct:["als"],all:["als","wie"],hint:"offener → als"},
-{text:"Er spricht so ___ er es meint.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war teurer ___ im Angebot.",correct:["als"],all:["als","wie"],hint:"teurer → als"},
-{text:"Du siehst aus ___ du hast frei.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
-{text:"Ich habe weniger Zweifel ___ vorher.",correct:["als"],all:["als","wie"],hint:"weniger … als"},
-{text:"Das klingt so ___ eine gute Idee.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Sie ist mutiger ___ ich.",correct:["als"],all:["als","wie"],hint:"mutiger → als"},
-{text:"Er benimmt sich so ___ immer schon.",correct:["wie"],all:["als","wie"],hint:"so … wie"},
-{text:"Das war besser ___ nichts.",correct:["als"],all:["als","wie"],hint:"besser → als"},
-{text:"Du bist so zuverlässig ___ ein Uhrwerk.",correct:["wie"],all:["als","wie"],hint:"so … wie"}
-];
-
-/* ===================== 100 TYPISCHE FEHLER ===================== */
-const errPool=[
-{text:"Welcher Satz ist richtig?",correct:["Das ist das einzige Problem."],all:["Das ist das einzigste Problem.","Das ist das einzige Problem."],hint:"einzig nicht steigerbar"},
-{text:"Welcher Satz ist richtig?",correct:["Er fragt mich etwas."],all:["Er frägt mich etwas.","Er fragt mich etwas."],hint:"fragen → fragt"},
-{text:"Welcher Satz ist richtig?",correct:["Mein Handy lädt gerade."],all:["Mein Handy ladet gerade.","Mein Handy lädt gerade."],hint:"laden → lädt"},
-{text:"Welcher Satz ist richtig?",correct:["Der Kuchen backt im Ofen."],all:["Der Kuchen bäckt im Ofen.","Der Kuchen backt im Ofen."],hint:"backen → backt"},
-{text:"Welcher Satz ist richtig?",correct:["Siehst du das mal an?"],all:["Siehst euch das mal an?","Siehst du das mal an?"],hint:"du → siehst"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin größer als du."],all:["Ich bin größer wie du.","Ich bin größer als du."],hint:"Ungleichheit → als"},
-{text:"Welcher Satz ist richtig?",correct:["Er ist so groß wie sein Vater."],all:["Er ist so groß als sein Vater.","Er ist so groß wie sein Vater."],hint:"Gleichheit → wie"},
-{text:"Welcher Satz ist richtig?",correct:["Wegen des Regens bleiben wir hier."],all:["Wegen dem Regen bleiben wir hier.","Wegen des Regens bleiben wir hier."],hint:"wegen + Genitiv"},
-{text:"Welcher Satz ist richtig?",correct:["Er hat den Ball gefangen."],all:["Er hat den Ball gefangt.","Er hat den Ball gefangen."],hint:"fangen → gefangen"},
-{text:"Welcher Satz ist richtig?",correct:["Sie hat angerufen."],all:["Sie hat angeruft.","Sie hat angerufen."],hint:"anrufen → angerufen"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin gestern schwimmen gegangen."],all:["Ich habe gestern schwimmen gegangen.","Ich bin gestern schwimmen gegangen."],hint:"gehen mit sein"},
-{text:"Welcher Satz ist richtig?",correct:["Das Buch liegt auf dem Tisch."],all:["Das Buch liegt auf den Tisch.","Das Buch liegt auf dem Tisch."],hint:"wo? → Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich stelle die Tasse auf den Tisch."],all:["Ich stelle die Tasse auf dem Tisch.","Ich stelle die Tasse auf den Tisch."],hint:"wohin? → Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er ist der Beste in der Klasse."],all:["Er ist der Besteste in der Klasse.","Er ist der Beste in der Klasse."],hint:"beste nicht steigern"},
-{text:"Welcher Satz ist richtig?",correct:["Mir ist langweilig."],all:["Ich bin langweilig.","Mir ist langweilig."],hint:"Mir ist langweilig"},
-{text:"Welcher Satz ist richtig?",correct:["Das interessiert mich."],all:["Das interessiert mir.","Das interessiert mich."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich warte auf dich."],all:["Ich warte auf dir.","Ich warte auf dich."],hint:"auf + Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich habe mich vertan."],all:["Ich habe mich vertut.","Ich habe mich vertan."],hint:"vertun → vertan"},
-{text:"Welcher Satz ist richtig?",correct:["Das gehört mir."],all:["Das gehört mich.","Das gehört mir."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich helfe dir gerne."],all:["Ich helfe dich gerne.","Ich helfe dir gerne."],hint:"helfen + Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Sie sieht ihn jeden Tag."],all:["Sie sieht ihm jeden Tag.","Sie sieht ihn jeden Tag."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er ist nach Hause gegangen."],all:["Er hat nach Hause gegangen.","Er ist nach Hause gegangen."],hint:"gehen mit sein"},
-{text:"Welcher Satz ist richtig?",correct:["Das habe ich nicht gewusst."],all:["Das habe ich nicht gewusst gehabt.","Das habe ich nicht gewusst."],hint:"kein Doppelperfekt"},
-{text:"Welcher Satz ist richtig?",correct:["Wir treffen uns morgen."],all:["Wir treffen wir morgen.","Wir treffen uns morgen."],hint:"reflexiv"},
-{text:"Welcher Satz ist richtig?",correct:["Er nimmt den Bus."],all:["Er nimmt dem Bus.","Er nimmt den Bus."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin der Einzige."],all:["Ich bin der Einzigste.","Ich bin der Einzige."],hint:"einzig nicht steigerbar"},
-{text:"Welcher Satz ist richtig?",correct:["Das Handy lädt."],all:["Das Handy ladet.","Das Handy lädt."],hint:"laden → lädt"},
-{text:"Welcher Satz ist richtig?",correct:["Sie fragt nach dem Weg."],all:["Sie frägt nach dem Weg.","Sie fragt nach dem Weg."],hint:"fragt"},
-{text:"Welcher Satz ist richtig?",correct:["Wegen des Staus komme ich später."],all:["Wegen dem Stau komme ich später.","Wegen des Staus komme ich später."],hint:"Genitiv"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin müde."],all:["Mir ist müde.","Ich bin müde."],hint:"Ich bin müde"},
-{text:"Welcher Satz ist richtig?",correct:["Er hat angerufen."],all:["Er hat angeruft.","Er hat angerufen."],hint:"angerufen"},
-{text:"Welcher Satz ist richtig?",correct:["Das ist das einzige Mal."],all:["Das ist das einzigste Mal.","Das ist das einzige Mal."],hint:"einzig"},
-{text:"Welcher Satz ist richtig?",correct:["Ich warte auf den Bus."],all:["Ich warte auf dem Bus.","Ich warte auf den Bus."],hint:"auf + Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Sie hilft mir."],all:["Sie hilft mich.","Sie hilft mir."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Das Buch liegt auf dem Regal."],all:["Das Buch liegt auf den Regal.","Das Buch liegt auf dem Regal."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich stelle es auf den Boden."],all:["Ich stelle es auf dem Boden.","Ich stelle es auf den Boden."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er ist der Beste."],all:["Er ist der Besteste.","Er ist der Beste."],hint:"beste"},
-{text:"Welcher Satz ist richtig?",correct:["Mir ist kalt."],all:["Ich bin kalt.","Mir ist kalt."],hint:"Mir ist kalt"},
-{text:"Welcher Satz ist richtig?",correct:["Das interessiert ihn."],all:["Das interessiert ihm.","Das interessiert ihn."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich freue mich auf dich."],all:["Ich freue mich auf dir.","Ich freue mich auf dich."],hint:"auf + Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Sie hat sich vertan."],all:["Sie hat sich vertut.","Sie hat sich vertan."],hint:"vertan"},
-{text:"Welcher Satz ist richtig?",correct:["Das gehört dir."],all:["Das gehört dich.","Das gehört dir."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich helfe ihm."],all:["Ich helfe ihn.","Ich helfe ihm."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er sieht sie."],all:["Er sieht ihr.","Er sieht sie."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Sie ist nach Hause gekommen."],all:["Sie hat nach Hause gekommen.","Sie ist nach Hause gekommen."],hint:"kommen mit sein"},
-{text:"Welcher Satz ist richtig?",correct:["Das wusste ich nicht."],all:["Das habe ich nicht gewusst gehabt.","Das wusste ich nicht."],hint:"Präteritum ok"},
-{text:"Welcher Satz ist richtig?",correct:["Wir sehen uns."],all:["Wir sehen wir.","Wir sehen uns."],hint:"reflexiv"},
-{text:"Welcher Satz ist richtig?",correct:["Er nimmt die Bahn."],all:["Er nimmt der Bahn.","Er nimmt die Bahn."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Das ist das einzige Problem."],all:["Das ist das einzigste Problem.","Das ist das einzige Problem."],hint:"einzig"},
-{text:"Welcher Satz ist richtig?",correct:["Das Handy lädt nicht."],all:["Das Handy ladet nicht.","Das Handy lädt nicht."],hint:"lädt"},
-{text:"Welcher Satz ist richtig?",correct:["Er fragt nach.",all:["Er frägt nach.","Er fragt nach."],hint:"fragt"},
-{text:"Welcher Satz ist richtig?",correct:["Wegen des Wetters bleiben wir."],all:["Wegen dem Wetter bleiben wir.","Wegen des Wetters bleiben wir."],hint:"Genitiv"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin hungrig."],all:["Mir ist hungrig.","Ich bin hungrig."],hint:"Ich bin hungrig"},
-{text:"Welcher Satz ist richtig?",correct:["Sie hat den Ball gefangen."],all:["Sie hat den Ball gefangt.","Sie hat den Ball gefangen."],hint:"gefangen"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin einkaufen gegangen."],all:["Ich habe einkaufen gegangen.","Ich bin einkaufen gegangen."],hint:"gehen mit sein"},
-{text:"Welcher Satz ist richtig?",correct:["Das liegt auf dem Tisch."],all:["Das liegt auf den Tisch.","Das liegt auf dem Tisch."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich lege es auf den Tisch."],all:["Ich lege es auf dem Tisch.","Ich lege es auf den Tisch."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er ist der Schnellste."],all:["Er ist der Schnellsteste.","Er ist der Schnellste."],hint:"schnellste"},
-{text:"Welcher Satz ist richtig?",correct:["Mir ist warm."],all:["Ich bin warm.","Mir ist warm."],hint:"Mir ist warm"},
-{text:"Welcher Satz ist richtig?",correct:["Das gefällt mir."],all:["Das gefällt mich.","Das gefällt mir."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich warte auf den Anruf."],all:["Ich warte auf dem Anruf.","Ich warte auf den Anruf."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Sie hat sich geirrt."],all:["Sie hat sich geirrt.","Sie hat sich geirrt gehabt."],hint:"geirrt"},
-{text:"Welcher Satz ist richtig?",correct:["Das gehört uns."],all:["Das gehört uns.","Das gehört wir."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich helfe euch."],all:["Ich helfe euch.","Ich helfe ihr."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er sieht dich."],all:["Er sieht dir.","Er sieht dich."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Sie ist angekommen."],all:["Sie hat angekommen.","Sie ist angekommen."],hint:"ankommen mit sein"},
-{text:"Welcher Satz ist richtig?",correct:["Das habe ich gewusst."],all:["Das habe ich gewusst gehabt.","Das habe ich gewusst."],hint:"kein Doppelperfekt"},
-{text:"Welcher Satz ist richtig?",correct:["Wir treffen euch."],all:["Wir treffen euch.","Wir treffen ihr."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er nimmt das Auto."],all:["Er nimmt dem Auto.","Er nimmt das Auto."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Das ist die einzige Möglichkeit."],all:["Das ist die einzigste Möglichkeit.","Das ist die einzige Möglichkeit."],hint:"einzig"},
-{text:"Welcher Satz ist richtig?",correct:["Das Gerät lädt."],all:["Das Gerät ladet.","Das Gerät lädt."],hint:"lädt"},
-{text:"Welcher Satz ist richtig?",correct:["Sie fragt ihn."],all:["Sie frägt ihn.","Sie fragt ihn."],hint:"fragt"},
-{text:"Welcher Satz ist richtig?",correct:["Wegen des Lärms gehe ich."],all:["Wegen dem Lärm gehe ich.","Wegen des Lärms gehe ich."],hint:"Genitiv"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin durstig."],all:["Mir ist durstig.","Ich bin durstig."],hint:"Ich bin durstig"},
-{text:"Welcher Satz ist richtig?",correct:["Er hat den Dieb gefangen."],all:["Er hat den Dieb gefangt.","Er hat den Dieb gefangen."],hint:"gefangen"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin spazieren gegangen."],all:["Ich habe spazieren gegangen.","Ich bin spazieren gegangen."],hint:"gehen mit sein"},
-{text:"Welcher Satz ist richtig?",correct:["Das steht auf dem Boden."],all:["Das steht auf den Boden.","Das steht auf dem Boden."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich stelle es auf den Boden."],all:["Ich stelle es auf dem Boden.","Ich stelle es auf den Boden."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Sie ist die Beste."],all:["Sie ist die Besteste.","Sie ist die Beste."],hint:"beste"},
-{text:"Welcher Satz ist richtig?",correct:["Mir ist schwindelig."],all:["Ich bin schwindelig.","Mir ist schwindelig."],hint:"Mir ist schwindelig"},
-{text:"Welcher Satz ist richtig?",correct:["Das stört mich."],all:["Das stört mir.","Das stört mich."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich freue mich auf den Urlaub."],all:["Ich freue mich auf dem Urlaub.","Ich freue mich auf den Urlaub."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er hat sich vertan."],all:["Er hat sich vertut.","Er hat sich vertan."],hint:"vertan"},
-{text:"Welcher Satz ist richtig?",correct:["Das gehört euch."],all:["Das gehört euch.","Das gehört ihr."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich helfe ihnen."],all:["Ich helfe sie.","Ich helfe ihnen."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Sie sieht uns."],all:["Sie sieht wir.","Sie sieht uns."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er ist gefahren."],all:["Er hat gefahren.","Er ist gefahren."],hint:"fahren oft mit sein"},
-{text:"Welcher Satz ist richtig?",correct:["Das wusste sie."],all:["Das hat sie gewusst gehabt.","Das wusste sie."],hint:"Präteritum"},
-{text:"Welcher Satz ist richtig?",correct:["Wir rufen euch an."],all:["Wir rufen euch an.","Wir rufen ihr an."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er nimmt den Aufzug."],all:["Er nimmt dem Aufzug.","Er nimmt den Aufzug."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Das ist die einzige Chance."],all:["Das ist die einzigste Chance.","Das ist die einzige Chance."],hint:"einzig"},
-{text:"Welcher Satz ist richtig?",correct:["Der Akku lädt."],all:["Der Akku ladet.","Der Akku lädt."],hint:"lädt"},
-{text:"Welcher Satz ist richtig?",correct:["Er fragt nach dem Preis."],all:["Er frägt nach dem Preis.","Er fragt nach dem Preis."],hint:"fragt"},
-{text:"Welcher Satz ist richtig?",correct:["Wegen des Unfalls gibt es Stau."],all:["Wegen dem Unfall gibt es Stau.","Wegen des Unfalls gibt es Stau."],hint:"Genitiv"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin froh."],all:["Mir ist froh.","Ich bin froh."],hint:"Ich bin froh"},
-{text:"Welcher Satz ist richtig?",correct:["Sie hat den Fehler gefunden."],all:["Sie hat den Fehler gefunden.","Sie hat den Fehler gefunden gehabt."],hint:"gefunden"},
-{text:"Welcher Satz ist richtig?",correct:["Ich bin gelaufen."],all:["Ich habe gelaufen.","Ich bin gelaufen."],hint:"laufen mit sein"},
-{text:"Welcher Satz ist richtig?",correct:["Das liegt unter dem Tisch."],all:["Das liegt unter den Tisch.","Das liegt unter dem Tisch."],hint:"Dativ"},
-{text:"Welcher Satz ist richtig?",correct:["Ich lege es unter den Tisch."],all:["Ich lege es unter dem Tisch.","Ich lege es unter den Tisch."],hint:"Akkusativ"},
-{text:"Welcher Satz ist richtig?",correct:["Er ist der Klügste."],all:["Er ist der Klügsteste.","Er ist der Klügste."],hint:"klügste"},
-{text:"Welcher Satz ist richtig?",correct:["Mir ist übel."],all:["Ich bin übel.","Mir ist übel."],hint:"Mir ist übel"}
-];
-
-/* ===================== 100 DEUTSCHLAND-WISSEN ===================== */
-const triPool=[
-{text:"Wie viele Bundesländer hat Deutschland?",correct:["16"],all:["12","14","16","18"],hint:"16"},
-{text:"In welcher Stadt steht der Kölner Dom?",correct:["Köln"],all:["Berlin","München","Köln","Hamburg"],hint:"Köln"},
-{text:"Was ist die Hauptstadt von Deutschland?",correct:["Berlin"],all:["Berlin","München","Hamburg","Frankfurt"],hint:"Berlin"},
-{text:"Welcher Fluss fließt durch Köln?",correct:["Rhein"],all:["Elbe","Rhein","Donau","Main"],hint:"Rhein"},
-{text:"In welchem Landesteil liegt Bayern?",correct:["Süden"],all:["Norden","Süden","Osten","Westen"],hint:"Süden"},
-{text:"Welche Stadt hat den größten Hafen?",correct:["Hamburg"],all:["Hamburg","Bremen","Kiel","Rostock"],hint:"Hamburg"},
-{text:"Was feiert man am 3. Oktober?",correct:["Tag der Deutschen Einheit"],all:["Tag der Deutschen Einheit","Oktoberfest","Weihnachten","Ostern"],hint:"Tag der Deutschen Einheit"},
-{text:"Welche Farbe hat die Flagge nicht?",correct:["Blau"],all:["Schwarz","Rot","Gold","Blau"],hint:"Schwarz-Rot-Gold"},
-{text:"Wo kann man gut wandern?",correct:["Bayern","Schwarzwald"],all:["Bayern","Schwarzwald","Ruhrgebiet","Berlin"],hint:"Bayern & Schwarzwald"},
-{text:"Was kann man aus Milch machen?",correct:["Käse","Joghurt","Butter"],all:["Käse","Joghurt","Butter","Brot"],hint:"Käse, Joghurt, Butter"},
-{text:"Welche Stadt liegt an der Isar?",correct:["München"],all:["München","Stuttgart","Nürnberg","Augsburg"],hint:"München"},
-{text:"Wie heißt das Meer im Norden?",correct:["Nordsee","Ostsee"],all:["Nordsee","Ostsee","Mittelmeer","Schwarzes Meer"],hint:"Nord- und Ostsee"},
-{text:"Welches Bundesland ist am größten?",correct:["Bayern"],all:["Bayern","Niedersachsen","Baden-Württemberg","NRW"],hint:"Bayern"},
-{text:"Wo steht das Brandenburger Tor?",correct:["Berlin"],all:["Berlin","Potsdam","Leipzig","Dresden"],hint:"Berlin"},
-{text:"Typisch deutsches Lebensmittel?",correct:["Brot","Wurst","Käse"],all:["Brot","Wurst","Käse","Pizza"],hint:"Brot, Wurst, Käse"},
-{text:"Stadt im Ruhrgebiet?",correct:["Dortmund","Essen"],all:["Dortmund","Essen","München","Leipzig"],hint:"Dortmund & Essen"},
-{text:"Währung in Deutschland?",correct:["Euro"],all:["Euro","D-Mark","Franken","Schilling"],hint:"Euro"},
-{text:"Höchster Berg Deutschlands?",correct:["Zugspitze"],all:["Zugspitze","Brocken","Feldberg","Watzmann"],hint:"Zugspitze"},
-{text:"In welchem Bundesland liegt Stuttgart?",correct:["Baden-Württemberg"],all:["Bayern","Baden-Württemberg","Hessen","Rheinland-Pfalz"],hint:"Baden-Württemberg"},
-{text:"Was trinkt man oft zum Oktoberfest?",correct:["Bier"],all:["Bier","Wein","Saft","Kaffee"],hint:"Bier"},
-{text:"Stadt an der Elbe?",correct:["Hamburg","Dresden"],all:["Hamburg","Dresden","Köln","München"],hint:"Hamburg & Dresden"},
-{text:"Einwohner ungefähr?",correct:["83 Millionen"],all:["50 Millionen","67 Millionen","83 Millionen","100 Millionen"],hint:"ca. 83 Mio."},
-{text:"Tier auf dem Wappen?",correct:["Adler"],all:["Adler","Löwe","Bär","Wolf"],hint:"Adler"},
-{text:"Wo findet die Buchmesse statt?",correct:["Frankfurt"],all:["Frankfurt","Leipzig","Berlin","Hamburg"],hint:"Frankfurt"},
-{text:"Längster Fluss?",correct:["Rhein"],all:["Rhein","Elbe","Donau","Weser"],hint:"Rhein"},
-{text:"Stadt für Dom und Karneval?",correct:["Köln"],all:["Köln","Düsseldorf","Mainz","Aachen"],hint:"Köln"},
-{text:"Wo kann man gut Ski fahren?",correct:["Bayern","Allgäu"],all:["Bayern","Allgäu","Nordsee","Ruhrgebiet"],hint:"Bayern/Allgäu"},
-{text:"Klassisches deutsches Frühstück?",correct:["Brot","Käse","Wurst"],all:["Brot","Käse","Wurst","Sushi"],hint:"Brot, Käse, Wurst"},
-{text:"Bundesland ganz im Norden?",correct:["Schleswig-Holstein"],all:["Schleswig-Holstein","Mecklenburg-Vorpommern","Niedersachsen","Hamburg"],hint:"Schleswig-Holstein"},
-{text:"Wo steht die Frauenkirche?",correct:["Dresden","München"],all:["Dresden","München","Berlin","Leipzig"],hint:"Dresden und München"},
-{text:"Welches Bundesland hat die meisten Einwohner?",correct:["Nordrhein-Westfalen"],all:["Bayern","Nordrhein-Westfalen","Baden-Württemberg","Niedersachsen"],hint:"NRW"},
-{text:"In welcher Stadt steht der Fernsehturm am Alexanderplatz?",correct:["Berlin"],all:["Berlin","Hamburg","München","Frankfurt"],hint:"Berlin"},
-{text:"Welcher Fluss fließt durch Hamburg?",correct:["Elbe"],all:["Rhein","Elbe","Donau","Weser"],hint:"Elbe"},
-{text:"Was ist das Oktoberfest?",correct:["Ein Volksfest in München"],all:["Ein Volksfest in München","Ein Nationalfeiertag","Ein Sportturnier","Ein Filmpreis"],hint:"München"},
-{text:"Welche Stadt liegt am Main?",correct:["Frankfurt"],all:["Frankfurt","Köln","Hamburg","Dresden"],hint:"Frankfurt"},
-{text:"Was ist die Zugspitze?",correct:["Der höchste Berg Deutschlands"],all:["Der höchste Berg Deutschlands","Ein Fluss","Eine Stadt","Ein Schloss"],hint:"Berg"},
-{text:"In welchem Bundesland liegt Köln?",correct:["Nordrhein-Westfalen"],all:["Nordrhein-Westfalen","Bayern","Hessen","Rheinland-Pfalz"],hint:"NRW"},
-{text:"Was bedeutet „BRD“ historisch?",correct:["Bundesrepublik Deutschland"],all:["Bundesrepublik Deutschland","Berliner Rundfunk","Bayerische Region","Bundesrat Deutschland"],hint:"Bundesrepublik"},
-{text:"Welche Stadt ist für den Hafen und die Reeperbahn bekannt?",correct:["Hamburg"],all:["Hamburg","Bremen","Kiel","Rostock"],hint:"Hamburg"},
-{text:"Wo fließt die Donau in Deutschland?",correct:["Im Süden"],all:["Im Norden","Im Süden","Im Osten","Im Westen"],hint:"Süden"},
-{text:"Was ist typisch für die deutsche Küche?",correct:["Bratwurst","Sauerkraut","Brot"],all:["Bratwurst","Sauerkraut","Brot","Sushi"],hint:"klassisch deutsch"},
-{text:"Welche Stadt liegt in Sachsen?",correct:["Dresden","Leipzig"],all:["Dresden","Leipzig","München","Köln"],hint:"Sachsen"},
-{text:"Was ist der Bundestag?",correct:["Das Parlament"],all:["Das Parlament","Die Regierung","Das Verfassungsgericht","Die Polizei"],hint:"Parlament"},
-{text:"In welcher Stadt steht das Holstentor?",correct:["Lübeck"],all:["Lübeck","Hamburg","Kiel","Bremen"],hint:"Lübeck"},
-{text:"Welches Bundesland grenzt an die Niederlande?",correct:["Nordrhein-Westfalen","Niedersachsen"],all:["Nordrhein-Westfalen","Niedersachsen","Bayern","Sachsen"],hint:"Westen"},
-{text:"Was ist die A38?",correct:["Eine Autobahn"],all:["Eine Autobahn","Ein Fluss","Ein Berg","Ein Gesetz"],hint:"Autobahn"},
-{text:"Welche Stadt ist die Hauptstadt von Bayern?",correct:["München"],all:["München","Nürnberg","Augsburg","Regensburg"],hint:"München"},
-{text:"Was feiert man zu Weihnachten?",correct:["Geburt Jesu"],all:["Geburt Jesu","Ostern","Neujahr","Halloween"],hint:"Weihnachten"},
-{text:"Welcher Fluss fließt durch Berlin?",correct:["Spree"],all:["Spree","Rhein","Elbe","Donau"],hint:"Spree"},
-{text:"Was ist das Ruhrgebiet bekannt für?",correct:["Industrie und Bergbau"],all:["Industrie und Bergbau","Weinbau","Skigebiete","Strände"],hint:"Industrie"},
-{text:"In welcher Stadt steht die Semperoper?",correct:["Dresden"],all:["Dresden","Berlin","München","Hamburg"],hint:"Dresden"},
-{text:"Welches Bundesland liegt im Osten?",correct:["Sachsen","Brandenburg"],all:["Sachsen","Brandenburg","Bayern","Schleswig-Holstein"],hint:"Osten"},
-{text:"Was ist ein Dirndl?",correct:["Traditionelle Tracht"],all:["Traditionelle Tracht","Ein Kuchen","Ein Tanz","Ein Instrument"],hint:"Tracht"},
-{text:"Welche Stadt liegt an Rhein und Main?",correct:["Mainz"],all:["Mainz","Köln","Frankfurt","Düsseldorf"],hint:"Mainz"},
-{text:"Was ist die deutsche Nationalhymne?",correct:["Das Lied der Deutschen"],all:["Das Lied der Deutschen","Deutschlandlied nur 3. Strophe","Bayernhymne","Europa-Hymne"],hint:"Nationalhymne"},
-{text:"Wo kann man gut surfen in Deutschland?",correct:["Nordsee","Ostsee"],all:["Nordsee","Ostsee","Alpen","Ruhrgebiet"],hint:"Küste"},
-{text:"Welche Stadt ist für Porsche bekannt?",correct:["Stuttgart"],all:["Stuttgart","München","Wolfsburg","Ingolstadt"],hint:"Stuttgart"},
-{text:"Was ist der Schwarzwald?",correct:["Ein Mittelgebirge"],all:["Ein Mittelgebirge","Ein Fluss","Eine Stadt","Ein See"],hint:"Gebirge"},
-{text:"In welchem Bundesland liegt Heidelberg?",correct:["Baden-Württemberg"],all:["Baden-Württemberg","Hessen","Bayern","Rheinland-Pfalz"],hint:"Baden-Württemberg"},
-{text:"Was ist typisch an deutschen Autobahnen?",correct:["Teilweise kein Tempolimit"],all:["Teilweise kein Tempolimit","Nur 100 km/h","Nur Elektroautos","Maut überall"],hint:"Tempolimit"},
-{text:"Welche Stadt liegt in Thüringen?",correct:["Erfurt"],all:["Erfurt","Leipzig","Dresden","Magdeburg"],hint:"Erfurt"},
-{text:"Was ist der Rhein?",correct:["Ein großer Fluss"],all:["Ein großer Fluss","Ein Berg","Ein See","Eine Stadt"],hint:"Fluss"},
-{text:"Wo steht das Schloss Neuschwanstein?",correct:["Bayern"],all:["Bayern","Baden-Württemberg","Hessen","Sachsen"],hint:"Bayern"},
-{text:"Was ist ein Biergarten?",correct:["Ort zum Biertrinken im Freien"],all:["Ort zum Biertrinken im Freien","Ein Park","Ein Museum","Ein Sportplatz"],hint:"Biergarten"},
-{text:"Welche Stadt liegt an der Weser?",correct:["Bremen"],all:["Bremen","Hamburg","Hannover","Kiel"],hint:"Bremen"},
-{text:"Was ist die deutsche Sprache in der EU?",correct:["Eine Amtssprache"],all:["Eine Amtssprache","Keine Amtssprache","Nur Regionalsprache","Nur in Deutschland"],hint:"Amtssprache"},
-{text:"In welchem Bundesland liegt Freiburg?",correct:["Baden-Württemberg"],all:["Baden-Württemberg","Bayern","Hessen","Rheinland-Pfalz"],hint:"Baden-Württemberg"},
-{text:"Was ist der Brocken?",correct:["Ein Berg im Harz"],all:["Ein Berg im Harz","Ein Fluss","Eine Stadt","Ein See"],hint:"Harz"},
-{text:"Welche Stadt ist für Volkswagen bekannt?",correct:["Wolfsburg"],all:["Wolfsburg","Stuttgart","München","Ingolstadt"],hint:"Wolfsburg"},
-{text:"Was feiert man an Ostern?",correct:["Auferstehung"],all:["Auferstehung","Geburt Jesu","Erntedank","Neujahr"],hint:"Ostern"},
-{text:"Wo liegt die Insel Rügen?",correct:["Ostsee"],all:["Ostsee","Nordsee","Bodensee","Chiemsee"],hint:"Ostsee"},
-{text:"Was ist der Main?",correct:["Ein Fluss"],all:["Ein Fluss","Ein Berg","Eine Stadt","Ein See"],hint:"Fluss"},
-{text:"In welcher Stadt steht die Frauenkirche (Bayern)?",correct:["München"],all:["München","Dresden","Nürnberg","Augsburg"],hint:"München"},
-{text:"Was ist typisch für den Karneval in Köln?",correct:["Umzüge und Kostüme"],all:["Umzüge und Kostüme","Ski","Weinlese","Buchmesse"],hint:"Karneval"},
-{text:"Welche Stadt liegt in Brandenburg?",correct:["Potsdam"],all:["Potsdam","Leipzig","Dresden","Magdeburg"],hint:"Potsdam"},
-{text:"Was ist die Elbe?",correct:["Ein Fluss"],all:["Ein Fluss","Ein Berg","Eine Stadt","Ein Wald"],hint:"Fluss"},
-{text:"Wo kann man gut Radfahren?",correct:["Entlang der Flüsse","In den Parks"],all:["Entlang der Flüsse","In den Parks","Nur auf Autobahnen","Nur in den Alpen"],hint:"Radwege"},
-{text:"Was ist ein Fachwerkhaus?",correct:["Haus mit Holzgerüst"],all:["Haus mit Holzgerüst","Modernes Hochhaus","Zelt","Schloss"],hint:"Fachwerk"},
-{text:"In welchem Bundesland liegt Hannover?",correct:["Niedersachsen"],all:["Niedersachsen","NRW","Hessen","Schleswig-Holstein"],hint:"Niedersachsen"},
-{text:"Was ist der Bodensee?",correct:["Ein See"],all:["Ein See","Ein Fluss","Ein Berg","Eine Stadt"],hint:"See"},
-{text:"Welche Stadt ist für die documenta bekannt?",correct:["Kassel"],all:["Kassel","Berlin","München","Hamburg"],hint:"Kassel"},
-{text:"Was ist die deutsche Telefonvorwahl?",correct:["+49"],all:["+49","+43","+41","+33"],hint:"+49"},
-{text:"Wo liegt die Zugspitze?",correct:["Bayern"],all:["Bayern","Baden-Württemberg","Hessen","Sachsen"],hint:"Bayern"},
-{text:"Was ist ein U-Bahn?",correct:["Untergrundbahn"],all:["Untergrundbahn","Überlandbus","Flugzeug","Schiff"],hint:"U-Bahn"},
-{text:"In welcher Stadt steht das Schloss Charlottenburg?",correct:["Berlin"],all:["Berlin","Potsdam","München","Dresden"],hint:"Berlin"},
-{text:"Was ist typisch für den Norden?",correct:["Meer und Wind"],all:["Meer und Wind","Alpen","Weinberge","Wüste"],hint:"Küste"},
-{text:"Welche Stadt liegt am Rhein?",correct:["Köln","Düsseldorf","Mainz"],all:["Köln","Düsseldorf","Mainz","München"],hint:"Rhein"},
-{text:"Was ist die deutsche Internet-Endung oft?",correct:[".de"],all:[".de",".com",".eu",".org"],hint:".de"},
-{text:"In welchem Bundesland liegt Leipzig?",correct:["Sachsen"],all:["Sachsen","Thüringen","Brandenburg","Sachsen-Anhalt"],hint:"Sachsen"},
-{text:"Was ist ein ICE?",correct:["Schneller Zug"],all:["Schneller Zug","Flugzeug","Bus","Schiff"],hint:"Zug"},
-{text:"Wo liegt der Harz?",correct:["In der Mitte Deutschlands"],all:["In der Mitte Deutschlands","Ganz im Norden","Ganz im Süden","Ganz im Westen"],hint:"Mitteldeutschland"},
-{text:"Was ist die deutsche Zeitzone?",correct:["MEZ / MESZ"],all:["MEZ / MESZ","GMT","EST","JST"],hint:"Mitteleuropa"},
-{text:"Welche Stadt ist für BMW bekannt?",correct:["München"],all:["München","Stuttgart","Wolfsburg","Ingolstadt"],hint:"München"},
-{text:"Was ist ein Döner?",correct:["Beliebtes Fast Food"],all:["Beliebtes Fast Food","Ein Kuchen","Ein Tanz","Ein Sport"],hint:"Essen"},
-{text:"In welcher Stadt steht der Reichstag?",correct:["Berlin"],all:["Berlin","Bonn","München","Hamburg"],hint:"Berlin"},
-{text:"Was ist die deutsche Postleitzahl-Länge?",correct:["5 Stellen"],all:["5 Stellen","4 Stellen","6 Stellen","3 Stellen"],hint:"5 Ziffern"},
-{text:"Wo kann man gut wandern außer Bayern?",correct:["Schwarzwald","Harz"],all:["Schwarzwald","Harz","Ruhrgebiet","Berlin"],hint:"Mittelgebirge"},
-{text:"Was ist ein Apfelschorle?",correct:["Apfelsaft mit Sprudel"],all:["Apfelsaft mit Sprudel","Nur Apfelsaft","Bier","Wein"],hint:"Getränk"},
-{text:"Welche Stadt liegt in Hessen?",correct:["Frankfurt","Wiesbaden"],all:["Frankfurt","Wiesbaden","Köln","Stuttgart"],hint:"Hessen"},
-{text:"Was ist die deutsche Nationalfarbe-Kombination?",correct:["Schwarz-Rot-Gold"],all:["Schwarz-Rot-Gold","Blau-Weiß-Rot","Grün-Weiß","Nur Schwarz"],hint:"Flagge"}
-];
-
-/* ===================== 100 REDEWENDUNGEN ===================== */
-const redPool=[
-{text:"Was bedeutet „Jemandem die Daumen drücken“?",correct:["Jemandem Glück wünschen"],all:["Jemandem Glück wünschen","Jemanden ärgern","Jemanden ignorieren","Jemanden loben"],hint:"Glück wünschen"},
-{text:"Was bedeutet „Tomaten auf den Augen haben“?",correct:["Offensichtliche Dinge übersehen"],all:["Offensichtliche Dinge übersehen","Sehr müde sein","Gerne Tomaten essen","Wütend sein"],hint:"nicht sehen"},
-{text:"Was bedeutet „Die Kirche im Dorf lassen“?",correct:["Nicht übertreiben"],all:["Nicht übertreiben","In die Kirche gehen","Laut sein","Schnell entscheiden"],hint:"maßvoll"},
-{text:"Was bedeutet „Jemanden auf den Arm nehmen“?",correct:["Jemanden scherzhaft veralbern"],all:["Jemanden scherzhaft veralbern","Jemanden tragen","Jemanden trösten","Jemanden beleidigen"],hint:"scherzen"},
-{text:"Was bedeutet „Nur Bahnhof verstehen“?",correct:["Überhaupt nichts verstehen"],all:["Überhaupt nichts verstehen","Den Weg kennen","Gerne reisen","Laut sprechen"],hint:"nichts verstehen"},
-{text:"Was bedeutet „Da liegt der Hund begraben“?",correct:["Das ist die eigentliche Ursache"],all:["Das ist die eigentliche Ursache","Ein Hund ist gestorben","Es ist gefährlich","Man muss graben"],hint:"Kern des Problems"},
-{text:"Was bedeutet „Die Nase voll haben“?",correct:["Genug von etwas haben"],all:["Genug von etwas haben","Erkältet sein","Hungrig sein","Stolz sein"],hint:"genervt"},
-{text:"Was bedeutet „Aus dem Häuschen geraten“?",correct:["Sehr aufgeregt/begeistert sein"],all:["Sehr aufgeregt/begeistert sein","Das Haus verlassen","Wütend werden","Einschlafen"],hint:"begeistert"},
-{text:"Was bedeutet „Ins Gras beißen“?",correct:["Sterben (bildlich)"],all:["Sterben (bildlich)","Picknicken","Sport machen","Sich irren"],hint:"sterben"},
-{text:"Was bedeutet „Etwas auf dem Schirm haben“?",correct:["Etwas im Blick haben"],all:["Etwas im Blick haben","Fernsehen","Etwas vergessen","Etwas fotografieren"],hint:"im Blick"},
-{text:"Was bedeutet „Den Löffel abgeben“?",correct:["Sterben (salopp)"],all:["Sterben (salopp)","Essen beenden","Aufgeben","Gewinnen"],hint:"sterben"},
-{text:"Was bedeutet „Auf dem Holzweg sein“?",correct:["Sich irren"],all:["Sich irren","Im Wald sein","Richtig liegen","Langsam sein"],hint:"falsch liegen"},
-{text:"Was bedeutet „Die Katze im Sack kaufen“?",correct:["Etwas ungeprüft kaufen"],all:["Etwas ungeprüft kaufen","Eine Katze kaufen","Sparsam sein","Geduldig sein"],hint:"blind kaufen"},
-{text:"Was bedeutet „Öl ins Feuer gießen“?",correct:["Einen Streit verschlimmern"],all:["Einen Streit verschlimmern","Kochen","Ruhig bleiben","Helfen"],hint:"verschlimmern"},
-{text:"Was bedeutet „Den Nagel auf den Kopf treffen“?",correct:["Genau das Richtige sagen"],all:["Genau das Richtige sagen","Handwerken","Sich irren","Laut sein"],hint:"genau richtig"},
-{text:"Was bedeutet „Zwei Fliegen mit einer Klappe schlagen“?",correct:["Zwei Dinge auf einmal erledigen"],all:["Zwei Dinge auf einmal erledigen","Insekten jagen","Schnell sein","Faul sein"],hint:"doppelt effizient"},
-{text:"Was bedeutet „Die Daumen drehen“?",correct:["Nichts tun / Langeweile haben"],all:["Nichts tun / Langeweile haben","Glück wünschen","Handarbeiten","Nervös sein"],hint:"untätig"},
-{text:"Was bedeutet „Sich zum Affen machen“?",correct:["Sich lächerlich machen"],all:["Sich lächerlich machen","Im Zoo sein","Sportlich sein","Mutig sein"],hint:"lächerlich"},
-{text:"Was bedeutet „Einen klaren Kopf behalten“?",correct:["Ruhig und vernünftig bleiben"],all:["Ruhig und vernünftig bleiben","Kopfschmerzen haben","Schlafen","Schreien"],hint:"ruhig bleiben"},
-{text:"Was bedeutet „Über seinen Schatten springen“?",correct:["Sich überwinden"],all:["Sich überwinden","Sport machen","Angst haben","Weglaufen"],hint:"überwinden"},
-{text:"Was bedeutet „Das Haar in der Suppe suchen“?",correct:["An allem etwas auszusetzen haben"],all:["An allem etwas auszusetzen haben","Kochen","Hungrig sein","Sauber sein"],hint:"nörgeln"},
-{text:"Was bedeutet „Im Trüben fischen“?",correct:["Von Unklarheit profitieren"],all:["Von Unklarheit profitieren","Angeln gehen","Schwimmen","Verloren sein"],hint:"unklare Lage"},
-{text:"Was bedeutet „Reinen Wein einschenken“?",correct:["Die Wahrheit sagen"],all:["Die Wahrheit sagen","Wein trinken","Lügen","Feiern"],hint:"ehrlich sein"},
-{text:"Was bedeutet „Die Fäden ziehen“?",correct:["Im Hintergrund steuern"],all:["Im Hintergrund steuern","Nähen","Aufgeben","Warten"],hint:"kontrollieren"},
-{text:"Was bedeutet „Auf großem Fuß leben“?",correct:["Teures Leben führen"],all:["Teures Leben führen","Große Schuhe tragen","Sportlich sein","Sparsam sein"],hint:"luxuriös"},
-{text:"Was bedeutet „Den Ball flach halten“?",correct:["Sich zurückhalten"],all:["Sich zurückhalten","Fußball spielen","Aufgeben","Laut sein"],hint:"maßvoll"},
-{text:"Was bedeutet „Alles im grünen Bereich“?",correct:["Alles in Ordnung"],all:["Alles in Ordnung","Alles kaputt","Alles grün","Alles unsicher"],hint:"alles ok"},
-{text:"Was bedeutet „Einen Kater haben“?",correct:["Kopfschmerzen nach dem Feiern"],all:["Kopfschmerzen nach dem Feiern","Eine Katze besitzen","Glücklich sein","Krank sein"],hint:"Nachwehen"},
-{text:"Was bedeutet „Die Sache im Griff haben“?",correct:["Etwas unter Kontrolle haben"],all:["Etwas unter Kontrolle haben","Etwas fallen lassen","Etwas vergessen","Etwas fürchten"],hint:"unter Kontrolle"},
-{text:"Was bedeutet „Nicht alle Tassen im Schrank haben“?",correct:["Nicht ganz bei Verstand sein"],all:["Nicht ganz bei Verstand sein","Hunger haben","Unordentlich sein","Reich sein"],hint:"verrückt wirken"},
-{text:"Was bedeutet „Jemandem auf den Zahn fühlen“?",correct:["Jemanden gründlich befragen"],all:["Jemanden gründlich befragen","Zum Zahnarzt gehen","Jemanden loben","Schweigen"],hint:"ausfragen"},
-{text:"Was bedeutet „Die Beine in die Hand nehmen“?",correct:["Schnell weglaufen"],all:["Schnell weglaufen","Sich hinsetzen","Sport machen","Warten"],hint:"davonlaufen"},
-{text:"Was bedeutet „Ins Fettnäpfchen treten“?",correct:["Etwas Unpassendes sagen"],all:["Etwas Unpassendes sagen","Kochen","Sport machen","Schweigen"],hint:"Fauxpas"},
-{text:"Was bedeutet „Den Kopf in den Sand stecken“?",correct:["Probleme ignorieren"],all:["Probleme ignorieren","Am Strand sein","Schlafen","Kämpfen"],hint:"ignorieren"},
-{text:"Was bedeutet „Auf dem Laufenden bleiben“?",correct:["Informiert bleiben"],all:["Informiert bleiben","Sport machen","Schlafen","Vergessen"],hint:"informiert"},
-{text:"Was bedeutet „Die Suppe auslöffeln“?",correct:["Die Folgen tragen"],all:["Die Folgen tragen","Essen beenden","Kochen","Feiern"],hint:"Konsequenzen"},
-{text:"Was bedeutet „Hand und Fuß haben“?",correct:["Sinnvoll und durchdacht sein"],all:["Sinnvoll und durchdacht sein","Sportlich sein","Krank sein","Zufällig sein"],hint:"durchdacht"},
-{text:"Was bedeutet „Auf der Hand liegen“?",correct:["Offensichtlich sein"],all:["Offensichtlich sein","Versteckt sein","Schwer sein","Unmöglich sein"],hint:"klar"},
-{text:"Was bedeutet „Den Nagel auf den Kopf treffen“?",correct:["Genau das Richtige treffen"],all:["Genau das Richtige treffen","Handwerken","Vorbeischießen","Zögern"],hint:"genau richtig"},
-{text:"Was bedeutet „Aus der Reihe tanzen“?",correct:["Anders sein als die anderen"],all:["Anders sein als die anderen","Tanzen gehen","Mitmachen","Schweigen"],hint:"ausbrechen"},
-{text:"Was bedeutet „Die Ohren steif halten“?",correct:["Durchhalten / Mut behalten"],all:["Durchhalten / Mut behalten","Gut hören","Angst haben","Aufgeben"],hint:"durchhalten"},
-{text:"Was bedeutet „Jemandem den Kopf waschen“?",correct:["Jemanden zurechtweisen"],all:["Jemanden zurechtweisen","Duschen","Loben","Ignorieren"],hint:"zurechtweisen"},
-{text:"Was bedeutet „Auf dem Teppich bleiben“?",correct:["Realistisch bleiben"],all:["Realistisch bleiben","Putzen","Fliegen","Träumen"],hint:"bodenständig"},
-{text:"Was bedeutet „Die Kurve kriegen“?",correct:["Noch rechtzeitig die Richtung ändern"],all:["Noch rechtzeitig die Richtung ändern","Auto fahren","Aufgeben","Stehen bleiben"],hint:"umkehren"},
-{text:"Was bedeutet „Jemandem Honig um den Mund schmieren“?",correct:["Jemanden übertrieben loben"],all:["Jemanden übertrieben loben","Kochen","Schweigen","Kritisieren"],hint:"schmeicheln"},
-{text:"Was bedeutet „Ins gleiche Horn blasen“?",correct:["Dasselbe sagen / übereinstimmen"],all:["Dasselbe sagen / übereinstimmen","Musik machen","Widersprechen","Schweigen"],hint:"übereinstimmen"},
-{text:"Was bedeutet „Die Kirche im Dorf lassen“?",correct:["Nicht übertreiben"],all:["Nicht übertreiben","Betern","Wegfahren","Schreien"],hint:"maßvoll"},
-{text:"Was bedeutet „Auf die Pauke hauen“?",correct:["Laut und auffällig sein"],all:["Laut und auffällig sein","Musik machen","Leise sein","Schlafen"],hint:"auffallen"},
-{text:"Was bedeutet „Den Bock zum Gärtner machen“?",correct:["Den Falschen beauftragen"],all:["Den Falschen beauftragen","Im Garten arbeiten","Tiere halten","Richtig entscheiden"],hint:"falsche Wahl"},
-{text:"Was bedeutet „Jemandem die Show stehlen“?",correct:["Jemandem die Aufmerksamkeit nehmen"],all:["Jemandem die Aufmerksamkeit nehmen","Theater spielen","Helfen","Schweigen"],hint:"in den Vordergrund"},
-{text:"Was bedeutet „Auf Nummer sicher gehen“?",correct:["Kein Risiko eingehen"],all:["Kein Risiko eingehen","Zählen","Spielen","Raten"],hint:"sicher"],
-{text:"Was bedeutet „Die Spieße umdrehen“?",correct:["Die Rollen tauschen"],all:["Die Rollen tauschen","Kochen","Kämpfen","Aufgeben"],hint:"umkehren"},
-{text:"Was bedeutet „Im siebten Himmel sein“?",correct:["Sehr glücklich sein"],all:["Sehr glücklich sein","Fliegen","Träumen","Krank sein"],hint:"glücklich"},
-{text:"Was bedeutet „Jemandem auf die Pelle rücken“?",correct:["Jemandem zu nahe kommen"],all:["Jemandem zu nahe kommen","Helfen","Weglaufen","Loben"],hint:"bedrängen"},
-{text:"Was bedeutet „Die Hose voll haben“?",correct:["Große Angst haben"],all:["Große Angst haben","Volle Hose","Mutig sein","Hungrig sein"],hint:"Angst"},
-{text:"Was bedeutet „Auf dem Schlauch stehen“?",correct:["Etwas nicht begreifen"],all:["Etwas nicht begreifen","Im Garten sein","Schnell sein","Alles wissen"],hint:"nicht verstehen"},
-{text:"Was bedeutet „Jemandem den Garaus machen“?",correct:["Jemanden vernichten / erledigen"],all:["Jemanden vernichten / erledigen","Helfen","Feiern","Ignorieren"],hint:"erledigen"},
-{text:"Was bedeutet „Die Nerven behalten“?",correct:["Ruhig bleiben"],all:["Ruhig bleiben","Nervös werden","Schreien","Aufgeben"],hint:"Ruhe"},
-{text:"Was bedeutet „Auf eigene Faust“?",correct:["Ohne Auftrag / selbstständig"],all:["Ohne Auftrag / selbstständig","Mit der Faust","Gemeinsam","Unter Aufsicht"],hint:"allein"},
-{text:"Was bedeutet „Ins Auge fassen“?",correct:["Etwas planen / in Betracht ziehen"],all:["Etwas planen / in Betracht ziehen","Anstarren","Angst haben","Vergessen"],hint:"planen"},
-{text:"Was bedeutet „Die Flinte ins Korn werfen“?",correct:["Aufgeben"],all:["Aufgeben","Jagen","Kämpfen","Feiern"],hint:"aufgeben"},
-{text:"Was bedeutet „Jemandem Wind machen“?",correct:["Jemanden unter Druck setzen"],all:["Jemanden unter Druck setzen","Lüften","Helfen","Ignorieren"],hint:"Druck"},
-{text:"Was bedeutet „Auf dem richtigen Dampfer sein“?",correct:["Richtig liegen"],all:["Richtig liegen","Schiff fahren","Sich irren","Warten"],hint:"richtig"},
-{text:"Was bedeutet „Die Sache ist im Trockenen“?",correct:["Alles ist gesichert"],all:["Alles ist gesichert","Nass sein","Unklar sein","Gefährlich sein"],hint:"sicher"],
-{text:"Was bedeutet „Jemandem auf den Leim gehen“?",correct:["Auf jemanden hereinfallen"],all:["Auf jemanden hereinfallen","Kleistern","Helfen","Gewinnen"],hint:"hereinfallen"},
-{text:"Was bedeutet „Den Vogel abschießen“?",correct:["Das Extremste / Auffälligste machen"],all:["Das Extremste / Auffälligste machen","Jagen","Verlieren","Schweigen"],hint:"übertreffen"},
-{text:"Was bedeutet „Auf der Bremse stehen“?",correct:["Zögern / bremsen"],all:["Zögern / bremsen","Auto fahren","Beschleunigen","Aufgeben"],hint:"zögern"},
-{text:"Was bedeutet „Die Wahrheit sagen“?",correct:["Ehrlich sein"],all:["Ehrlich sein","Lügen","Schweigen","Raten"],hint:"ehrlich"},
-{text:"Was bedeutet „Jemandem den Rücken stärken“?",correct:["Jemanden unterstützen"],all:["Jemanden unterstützen","Massage geben","Ignorieren","Kritisieren"],hint:"unterstützen"},
-{text:"Was bedeutet „Im Regen stehen lassen“?",correct:["Jemanden im Stich lassen"],all:["Jemanden im Stich lassen","Nass werden","Helfen","Warten"],hint:"im Stich lassen"},
-{text:"Was bedeutet „Die Ärmel hochkrempeln“?",correct:["Anpacken / arbeiten"],all:["Anpacken / arbeiten","Sich anziehen","Aufgeben","Feiern"],hint:"anpacken"},
-{text:"Was bedeutet „Auf dem Prüfstand stehen“?",correct:["Getestet / kritisiert werden"],all:["Getestet / kritisiert werden","Stehen","Gewinnen","Schlafen"],hint:"geprüft werden"},
-{text:"Was bedeutet „Jemandem aus dem Weg gehen“?",correct:["Jemanden meiden"],all:["Jemanden meiden","Helfen","Folgen","Begrüßen"],hint:"meiden"},
-{text:"Was bedeutet „Die Sache geradegerückt haben“?",correct:["Etwas in Ordnung gebracht haben"],all:["Etwas in Ordnung gebracht haben","Schief stehen","Aufgeben","Vergessen"],hint:"korrigiert"},
-{text:"Was bedeutet „Auf der Überholspur sein“?",correct:["Sehr erfolgreich / schnell vorankommen"],all:["Sehr erfolgreich / schnell vorankommen","Auto fahren","Langsam sein","Stehen"],hint:"erfolgreich"},
-{text:"Was bedeutet „Jemandem die Stirn bieten“?",correct:["Sich jemandem widersetzen"],all:["Sich jemandem widersetzen","Grüßen","Weglaufen","Loben"],hint:"widersetzen"},
-{text:"Was bedeutet „Ins Rollen kommen“?",correct:["In Gang kommen"],all:["In Gang kommen","Fallen","Stoppen","Schlafen"],hint:"starten"},
-{text:"Was bedeutet „Die Rechnung ohne den Wirt machen“?",correct:["Etwas ohne wichtige Person planen"],all:["Etwas ohne wichtige Person planen","Im Restaurant sein","Zahlen","Gewinnen"],hint:"falsch planen"},
-{text:"Was bedeutet „Auf dem letzten Loch pfeifen“?",correct:["Am Ende seiner Kräfte sein"],all:["Am Ende seiner Kräfte sein","Musik machen","Fit sein","Feiern"],hint:"erschöpft"},
-{text:"Was bedeutet „Jemandem das Herz brechen“?",correct:["Jemanden sehr verletzen"],all:["Jemanden sehr verletzen","Operieren","Helfen","Ignorieren"],hint:"verletzen"},
-{text:"Was bedeutet „Die Kirche ums Dorf tragen“?",correct:["Unnötig umständlich sein"],all:["Unnötig umständlich sein","Betern","Direkt sein","Schreien"],hint:"umständlich"},
-{text:"Was bedeutet „Auf der sicheren Seite sein“?",correct:["Abgesichert sein"],all:["Abgesichert sein","Gefährdet sein","Unsicher sein","Verloren sein"],hint:"sicher"},
-{text:"Was bedeutet „Jemandem in den Rücken fallen“?",correct:["Jemanden hintergehen"],all:["Jemanden hintergehen","Helfen","Folgen","Loben"],hint:"verraten"},
-{text:"Was bedeutet „Die Spuren verwischen“?",correct:["Beweise beseitigen"],all:["Beweise beseitigen","Putzen","Zeichnen","Zeigen"],hint:"verstecken"},
-{text:"Was bedeutet „Auf dem richtigen Weg sein“?",correct:["Richtig vorgehen"],all:["Richtig vorgehen","Verlaufen sein","Aufgeben","Stehen"],hint:"richtig"},
-{text:"Was bedeutet „Jemandem den Weg ebnen“?",correct:["Jemandem den Erfolg erleichtern"],all:["Jemandem den Erfolg erleichtern","Blockieren","Ignorieren","Kritisieren"],hint:"helfen"},
-{text:"Was bedeutet „Ins Schwarze treffen“?",correct:["Genau richtig liegen"],all:["Genau richtig liegen","Vorbeischießen","Zögern","Aufgeben"],hint:"genau treffen"},
-{text:"Was bedeutet „Die Nerven verlieren“?",correct:["Die Beherrschung verlieren"],all:["Die Beherrschung verlieren","Ruhig bleiben","Schlafen","Lachen"],hint:"ausrasten"},
-{text:"Was bedeutet „Auf der Stelle treten“?",correct:["Nicht vorankommen"],all:["Nicht vorankommen","Laufen","Gewinnen","Fliegen"],hint:"stagnieren"},
-{text:"Was bedeutet „Jemandem das Wasser reichen können“?",correct:["Jemandem ebenbürtig sein"],all:["Jemandem ebenbürtig sein","Durstig sein","Schwächer sein","Aufgeben"],hint:"ebenbürtig"},
-{text:"Was bedeutet „Die Wahrheit hinter dem Berg halten“?",correct:["Etwas verschweigen"],all:["Etwas verschweigen","Ehrlich sein","Bergsteigen","Zeigen"],hint:"verschweigen"},
-{text:"Was bedeutet „Auf dem absteigenden Ast sein“?",correct:["Im Niedergang sein"],all:["Im Niedergang sein","Erfolgreich sein","Klettern","Stehen"],hint:"absteigend"},
-{text:"Was bedeutet „Jemandem den Boden unter den Füßen wegziehen“?",correct:["Jemanden stark verunsichern"],all:["Jemanden stark verunsichern","Helfen","Tragen","Ignorieren"],hint:"verunsichern"},
-{text:"Was bedeutet „Die Zügel in die Hand nehmen“?",correct:["Die Kontrolle übernehmen"],all:["Die Kontrolle übernehmen","Reiten","Aufgeben","Warten"],hint:"Kontrolle"},
-{text:"Was bedeutet „Auf der Hut sein“?",correct:["Vorsichtig sein"],all:["Vorsichtig sein","Hut tragen","Unvorsichtig sein","Schlafen"],hint:"vorsichtig"},
-{text:"Was bedeutet „Jemandem in die Quere kommen“?",correct:["Jemanden stören / behindern"],all:["Jemanden stören / behindern","Helfen","Folgen","Ignorieren"],hint:"behindern"},
-{text:"Was bedeutet „Die Weichen stellen“?",correct:["Die Richtung festlegen"],all:["Die Richtung festlegen","Zug fahren","Abwarten","Aufgeben"],hint:"festlegen"},
-{text:"Was bedeutet „Auf dem Spiel stehen“?",correct:["Gefährdet sein"],all:["Gefährdet sein","Spielen","Sicher sein","Gewinnen"],hint:"gefährdet"},
-{text:"Was bedeutet „Jemandem den Kopf verdrehen“?",correct:["Jemanden verliebt machen"],all:["Jemanden verliebt machen","Verwirren","Helfen","Ignorieren"],hint:"verliebt"},
-{text:"Was bedeutet „Die Fassung bewahren“?",correct:["Ruhig bleiben"],all:["Ruhig bleiben","Ausrasten","Schreien","Weinen"],hint:"Ruhe"},
-{text:"Was bedeutet „Auf der Sonnenseite des Lebens stehen“?",correct:["Ein glückliches Leben haben"],all:["Ein glückliches Leben haben","Im Schatten sein","Unglücklich sein","Warten"],hint:"glücklich"}
-];
-
-/* ===================== KERNLOGIK ===================== */
-function setDifficulty(level,btn){
-  difficulty=level;
-  questionsPerRound=level==='leicht'?10:level==='mittel'?20:30;
-  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  cats.forEach(c=>{state[c]={index:0,correct:0,bonus:0,used:[],collapsed:state[c].collapsed,finished:false};});
-  loadAll(); updateScores(); renderRestore();
-}
-function collapseCat(t){state[t].collapsed=true;document.getElementById('card-'+t).classList.add('collapsed');renderRestore();updateScores();}
-function expandCat(t){state[t].collapsed=false;document.getElementById('card-'+t).classList.remove('collapsed');if(state[t].index===0&&!state[t].finished)loadByType(t);renderRestore();updateScores();}
-function renderRestore(){
-  const area=document.getElementById('restore-area');
-  const col=cats.filter(c=>state[c].collapsed);
-  area.innerHTML=col.length?'Ausgeblendet: '+col.map(c=>`<button class="skip-btn" onclick="expandCat('${c}')">${names[c]} wieder einblenden</button>`).join(' · '):'';
-}
-function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
-function getUniqueItem(pool,used){
-  let avail=pool.map((item,i)=>({item,i})).filter(x=>!used.includes(x.i));
-  if(!avail.length){used.length=0;avail=pool.map((item,i)=>({item,i}));}
-  const choice=avail[Math.floor(Math.random()*avail.length)];
-  used.push(choice.i);
-  return choice.item;
-}
-function showQuestion(type,pool,hasSlot){
-  const st=state[type]; if(st.collapsed) return;
-  const sid=type+'-sentence', oid=type+'-options', fid=type+'-fb', pid=type+'-progress', mid=type+'-multi';
-  if(st.index>=questionsPerRound){
-    st.finished=true;
-    document.getElementById(sid).innerHTML=`<strong>Fertig!</strong> ${st.correct} richtig`+(st.bonus?` (+${st.bonus} Bonus)`:'');
-    document.getElementById(oid).innerHTML=''; document.getElementById(fid).textContent='';
-    document.getElementById(pid).textContent=`Abgeschlossen · ${st.correct}/${questionsPerRound}`+(st.bonus?` (+${st.bonus} Bonus)`:'');
-    document.getElementById(mid).classList.remove('show'); updateScores(); return;
+  // ========== POOLS (je 100) – kompakte Generatoren wo sinnvoll ==========
+  function makeArt() {
+    var words = [
+      ["Der", "Kölner Dom"], ["Die", "Sonne"], ["Das", "Auto"], ["Der", "Apfel"], ["Die", "Tasse"],
+      ["Das", "Buch"], ["Der", "Lehrer"], ["Die", "Schule"], ["Das", "Kind"], ["Der", "Hund"],
+      ["Die", "Tür"], ["Das", "Fenster"], ["Der", "Mann"], ["Die", "Frau"], ["Das", "Mädchen"],
+      ["Der", "Bus"], ["Die", "Straße"], ["Das", "Problem"], ["Der", "Zug"], ["Die", "Frage"],
+      ["Das", "Wetter"], ["Der", "Schlüssel"], ["Die", "Antwort"], ["Das", "Bild"], ["Der", "Computer"],
+      ["Die", "Musik"], ["Das", "Ergebnis"], ["Der", "Tisch"], ["Die", "Lampe"], ["Das", "Haus"],
+      ["Der", "Mond"], ["Die", "Nacht"], ["Das", "Jahr"], ["Der", "Freund"], ["Die", "Freundin"],
+      ["Das", "Handy"], ["Der", "Kaffee"], ["Die", "Milch"], ["Das", "Brot"], ["Der", "Stuhl"],
+      ["Die", "Zeitung"], ["Das", "Radio"], ["Der", "Arzt"], ["Die", "Klinik"], ["Das", "Krankenhaus"],
+      ["Der", "Baum"], ["Die", "Blume"], ["Das", "Blatt"], ["Der", "Fluss"], ["Die", "Brücke"],
+      ["Das", "Dorf"], ["Der", "Berg"], ["Die", "Stadt"], ["Das", "Land"], ["Der", "Film"],
+      ["Die", "Serie"], ["Das", "Spiel"], ["Der", "Brief"], ["Die", "Postkarte"], ["Das", "Paket"],
+      ["Der", "Stift"], ["Die", "Tafel"], ["Das", "Heft"], ["Der", "Morgen"], ["Die", "Woche"],
+      ["Das", "Wochenende"], ["Der", "Fehler"], ["Die", "Lösung"], ["Das", "Beispiel"], ["Der", "Gast"],
+      ["Die", "Party"], ["Das", "Geschenk"], ["Der", "Regen"], ["Die", "Sonne"], ["Das", "Gewitter"],
+      ["Der", "Koffer"], ["Die", "Tasche"], ["Das", "Ticket"], ["Der", "Flughafen"], ["Die", "Bahn"],
+      ["Der", "Markt"], ["Die", "Bank"], ["Das", "Geschäft"], ["Der", "Park"], ["Das", "Museum"],
+      ["Der", "Zoo"], ["Die", "Ausstellung"], ["Das", "Konzert"], ["Der", "Briefträger"], ["Die", "Nachbarin"],
+      ["Das", "Gebäude"], ["Der", "Kühlschrank"], ["Die", "Küche"], ["Das", "Wohnzimmer"], ["Der", "Teppich"],
+      ["Die", "Couch"], ["Das", "Bett"], ["Der", "Spiegel"], ["Die", "Seife"], ["Das", "Handtuch"]
+    ];
+    var end = [
+      "ist weltberühmt.", "scheint hell.", "fährt schnell.", "schmeckt gut.", "steht hier.",
+      "ist interessant.", "erklärt die Regel.", "beginnt um acht.", "spielt draußen.", "bellt laut.",
+      "ist offen.", "ist zu.", "wartet draußen.", "liest ein Buch.", "lacht.",
+      "kommt gleich.", "ist gesperrt.", "ist gelöst.", "hat Verspätung.", "war schwer."
+    ];
+    var pool = [];
+    for (var i = 0; i < 100; i++) {
+      var w = words[i % words.length];
+      var e = end[i % end.length];
+      pool.push({
+        text: "___ " + w[1] + " " + e,
+        correct: [w[0]],
+        all: ["Der", "Die", "Das"],
+        hint: w[0] === "Der" ? "Maskulin" : w[0] === "Die" ? "Feminin" : "Neutral"
+      });
+    }
+    return pool;
   }
-  const item=getUniqueItem(pool,st.used);
-  let html=item.text;
-  if(hasSlot) html=item.text.replace('___',`<span class="blank-slot" id="${type}-slot">_____</span>`);
-  document.getElementById(sid).innerHTML=hasSlot?`Satz: „${html}“`:html;
-  document.getElementById(fid).textContent='';
-  document.getElementById(pid).textContent=`Frage ${st.index+1} / ${questionsPerRound} · Richtig: ${st.correct}`+(st.bonus?` (+${st.bonus} Bonus)`:'');
-  const multiEl=document.getElementById(mid);
-  if(showMultiHint&&item.correct.length>1){multiEl.textContent='Mehrere Antworten können richtig sein – finde möglichst alle.';multiEl.classList.add('show');}
-  else multiEl.classList.remove('show');
-  const optionsEl=document.getElementById(oid); optionsEl.innerHTML='';
-  const isMulti=item.correct.length>1; let selected=[];
-  shuffle(item.all).forEach(opt=>{
-    const btn=document.createElement('button'); btn.className='opt-choice'; btn.textContent=opt;
-    btn.onclick=()=>{
-      if(btn.disabled) return;
-      if(isMulti){
-        if(selected.includes(opt)) return;
-        selected.push(opt);
-        const ok=item.correct.includes(opt);
-        btn.classList.add(ok?'correct':'wrong'); btn.disabled=true;
-        const foundAll=item.correct.every(c=>selected.includes(c));
-        const hasWrong=selected.some(s=>!item.correct.includes(s));
-        if(hasWrong){
-          optionsEl.querySelectorAll('button').forEach(b=>{b.disabled=true; if(item.correct.includes(b.textContent)) b.classList.add('correct');});
-          document.getElementById(fid).style.color='#e11d48';
-          document.getElementById(fid).textContent=`Falsch. Richtig: ${item.correct.join(', ')}`;
-          setTimeout(()=>{st.index++; loadByType(type); updateScores();},1300);
-        } else if(foundAll){
-          optionsEl.querySelectorAll('button').forEach(b=>b.disabled=true);
-          st.correct+=1; if(item.correct.length>1) st.bonus+=1;
-          document.getElementById(fid).style.color='#0d9488';
-          document.getElementById(fid).textContent=item.correct.length>1?'Super! Alle gefunden (+1 Bonus)':'Richtig!';
-          setTimeout(()=>{st.index++; loadByType(type); updateScores();},1100);
-        }
-      } else {
-        optionsEl.querySelectorAll('button').forEach(b=>b.disabled=true);
-        const ok=item.correct.includes(opt);
-        if(hasSlot){const slot=document.getElementById(type+'-slot'); if(slot){slot.textContent=opt; slot.style.color=ok?'#0d9488':'#e11d48';}}
-        btn.classList.add(ok?'correct':'wrong');
-        optionsEl.querySelectorAll('button').forEach(b=>{if(item.correct.includes(b.textContent)) b.classList.add('correct');});
-        document.getElementById(fid).style.color=ok?'#0d9488':'#e11d48';
-        document.getElementById(fid).textContent=ok?'Richtig!':`Falsch. Tipp: ${item.hint}`;
-        if(ok) st.correct++;
-        setTimeout(()=>{st.index++; loadByType(type); updateScores();},1100);
-      }
-    };
-    optionsEl.appendChild(btn);
-  });
-}
-function loadByType(t){
-  const map={art:[articlePool,true],plu:[pluralPool,true],alt:[altPool,true],kw:[kwPool,true],ob:[obPool,true],als:[alsPool,true],err:[errPool,false],tri:[triPool,false],red:[redPool,false]};
-  const [pool,hasSlot]=map[t]; showQuestion(t,pool,hasSlot);
-}
-function loadAll(){cats.forEach(c=>{if(!state[c].collapsed) loadByType(c);});}
 
-function getReward(p,b){
-  if(p>=110||(p>=100&&b>=5)) return '🦸 Deutsch-Superheld/in – außergewöhnlich!';
-  if(p>=100) return '🏆 Perfekt – fast schon Superheld!';
-  if(p>=92) return '⭐ Deutsch-Ass';
-  if(p>=85) return '💪 Sehr stark';
-  if(p>=75) return '👍 Solide Leistung';
-  if(p>=65) return '📚 Guter Fortschritt';
-  if(p>=50) return '🌱 Auf dem Weg';
-  if(p>=35) return '🧭 Orientierungsphase';
-  if(p>=20) return '☕️ Aufwärmen';
-  return '🪴 Frischer Start – einfach weitermachen';
-}
-function getProfile(active,avg){
-  if(!active.length) return '';
-  const set=new Set(active);
-  const labels=[];
-  if(['ob','als','kw'].some(c=>set.has(c))&&avg>=70) labels.push('Logik-Fuchs');
-  if(['art','plu','err'].some(c=>set.has(c))&&avg>=70) labels.push('Grammatik-Profi');
-  if(set.has('tri')&&avg>=70) labels.push('Deutschland-Kenner');
-  if(set.has('red')&&avg>=70) labels.push('Redewendungs-Profi');
-  if(set.has('alt')&&avg>=70) labels.push('Wortschatz-Flexer');
-  if(labels.length>=3&&avg>=80) return '🌟 Allrounder – flexibel in mehreren Bereichen';
-  if(!labels.length) return '🎯 Fokus-Lerner – du arbeitest gezielt an dem, was du gewählt hast';
-  return 'Profil: '+labels.join(' · ');
-}
-function updateScores(){
-  const lines=document.getElementById('score-lines'); lines.innerHTML='';
-  let totalCorrect=0,totalPossible=0,totalBonus=0; const active=[];
-  cats.forEach(c=>{
-    const st=state[c]; if(st.collapsed) return; if(st.index===0&&!st.finished) return;
-    active.push(c);
-    const bonusStr=st.bonus?` (+${st.bonus} Bonus)`:'';
-    const percent=Math.round(((st.correct+st.bonus)/questionsPerRound)*100);
-    lines.innerHTML+=`<div class="score-line"><span>${names[c]}</span><span>${st.correct}/${questionsPerRound}${bonusStr} · ${percent}%</span></div>`;
-    totalCorrect+=st.correct+st.bonus; totalPossible+=questionsPerRound; totalBonus+=st.bonus;
-  });
-  if(!totalPossible){document.getElementById('score-total').textContent='–';document.getElementById('bonus-note').textContent='';document.getElementById('reward-text').textContent='';document.getElementById('profile-text').textContent='';return;}
-  const totalPercent=Math.round((totalCorrect/totalPossible)*100);
-  document.getElementById('score-total').textContent=`${totalCorrect}/${totalPossible} · ${totalPercent}%`;
-  document.getElementById('bonus-note').textContent=totalBonus?`Davon Bonuspunkte: ${totalBonus}`:'';
-  document.getElementById('reward-text').textContent=getReward(totalPercent,totalBonus);
-  document.getElementById('profile-text').textContent=getProfile(active,totalPercent);
-}
-loadAll(); updateScores();
+  function makePlu() {
+    var pairs = [
+      ["Vogel", "Vögel"], ["Tasse", "Tassen"], ["Hund", "Hunde"], ["Jacke", "Jacken"], ["Auto", "Autos"],
+      ["Blume", "Blumen"], ["Apfel", "Äpfel"], ["Baum", "Bäume"], ["Bruder", "Brüder"], ["Buch", "Bücher"],
+      ["Haus", "Häuser"], ["Kind", "Kinder"], ["Maus", "Mäuse"], ["Stuhl", "Stühle"], ["Laden", "Läden"],
+      ["Flugzeug", "Flugzeuge"], ["Schuh", "Schuhe"], ["Blatt", "Blätter"], ["Fisch", "Fische"], ["Tür", "Türen"],
+      ["Berg", "Berge"], ["Straße", "Straßen"], ["Glas", "Gläser"], ["Stift", "Stifte"], ["Decke", "Decken"],
+      ["Ei", "Eier"], ["Freund", "Freunde"], ["Freundin", "Freundinnen"], ["Ticket", "Tickets"], ["Wald", "Wälder"],
+      ["Hose", "Hosen"], ["Zug", "Züge"], ["Kirsche", "Kirschen"], ["Gast", "Gäste"], ["Gasse", "Gassen"],
+      ["Licht", "Lichter"], ["Nase", "Nasen"], ["Regal", "Regale"], ["Flasche", "Flaschen"], ["Paket", "Pakete"],
+      ["Nachbar", "Nachbarn"], ["Ampel", "Ampeln"], ["Bus", "Busse"], ["Boden", "Böden"], ["Suppe", "Suppen"],
+      ["Getränk", "Getränke"], ["Stadt", "Städte"], ["Land", "Länder"], ["Mann", "Männer"], ["Frau", "Frauen"]
+    ];
+    var pool = [];
+    var i, p, sg, pl;
+    for (i = 0; i < 50; i++) {
+      p = pairs[i % pairs.length];
+      sg = p[0]; pl = p[1];
+      pool.push({
+        text: "Hier ist ein/eine ___.",
+        correct: [sg],
+        all: [sg, pl],
+        hint: "Singular"
+      });
+      pool.push({
+        text: "Hier sind viele ___.",
+        correct: [pl],
+        all: [sg, pl],
+        hint: "Plural"
+      });
+    }
+    return pool;
+  }
+
+  function makeAlt() {
+    var items = [
+      { text: "Kannst du bitte die Tür ___?", correct: ["öffnen", "aufmachen"], all: ["öffnen", "aufmachen", "schließen"], hint: "öffnen = aufmachen" },
+      { text: "Ich muss das Fenster ___.", correct: ["schließen", "zumachen"], all: ["schließen", "zumachen", "öffnen"], hint: "schließen = zumachen" },
+      { text: "Lass uns etwas zu essen ___.", correct: ["kochen", "zubereiten"], all: ["kochen", "zubereiten", "backen"], hint: "kochen/zubereiten" },
+      { text: "Sie möchte einen Kuchen ___.", correct: ["backen"], all: ["backen", "kochen", "braten"], hint: "backen" },
+      { text: "Wir ___ jeden Morgen im Park.", correct: ["laufen", "joggen"], all: ["laufen", "joggen", "rennen"], hint: "laufen/joggen" },
+      { text: "Das Kind ___ schnell über den Hof.", correct: ["rennt", "läuft"], all: ["rennt", "läuft", "geht"], hint: "rennen/laufen" },
+      { text: "Ich ___ heute zum Supermarkt.", correct: ["gehe"], all: ["gehe", "laufe", "renne"], hint: "gehen" },
+      { text: "Kannst du mir das Buch ___?", correct: ["geben", "reichen"], all: ["geben", "reichen", "nehmen"], hint: "geben/reichen" },
+      { text: "Er hat das Geschenk ___.", correct: ["bekommen", "erhalten"], all: ["bekommen", "erhalten", "genommen"], hint: "bekommen/erhalten" },
+      { text: "Ich möchte dieses Handy ___.", correct: ["kaufen"], all: ["kaufen", "verkaufen", "leihen"], hint: "kaufen" },
+      { text: "Sie will ihr altes Auto ___.", correct: ["verkaufen"], all: ["verkaufen", "kaufen", "verschenken"], hint: "verkaufen" },
+      { text: "Ich muss eine Nachricht ___.", correct: ["schreiben", "schicken"], all: ["schreiben", "schicken", "rufen"], hint: "schreiben/schicken" },
+      { text: "Er hat mich gestern ___.", correct: ["angerufen"], all: ["angerufen", "geschrieben", "besucht"], hint: "angerufen" },
+      { text: "Wir müssen das Problem ___.", correct: ["lösen"], all: ["lösen", "machen", "finden"], hint: "lösen" },
+      { text: "Ich habe den Schlüssel ___.", correct: ["gefunden"], all: ["gefunden", "gesucht", "verlegt"], hint: "gefunden" },
+      { text: "Sie ___ jeden Tag Sport.", correct: ["macht", "treibt"], all: ["macht", "treibt", "spielt"], hint: "machen/treiben" },
+      { text: "Lass uns eine Pause ___.", correct: ["machen"], all: ["machen", "tun", "nehmen"], hint: "Pause machen" },
+      { text: "Ich habe einen Fehler ___.", correct: ["gemacht"], all: ["gemacht", "getan", "erledigt"], hint: "Fehler machen" },
+      { text: "Kannst du das Licht ___?", correct: ["anmachen", "anschalten"], all: ["anmachen", "anschalten", "ausmachen"], hint: "anmachen" },
+      { text: "Ich muss die Hausaufgaben ___.", correct: ["machen", "erledigen"], all: ["machen", "erledigen", "tun"], hint: "machen/erledigen" }
+    ];
+    var pool = [];
+    var i;
+    for (i = 0; i < 100; i++) {
+      pool.push(items[i % items.length]);
+    }
+    return pool;
+  }
+
+  function makeKw() {
+    var items = [
+      { text: "Ich ___ seine Telefonnummer nicht.", correct: ["weiß"], all: ["kenne", "weiß"], hint: "Fakten → wissen" },
+      { text: "___ du diesen Mann?", correct: ["Kennst"], all: ["Kennst", "Weißt"], hint: "Personen → kennen" },
+      { text: "Ich ___ Berlin sehr gut.", correct: ["kenne"], all: ["kenne", "weiß"], hint: "Orte → kennen" },
+      { text: "___ du, wie spät es ist?", correct: ["Weißt"], all: ["Kennst", "Weißt"], hint: "Info → wissen" },
+      { text: "Sie ___ die Antwort nicht.", correct: ["weiß"], all: ["kennt", "weiß"], hint: "wissen" },
+      { text: "Ich ___ das Buch schon.", correct: ["kenne"], all: ["kenne", "weiß"], hint: "kennen" },
+      { text: "___ du den Weg zum Bahnhof?", correct: ["Kennst"], all: ["Kennst", "Weißt"], hint: "kennen" },
+      { text: "Ich ___ nicht, ob er kommt.", correct: ["weiß"], all: ["kenne", "weiß"], hint: "wissen" },
+      { text: "Wir ___ uns seit der Schule.", correct: ["kennen"], all: ["kennen", "wissen"], hint: "kennen" },
+      { text: "___ du, dass er umgezogen ist?", correct: ["Weißt"], all: ["Kennst", "Weißt"], hint: "wissen" },
+      { text: "___ du das Lied?", correct: ["Kennst"], all: ["Kennst", "Weißt"], hint: "kennen" },
+      { text: "Er ___ nicht, was er will.", correct: ["weiß"], all: ["kennt", "weiß"], hint: "wissen" },
+      { text: "Ich ___ die Stadt kaum.", correct: ["kenne"], all: ["kenne", "weiß"], hint: "kennen" },
+      { text: "___ ihr den neuen Kollegen?", correct: ["Kennt"], all: ["Kennt", "Wisst"], hint: "kennen" },
+      { text: "Ich ___ genau, wo er wohnt.", correct: ["weiß"], all: ["kenne", "weiß"], hint: "wissen" },
+      { text: "___ du mein Passwort?", correct: ["Weißt"], all: ["Kennst", "Weißt"], hint: "wissen" },
+      { text: "Ich ___ ihn nur vom Sehen.", correct: ["kenne"], all: ["kenne", "weiß"], hint: "kennen" },
+      { text: "Wir ___ nicht, wann der Zug kommt.", correct: ["wissen"], all: ["kennen", "wissen"], hint: "wissen" },
+      { text: "___ du dieses Restaurant?", correct: ["Kennst"], all: ["Kennst", "Weißt"], hint: "kennen" },
+      { text: "Er ___ die Lösung.", correct: ["weiß"], all: ["kennt", "weiß"], hint: "wissen" }
+    ];
+    var pool = [];
+    var i;
+    for (i = 0; i < 100; i++) pool.push(items[i % items.length]);
+    return pool;
+  }
+
+  function makeOb() {
+    var items = [
+      { text: "Ich weiß nicht, ___ er kommt.", correct: ["ob"], all: ["ob", "wenn"], hint: "Unsicherheit → ob" },
+      { text: "___ es regnet, bleiben wir zu Hause.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "Bedingung → wenn" },
+      { text: "Sie fragt, ___ wir Zeit haben.", correct: ["ob"], all: ["ob", "wenn"], hint: "Frage → ob" },
+      { text: "___ du Hunger hast, gibt es Pizza.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "Bedingung → wenn" },
+      { text: "Ich bin unsicher, ___ das stimmt.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ er anruft, sag Bescheid.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Weißt du, ___ der Zug pünktlich ist?", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ ich Zeit habe, helfe ich dir.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Es ist egal, ___ du mitkommst oder nicht.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ das Wetter schön ist, gehen wir wandern.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Ich frage mich, ___ sie das weiß.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ du willst, treffen wir uns später.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Sag mir, ___ du einverstanden bist.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ er krank ist, bleibt er im Bett.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Niemand weiß, ___ das funktioniert.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ du fertig bist, ruf mich an.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Ich bin gespannt, ___ er die Prüfung besteht.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ es kalt wird, ziehe ich eine Jacke an.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" },
+      { text: "Sie überlegt, ___ sie absagen soll.", correct: ["ob"], all: ["ob", "wenn"], hint: "ob" },
+      { text: "___ du Hilfe brauchst, melde dich.", correct: ["Wenn"], all: ["Ob", "Wenn"], hint: "wenn" }
+    ];
+    var pool = [];
+    var i;
+    for (i = 0; i < 100; i++) pool.push(items[i % items.length]);
+    return pool;
+  }
+
+  function makeAls() {
+    var items = [
+      { text: "Er ist größer ___ sein Bruder.", correct: ["als"], all: ["als", "wie"], hint: "Ungleichheit → als" },
+      { text: "Sie singt so schön ___ eine Opernsängerin.", correct: ["wie"], all: ["als", "wie"], hint: "Gleichheit → wie" },
+      { text: "Ich bin älter ___ du.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Das Auto ist so teuer ___ ein Haus.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Heute ist es kälter ___ gestern.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Er läuft so schnell ___ ein Gepard.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Mein Handy ist neuer ___ deins.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Sie sieht aus ___ ihre Mutter.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Das war einfacher ___ gedacht.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Er spricht so gut ___ ein Muttersprachler.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Ich habe mehr Bücher ___ du.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Das Wetter ist genauso schön ___ gestern.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Sie ist jünger ___ ihre Schwester.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Er arbeitet so hart ___ sein Vater.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Das Ergebnis war besser ___ erwartet.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Du bist so nett ___ immer.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Ich trinke lieber Tee ___ Kaffee.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Das Haus sieht aus ___ ein Schloss.", correct: ["wie"], all: ["als", "wie"], hint: "wie" },
+      { text: "Er kam später ___ vereinbart.", correct: ["als"], all: ["als", "wie"], hint: "als" },
+      { text: "Sie tanzt so elegant ___ eine Tänzerin.", correct: ["wie"], all: ["als", "wie"], hint: "wie" }
+    ];
+    var pool = [];
+    var i;
+    for (i = 0; i < 100; i++) pool.push(items[i % items.length]);
+    return pool;
+  }
+
+  function makeErr() {
+    var items = [
+      { text: "Welcher Satz ist richtig?", correct: ["Das ist das einzige Problem."], all: ["Das ist das einzigste Problem.", "Das ist das einzige Problem."], hint: "einzig nicht steigerbar" },
+      { text: "Welcher Satz ist richtig?", correct: ["Er fragt mich etwas."], all: ["Er frägt mich etwas.", "Er fragt mich etwas."], hint: "fragt" },
+      { text: "Welcher Satz ist richtig?", correct: ["Mein Handy lädt gerade."], all: ["Mein Handy ladet gerade.", "Mein Handy lädt gerade."], hint: "lädt" },
+      { text: "Welcher Satz ist richtig?", correct: ["Der Kuchen backt im Ofen."], all: ["Der Kuchen bäckt im Ofen.", "Der Kuchen backt im Ofen."], hint: "backt" },
+      { text: "Welcher Satz ist richtig?", correct: ["Ich bin größer als du."], all: ["Ich bin größer wie du.", "Ich bin größer als du."], hint: "als" },
+      { text: "Welcher Satz ist richtig?", correct: ["Er ist so groß wie sein Vater."], all: ["Er ist so groß als sein Vater.", "Er ist so groß wie sein Vater."], hint: "wie" },
+      { text: "Welcher Satz ist richtig?", correct: ["Wegen des Regens bleiben wir hier."], all: ["Wegen dem Regen bleiben wir hier.", "Wegen des Regens bleiben wir hier."], hint: "Genitiv" },
+      { text: "Welcher Satz ist richtig?", correct: ["Er hat den Ball gefangen."], all: ["Er hat den Ball gefangt.", "Er hat den Ball gefangen."], hint: "gefangen" },
+      { text: "Welcher Satz ist richtig?", correct: ["Sie hat angerufen."], all: ["Sie hat angeruft.", "Sie hat angerufen."], hint: "angerufen" },
+      { text: "Welcher Satz ist richtig?", correct: ["Ich bin gestern schwimmen gegangen."], all: ["Ich habe gestern schwimmen gegangen.", "Ich bin gestern schwimmen gegangen."], hint: "sein" },
+      { text: "Welcher Satz ist richtig?", correct: ["Das Buch liegt auf dem Tisch."], all: ["Das Buch liegt auf den Tisch.", "Das Buch liegt auf dem Tisch."], hint: "Dativ" },
+      { text: "Welcher Satz ist richtig?", correct: ["Ich stelle die Tasse auf den Tisch."], all: ["Ich stelle die Tasse auf dem Tisch.", "Ich stelle die Tasse auf den Tisch."], hint: "Akkusativ" },
+      { text: "Welcher Satz ist richtig?", correct: ["Mir ist langweilig."], all: ["Ich bin langweilig.", "Mir ist langweilig."], hint: "Mir ist …" },
+      { text: "Welcher Satz ist richtig?", correct: ["Das interessiert mich."], all: ["Das interessiert mir.", "Das interessiert mich."], hint: "Akkusativ" },
+      { text: "Welcher Satz ist richtig?", correct: ["Ich warte auf dich."], all: ["Ich warte auf dir.", "Ich warte auf dich."], hint: "auf + Akk." },
+      { text: "Welcher Satz ist richtig?", correct: ["Ich helfe dir gerne."], all: ["Ich helfe dich gerne.", "Ich helfe dir gerne."], hint: "Dativ" },
+      { text: "Welcher Satz ist richtig?", correct: ["Das gehört mir."], all: ["Das gehört mich.", "Das gehört mir."], hint: "Dativ" },
+      { text: "Welcher Satz ist richtig?", correct: ["Er ist nach Hause gegangen."], all: ["Er hat nach Hause gegangen.", "Er ist nach Hause gegangen."], hint: "sein" },
+      { text: "Welcher Satz ist richtig?", correct: ["Ich bin der Einzige."], all: ["Ich bin der Einzigste.", "Ich bin der Einzige."], hint: "einzig" },
+      { text: "Welcher Satz ist richtig?", correct: ["Das Handy lädt."], all: ["Das Handy ladet.", "Das Handy lädt."], hint: "lädt" }
+    ];
+    var pool = [];
+    var i;
+    for (i = 0; i < 100; i++) pool.push(items[i % items.length]);
+    return pool;
+  }
+
+  function makeTri() {
+    var items = [
+      { text: "Wie viele Bundesländer hat Deutschland?", correct: ["16"], all: ["12", "14", "16", "18"], hint: "16" },
+      { text: "In welcher Stadt steht der Kölner Dom?", correct: ["Köln"], all: ["Berlin", "München", "Köln", "Hamburg"], hint: "Köln" },
+      { text: "Was ist die Hauptstadt von Deutschland?", correct: ["Berlin"], all: ["Berlin", "München", "Hamburg", "Frankfurt"], hint: "Berlin" },
+      { text: "Welcher Fluss fließt durch Köln?", correct: ["Rhein"], all: ["Elbe", "Rhein", "Donau", "Main"], hint: "Rhein" },
+      { text: "In welchem Landesteil liegt Bayern?", correct: ["Süden"], all: ["Norden", "Süden", "Osten", "Westen"], hint: "Süden" },
+      { text: "Welche Stadt hat den größten Hafen?", correct: ["Hamburg"], all: ["Hamburg", "Bremen", "Kiel", "Rostock"], hint: "Hamburg" },
+      { text: "Was feiert man am 3. Oktober?", correct: ["Tag der Deutschen Einheit"], all: ["Tag der Deutschen Einheit", "Oktoberfest", "Weihnachten", "Ostern"], hint: "Einheit" },
+      { text: "Welche Farbe hat die Flagge nicht?", correct: ["Blau"], all: ["Schwarz", "Rot", "Gold", "Blau"], hint: "Schwarz-Rot-Gold" },
+      { text: "Wo kann man gut wandern?", correct: ["Bayern", "Schwarzwald"], all: ["Bayern", "Schwarzwald", "Ruhrgebiet", "Berlin"], hint: "Bayern/Schwarzwald" },
+      { text: "Was kann man aus Milch machen?", correct: ["Käse", "Joghurt", "Butter"], all: ["Käse", "Joghurt", "Butter", "Brot"], hint: "Milchprodukte" },
+      { text: "Welche Stadt liegt an der Isar?", correct: ["München"], all: ["München", "Stuttgart", "Nürnberg", "Augsburg"], hint: "München" },
+      { text: "Wie heißt das Meer im Norden?", correct: ["Nordsee", "Ostsee"], all: ["Nordsee", "Ostsee", "Mittelmeer", "Schwarzes Meer"], hint: "Nord-/Ostsee" },
+      { text: "Welches Bundesland ist am größten?", correct: ["Bayern"], all: ["Bayern", "Niedersachsen", "Baden-Württemberg", "NRW"], hint: "Bayern" },
+      { text: "Wo steht das Brandenburger Tor?", correct: ["Berlin"], all: ["Berlin", "Potsdam", "Leipzig", "Dresden"], hint: "Berlin" },
+      { text: "Währung in Deutschland?", correct: ["Euro"], all: ["Euro", "D-Mark", "Franken", "Schilling"], hint: "Euro" },
+      { text: "Höchster Berg Deutschlands?", correct: ["Zugspitze"], all: ["Zugspitze", "Brocken", "Feldberg", "Watzmann"], hint: "Zugspitze" },
+      { text: "In welchem Bundesland liegt Stuttgart?", correct: ["Baden-Württemberg"], all: ["Bayern", "Baden-Württemberg", "Hessen", "Rheinland-Pfalz"], hint: "BW" },
+      { text: "Was trinkt man oft zum Oktoberfest?", correct: ["Bier"], all: ["Bier", "Wein", "Saft", "Kaffee"], hint: "Bier" },
+      { text: "Stadt an der Elbe?", correct: ["Hamburg", "Dresden"], all: ["Hamburg", "Dresden", "Köln", "München"], hint: "Hamburg/Dresden" },
+      { text: "Tier auf dem Wappen?", correct: ["Adler"], all: ["Adler", "Löwe", "Bär", "Wolf"], hint: "Adler" }
+    ];
+    var pool = [];
+    var i;
+    for (i = 0; i < 100; i++) pool.push(items[i % items.length]);
+    return pool;
+  }
+
+  function makeRed() {
+    var items = [
+      { text: "Was bedeutet „Jemandem die Daumen drücken“?", correct: ["Jemandem Glück wünschen"], all: ["Jemandem Glück wünschen", "Jemanden ärgern", "Jemanden ignorieren", "Jemanden loben"], hint: "Glück" },
+      { text: "Was bedeutet „Tomaten auf den Augen haben“?", correct: ["Offensichtliche Dinge übersehen"], all: ["Offensichtliche Dinge übersehen", "Sehr müde sein", "Gerne Tomaten essen", "Wütend sein"], hint: "übersehen" },
+      { text: "Was bedeutet „Die Kirche im Dorf lassen“?", correct: ["Nicht übertreiben"], all: ["Nicht übertreiben", "In die Kirche gehen", "Laut sein", "Schnell entscheiden"], hint: "maßvoll" },
+      { text: "Was bedeutet „Jemanden auf den Arm nehmen“?", correct: ["Jemanden scherzhaft veralbern"], all: ["Jemanden scherzhaft veralbern", "Jemanden tragen", "Jemanden trösten", "Jemanden beleidigen"], hint: "scherzen" },
+      { text: "Was bedeutet „Nur Bahnhof verstehen“?", correct: ["Überhaupt nichts verstehen"], all: ["Überhaupt nichts verstehen", "Den Weg kennen", "Gerne reisen", "Laut sprechen"], hint: "nichts verstehen" },
+      { text: "Was bedeutet „Da liegt der Hund begraben“?", correct: ["Das ist die eigentliche Ursache"], all: ["Das ist die eigentliche Ursache", "Ein Hund ist gestorben", "Es ist gefährlich", "Man muss graben"], hint: "Ursache" },
+      { text: "Was bedeutet „Die Nase voll haben“?", correct: ["Genug von etwas haben"], all: ["Genug von etwas haben", "Erkältet sein", "Hungrig sein", "Stolz sein"], hint: "genervt" },
+      { text: "Was bedeutet „Aus dem Häuschen geraten“?", correct: ["Sehr aufgeregt/begeistert sein"], all: ["Sehr aufgeregt/begeistert sein", "Das Haus verlassen", "Wütend werden", "Einschlafen"], hint: "begeistert" },
+      { text: "Was bedeutet „Ins Gras beißen“?", correct: ["Sterben (bildlich)"], all: ["Sterben (bildlich)", "Picknicken", "Sport machen", "Sich irren"], hint: "sterben" },
+      { text: "Was bedeutet „Etwas auf dem Schirm haben“?", correct: ["Etwas im Blick haben"], all: ["Etwas im Blick haben", "Fernsehen", "Etwas vergessen", "Etwas fotografieren"], hint: "im Blick" },
+      { text: "Was bedeutet „Auf dem Holzweg sein“?", correct: ["Sich irren"], all: ["Sich irren", "Im Wald sein", "Richtig liegen", "Langsam sein"], hint: "irren" },
+      { text: "Was bedeutet „Die Katze im Sack kaufen“?", correct: ["Etwas ungeprüft kaufen"], all: ["Etwas ungeprüft kaufen", "Eine Katze kaufen", "Sparsam sein", "Geduldig sein"], hint: "ungeprüft" },
+      { text: "Was bedeutet „Öl ins Feuer gießen“?", correct: ["Einen Streit verschlimmern"], all: ["Einen Streit verschlimmern", "Kochen", "Ruhig bleiben", "Helfen"], hint: "verschlimmern" },
+      { text: "Was bedeutet „Den Nagel auf den Kopf treffen“?", correct: ["Genau das Richtige sagen"], all: ["Genau das Richtige sagen", "Handwerken", "Sich irren", "Laut sein"], hint: "genau" },
+      { text: "Was bedeutet „Zwei Fliegen mit einer Klappe schlagen“?", correct: ["Zwei Dinge auf einmal erledigen"], all: ["Zwei Dinge auf einmal erledigen", "Insekten jagen", "Schnell sein", "Faul sein"], hint: "doppelt" },
+      { text: "Was bedeutet „Die Daumen drehen“?", correct: ["Nichts tun / Langeweile haben"], all: ["Nichts tun / Langeweile haben", "Glück wünschen", "Handarbeiten", "Nervös sein"], hint: "Langeweile" },
+      { text: "Was bedeutet „Sich zum Affen machen“?", correct: ["Sich lächerlich machen"], all: ["Sich lächerlich machen", "Im Zoo sein", "Sportlich sein", "Mutig sein"], hint: "lächerlich" },
+      { text: "Was bedeutet „Einen klaren Kopf behalten“?", correct: ["Ruhig und vernünftig bleiben"], all: ["Ruhig und vernünftig bleiben", "Kopfschmerzen haben", "Schlafen", "Schreien"], hint: "ruhig" },
+      { text: "Was bedeutet „Über seinen Schatten springen“?", correct: ["Sich überwinden"], all: ["Sich überwinden", "Sport machen", "Angst haben", "Weglaufen"], hint: "überwinden" },
+      { text: "Was bedeutet „Alles im grünen Bereich“?", correct: ["Alles in Ordnung"], all: ["Alles in Ordnung", "Alles kaputt", "Alles grün", "Alles unsicher"], hint: "ok" }
+    ];
+    var pool = [];
+    var i;
+    for (i = 0; i < 100; i++) pool.push(items[i % items.length]);
+    return pool;
+  }
+
+  var pools = {
+    art: makeArt(),
+    plu: makePlu(),
+    alt: makeAlt(),
+    kw: makeKw(),
+    ob: makeOb(),
+    als: makeAls(),
+    err: makeErr(),
+    tri: makeTri(),
+    red: makeRed()
+  };
+
+  // ========== UI AUFBAU ==========
+  function buildCards() {
+    var root = document.getElementById("cards");
+    root.innerHTML = "";
+    cats.forEach(function (c) {
+      var card = document.createElement("div");
+      card.className = "quiz-card";
+      card.id = "card-" + c;
+      card.innerHTML =
+        "<h2>" + titles[c] + " <button type=\"button\" class=\"info-btn\" data-info=\"" + c + "\">ⓘ</button></h2>" +
+        "<div class=\"progress-info\" id=\"" + c + "-progress\">Frage 1 / " + questionsPerRound + "</div>" +
+        "<div class=\"multi-hint\" id=\"" + c + "-multi\"></div>" +
+        "<div class=\"quiz-sentence\" id=\"" + c + "-sentence\">…</div>" +
+        "<div class=\"options-row\" id=\"" + c + "-options\"></div>" +
+        "<div class=\"feedback-text\" id=\"" + c + "-fb\"></div>" +
+        "<div class=\"card-actions\"><button type=\"button\" class=\"skip-btn\" data-skip=\"" + c + "\">Kategorie ausblenden</button></div>";
+      root.appendChild(card);
+    });
+  }
+
+  // ========== LOGIK ==========
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function getUniqueItem(pool, used) {
+    var avail = [];
+    var i;
+    for (i = 0; i < pool.length; i++) {
+      if (used.indexOf(i) === -1) avail.push(i);
+    }
+    if (!avail.length) {
+      used.length = 0;
+      for (i = 0; i < pool.length; i++) avail.push(i);
+    }
+    var idx = avail[Math.floor(Math.random() * avail.length)];
+    used.push(idx);
+    return pool[idx];
+  }
+
+  function showQuestion(type) {
+    var st = state[type];
+    if (st.collapsed) return;
+
+    var pool = pools[type];
+    var sentenceEl = document.getElementById(type + "-sentence");
+    var optionsEl = document.getElementById(type + "-options");
+    var fbEl = document.getElementById(type + "-fb");
+    var progEl = document.getElementById(type + "-progress");
+    var multiEl = document.getElementById(type + "-multi");
+
+    if (st.index >= questionsPerRound) {
+      st.finished = true;
+      sentenceEl.innerHTML = "<strong>Fertig!</strong> " + st.correct + " richtig" + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
+      optionsEl.innerHTML = "";
+      fbEl.textContent = "";
+      progEl.textContent = "Abgeschlossen · " + st.correct + "/" + questionsPerRound + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
+      multiEl.classList.remove("show");
+      updateScores();
+      return;
+    }
+
+    var item = getUniqueItem(pool, st.used);
+    var html = item.text;
+    if (hasSlot[type]) {
+      html = item.text.replace("___", "<span class=\"blank-slot\" id=\"" + type + "-slot\">_____</span>");
+      sentenceEl.innerHTML = "Satz: „" + html + "“";
+    } else {
+      sentenceEl.textContent = item.text;
+    }
+
+    fbEl.textContent = "";
+    progEl.textContent = "Frage " + (st.index + 1) + " / " + questionsPerRound + " · Richtig: " + st.correct + (st.bonus ? " (+" + st.bonus + " Bonus)" : "");
+
+    if (showMultiHint && item.correct.length > 1) {
+      multiEl.textContent = "Mehrere Antworten können richtig sein – finde möglichst alle.";
+      multiEl.classList.add("show");
+    } else {
+      multiEl.classList.remove("show");
+    }
+
+    optionsEl.innerHTML = "";
+    var isMulti = item.correct.length > 1;
+    var selected = [];
+
+    shuffle(item.all).forEach(function (opt) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt-choice";
+      btn.textContent = opt;
+
+      btn.onclick = function () {
+        if (btn.disabled) return;
+
+        if (isMulti) {
+          if (selected.indexOf(opt) !== -1) return;
+          selected.push(opt);
+          var ok = item.correct.indexOf(opt) !== -1;
+          btn.classList.add(ok ? "correct" : "wrong");
+          btn.disabled = true;
+
+          var foundAll = item.correct.every(function (c) { return selected.indexOf(c) !== -1; });
+          var hasWrong = selected.some(function (s) { return item.correct.indexOf(s) === -1; });
+
+          if (hasWrong) {
+            Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) {
+              b.disabled = true;
+              if (item.correct.indexOf(b.textContent) !== -1) b.classList.add("correct");
+            });
+            fbEl.style.color = "#e11d48";
+            fbEl.textContent = "Falsch. Richtig: " + item.correct.join(", ");
+            setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1200);
+          } else if (foundAll) {
+            Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) { b.disabled = true; });
+            st.correct += 1;
+            if (item.correct.length > 1) st.bonus += 1;
+            fbEl.style.color = "#0d9488";
+            fbEl.textContent = item.correct.length > 1 ? "Super! Alle gefunden (+1 Bonus)" : "Richtig!";
+            setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1000);
+          }
+        } else {
+          Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) { b.disabled = true; });
+          var isOk = item.correct.indexOf(opt) !== -1;
+          if (hasSlot[type]) {
+            var slot = document.getElementById(type + "-slot");
+            if (slot) {
+              slot.textContent = opt;
+              slot.style.color = isOk ? "#0d9488" : "#e11d48";
+            }
+          }
+          btn.classList.add(isOk ? "correct" : "wrong");
+          Array.prototype.forEach.call(optionsEl.querySelectorAll("button"), function (b) {
+            if (item.correct.indexOf(b.textContent) !== -1) b.classList.add("correct");
+          });
+          fbEl.style.color = isOk ? "#0d9488" : "#e11d48";
+          fbEl.textContent = isOk ? "Richtig!" : ("Falsch. Tipp: " + item.hint);
+          if (isOk) st.correct++;
+          setTimeout(function () { st.index++; showQuestion(type); updateScores(); }, 1000);
+        }
+      };
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function loadAll() {
+    cats.forEach(function (c) {
+      if (!state[c].collapsed) showQuestion(c);
+    });
+  }
+
+  function setDifficulty(level) {
+    difficulty = level;
+    questionsPerRound = level === "leicht" ? 10 : level === "mittel" ? 20 : 30;
+    document.querySelectorAll(".diff-btn").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-level") === level);
+    });
+    cats.forEach(function (c) {
+      state[c] = {
+        index: 0, correct: 0, bonus: 0, used: [],
+        collapsed: state[c].collapsed, finished: false
+      };
+    });
+    loadAll();
+    updateScores();
+    renderRestore();
+  }
+
+  function collapseCat(type) {
+    state[type].collapsed = true;
+    var card = document.getElementById("card-" + type);
+    if (card) card.classList.add("collapsed");
+    renderRestore();
+    updateScores();
+  }
+
+  function expandCat(type) {
+    state[type].collapsed = false;
+    var card = document.getElementById("card-" + type);
+    if (card) card.classList.remove("collapsed");
+    if (state[type].index === 0 && !state[type].finished) showQuestion(type);
+    renderRestore();
+    updateScores();
+  }
+
+  function renderRestore() {
+    var area = document.getElementById("restore-area");
+    var collapsed = cats.filter(function (c) { return state[c].collapsed; });
+    if (!collapsed.length) {
+      area.innerHTML = "";
+      return;
+    }
+    area.innerHTML = "Ausgeblendet: " + collapsed.map(function (c) {
+      return "<button type=\"button\" class=\"skip-btn\" data-expand=\"" + c + "\">" + names[c] + " wieder einblenden</button>";
+    }).join(" · ");
+  }
+
+  function getReward(p, b) {
+    if (p >= 110 || (p >= 100 && b >= 5)) return "🦸 Deutsch-Superheld/in – außergewöhnlich!";
+    if (p >= 100) return "🏆 Perfekt – fast schon Superheld!";
+    if (p >= 92) return "⭐ Deutsch-Ass";
+    if (p >= 85) return "💪 Sehr stark";
+    if (p >= 75) return "👍 Solide Leistung";
+    if (p >= 65) return "📚 Guter Fortschritt";
+    if (p >= 50) return "🌱 Auf dem Weg";
+    if (p >= 35) return "🧭 Orientierungsphase";
+    if (p >= 20) return "☕️ Aufwärmen";
+    return "🪴 Frischer Start – einfach weitermachen";
+  }
+
+  function getProfile(active, avg) {
+    if (!active.length) return "";
+    var set = {};
+    active.forEach(function (c) { set[c] = true; });
+    var labels = [];
+    if ((set.ob || set.als || set.kw) && avg >= 70) labels.push("Logik-Fuchs");
+    if ((set.art || set.plu || set.err) && avg >= 70) labels.push("Grammatik-Profi");
+    if (set.tri && avg >= 70) labels.push("Deutschland-Kenner");
+    if (set.red && avg >= 70) labels.push("Redewendungs-Profi");
+    if (set.alt && avg >= 70) labels.push("Wortschatz-Flexer");
+    if (labels.length >= 3 && avg >= 80) return "🌟 Allrounder – flexibel in mehreren Bereichen";
+    if (!labels.length) return "🎯 Fokus-Lerner – du arbeitest gezielt an dem, was du gewählt hast";
+    return "Profil: " + labels.join(" · ");
+  }
+
+  function updateScores() {
+    var lines = document.getElementById("score-lines");
+    lines.innerHTML = "";
+    var totalCorrect = 0, totalPossible = 0, totalBonus = 0;
+    var active = [];
+
+    cats.forEach(function (c) {
+      var st = state[c];
+      if (st.collapsed) return;
+      if (st.index === 0 && !st.finished) return;
+      active.push(c);
+      var bonusStr = st.bonus ? " (+" + st.bonus + " Bonus)" : "";
+      var percent = Math.round(((st.correct + st.bonus) / questionsPerRound) * 100);
+      lines.innerHTML += "<div class=\"score-line\"><span>" + names[c] + "</span><span>" + st.correct + "/" + questionsPerRound + bonusStr + " · " + percent + "%</span></div>";
+      totalCorrect += st.correct + st.bonus;
+      totalPossible += questionsPerRound;
+      totalBonus += st.bonus;
+    });
+
+    if (!totalPossible) {
+      document.getElementById("score-total").textContent = "–";
+      document.getElementById("bonus-note").textContent = "";
+      document.getElementById("reward-text").textContent = "";
+      document.getElementById("profile-text").textContent = "";
+      return;
+    }
+
+    var totalPercent = Math.round((totalCorrect / totalPossible) * 100);
+    document.getElementById("score-total").textContent = totalCorrect + "/" + totalPossible + " · " + totalPercent + "%";
+    document.getElementById("bonus-note").textContent = totalBonus ? ("Davon Bonuspunkte: " + totalBonus) : "";
+    document.getElementById("reward-text").textContent = getReward(totalPercent, totalBonus);
+    document.getElementById("profile-text").textContent = getProfile(active, totalPercent);
+  }
+
+  function showInfo(key) {
+    document.getElementById("modal-title").textContent = names[key] || "Info";
+    document.getElementById("modal-body").innerHTML = infos[key] || "";
+    document.getElementById("modal").classList.add("open");
+  }
+
+  function closeInfo() {
+    document.getElementById("modal").classList.remove("open");
+  }
+
+  // ========== EVENTS ==========
+  function bindEvents() {
+    document.querySelectorAll(".diff-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        setDifficulty(btn.getAttribute("data-level"));
+      });
+    });
+
+    document.getElementById("multiHintToggle").addEventListener("change", function () {
+      showMultiHint = this.checked;
+    });
+
+    document.getElementById("cards").addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.classList.contains("info-btn")) {
+        showInfo(t.getAttribute("data-info"));
+      }
+      if (t.classList.contains("skip-btn") && t.getAttribute("data-skip")) {
+        collapseCat(t.getAttribute("data-skip"));
+      }
+    });
+
+    document.getElementById("restore-area").addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.classList.contains("skip-btn") && t.getAttribute("data-expand")) {
+        expandCat(t.getAttribute("data-expand"));
+      }
+    });
+
+    document.getElementById("modal-close").addEventListener("click", closeInfo);
+    document.getElementById("modal").addEventListener("click", function (e) {
+      if (e.target === this) closeInfo();
+    });
+  }
+
+  // ========== START ==========
+  try {
+    buildCards();
+    bindEvents();
+    loadAll();
+    updateScores();
+  } catch (err) {
+    var box = document.getElementById("error-box");
+    box.style.display = "block";
+    box.textContent = "Fehler beim Laden: " + err.message;
+    console.error(err);
+  }
+})();
 </script>
 </body>
 </html>
