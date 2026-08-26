@@ -1,564 +1,629 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Übungen – Deutsch mit Alex</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body { padding: 16px; background: #ffffff; }
-        .container { max-width: 600px; margin: 0 auto; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungen – Deutsch mit Alex</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding:16px;background:#fff;font-family:system-ui,-apple-system,sans-serif}
+.container{max-width:600px;margin:0 auto}
+h1{font-size:1.3rem;color:#1e40af;margin-bottom:4px}
+.subtitle{font-size:.9rem;color:#64748b;margin-bottom:16px}
 
-        h1 { font-size: 1.3rem; margin-bottom: 4px; color: #1e40af; }
-        .subtitle { font-size: 0.9rem; color: #64748b; margin-bottom: 16px; }
+.difficulty-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.diff-btn{flex:1;min-width:90px;padding:9px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#f8fafc;font-weight:600;font-size:.85rem;cursor:pointer;color:#475569}
+.diff-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
 
-        .difficulty-bar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .diff-btn {
-            flex: 1;
-            min-width: 90px;
-            padding: 9px 12px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            background: #f8fafc;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            color: #475569;
-        }
-        .diff-btn.active {
-            background: #2563eb;
-            color: white;
-            border-color: #2563eb;
-        }
+.quiz-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:16px}
+.quiz-card h2{font-size:1.05rem;color:#1e40af;margin-bottom:4px}
+.progress-info{font-size:.82rem;color:#64748b;margin-bottom:10px}
+.quiz-sentence{font-size:.95rem;margin-bottom:12px;font-weight:500;line-height:1.55}
 
-        .quiz-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 18px;
-        }
-        .quiz-card h2 {
-            font-size: 1.05rem;
-            margin-bottom: 6px;
-            color: #1e40af;
-        }
-        .progress-info {
-            font-size: 0.82rem;
-            color: #64748b;
-            margin-bottom: 12px;
-        }
-        .quiz-sentence {
-            font-size: 0.95rem;
-            margin-bottom: 14px;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-        .blank-slot {
-            display: inline-block;
-            min-width: 60px;
-            border-bottom: 2px solid #2563eb;
-            text-align: center;
-            color: #2563eb;
-            font-weight: bold;
-            padding: 0 6px;
-        }
-        .options-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .opt-choice {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 1;
-            min-width: 80px;
-            text-align: center;
-        }
-        .opt-choice:hover:not(:disabled) {
-            border-color: #2563eb;
-            color: #2563eb;
-        }
-        .opt-choice:disabled {
-            opacity: 0.85;
-            cursor: default;
-        }
-        .opt-choice.correct {
-            background: #d1fae5;
-            border-color: #10b981;
-            color: #065f46;
-        }
-        .opt-choice.wrong {
-            background: #fee2e2;
-            border-color: #ef4444;
-            color: #991b1b;
-        }
-        .feedback-text {
-            margin-top: 12px;
-            font-size: 0.88rem;
-            font-weight: 600;
-        }
-        .next-step-btn {
-            margin-top: 12px;
-            background: #0f172a;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: none;
-            font-weight: 600;
-        }
+.blank-slot{display:inline-block;min-width:58px;border-bottom:2px solid #2563eb;text-align:center;color:#2563eb;font-weight:700;padding:0 4px}
 
-        .score-box {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 10px;
-            margin-bottom: 30px;
-        }
-        .score-box h2 {
-            font-size: 1.1rem;
-            color: #0369a1;
-            margin-bottom: 10px;
-        }
-        .score-line {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            margin-bottom: 6px;
-            color: #334155;
-        }
-        .score-total {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid #bae6fd;
-            font-weight: 700;
-            font-size: 1rem;
-        }
-    </style>
+.options-row{display:flex;gap:8px;flex-wrap:wrap}
+.opt-choice{
+  background:#fff;border:1px solid #e2e8f0;padding:8px 10px;border-radius:8px;
+  font-size:.84rem;font-weight:600;cursor:pointer;flex:1 1 120px;
+  text-align:center;line-height:1.3;word-break:break-word;hyphens:auto;
+  min-height:42px;display:flex;align-items:center;justify-content:center;
+}
+.opt-choice:hover:not(:disabled){border-color:#2563eb;color:#2563eb}
+.opt-choice:disabled{opacity:.9;cursor:default}
+.opt-choice.correct{background:#d1fae5;border-color:#10b981;color:#065f46}
+.opt-choice.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+
+.feedback-text{margin-top:10px;font-size:.88rem;font-weight:600}
+
+.skip-btn{margin-top:8px;background:none;border:none;color:#94a3b8;font-size:.8rem;cursor:pointer;text-decoration:underline}
+.skip-btn:hover{color:#64748b}
+
+.score-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:16px;margin:18px 0 40px}
+.score-box h2{font-size:1.1rem;color:#0369a1;margin-bottom:10px}
+.score-line{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:6px;color:#334155}
+.score-total{margin-top:12px;padding-top:10px;border-top:1px solid #bae6fd;font-weight:700;font-size:1rem}
+.reward{margin-top:10px;font-size:1.05rem;font-weight:700;color:#1e40af}
+</style>
 </head>
 <body>
 <div class="container">
 
-    <h1>Interaktives Training</h1>
-    <p class="subtitle">Wähle die Schwierigkeit und starte die Übungen.</p>
+<h1>Interaktives Training</h1>
+<p class="subtitle">Wähle die Schwierigkeit. Jede Kategorie hat einen großen Fragen-Pool – es wird nie langweilig.</p>
 
-    <div class="difficulty-bar">
-        <button class="diff-btn active" onclick="setDifficulty('leicht', this)">Leicht (10)</button>
-        <button class="diff-btn" onclick="setDifficulty('mittel', this)">Mittel (20)</button>
-        <button class="diff-btn" onclick="setDifficulty('schwer', this)">Schwer (30)</button>
-    </div>
+<div class="difficulty-bar">
+  <button class="diff-btn active" onclick="setDifficulty('leicht',this)">Leicht (10)</button>
+  <button class="diff-btn" onclick="setDifficulty('mittel',this)">Mittel (20)</button>
+  <button class="diff-btn" onclick="setDifficulty('schwer',this)">Schwer (30)</button>
+</div>
 
-    <!-- 1. Artikel -->
-    <div class="quiz-card">
-        <h2>🎯 Artikel-Trainer</h2>
-        <div class="progress-info" id="art-progress">Frage 1 / 10 · Richtig: 0</div>
-        <div class="quiz-sentence" id="art-sentence">Lade...</div>
-        <div class="options-row" id="art-options"></div>
-        <div class="feedback-text" id="art-fb"></div>
-    </div>
+<!-- Kategorien -->
+<div class="quiz-card" id="card-art">
+  <h2>🎯 Artikel-Trainer</h2>
+  <div class="progress-info" id="art-progress">Frage 1 / 10 · Richtig: 0</div>
+  <div class="quiz-sentence" id="art-sentence">Lade...</div>
+  <div class="options-row" id="art-options"></div>
+  <div class="feedback-text" id="art-fb"></div>
+  <button class="skip-btn" onclick="skipCategory('art')">Diese Kategorie überspringen</button>
+</div>
 
-    <!-- 2. Singular / Plural -->
-    <div class="quiz-card">
-        <h2>📖 Singular & Plural</h2>
-        <div class="progress-info" id="plu-progress">Frage 1 / 10 · Richtig: 0</div>
-        <div class="quiz-sentence" id="plu-sentence">Lade...</div>
-        <div class="options-row" id="plu-options"></div>
-        <div class="feedback-text" id="plu-fb"></div>
-    </div>
+<div class="quiz-card" id="card-plu">
+  <h2>📖 Singular & Plural</h2>
+  <div class="progress-info" id="plu-progress">Frage 1 / 10 · Richtig: 0</div>
+  <div class="quiz-sentence" id="plu-sentence">Lade...</div>
+  <div class="options-row" id="plu-options"></div>
+  <div class="feedback-text" id="plu-fb"></div>
+  <button class="skip-btn" onclick="skipCategory('plu')">Diese Kategorie überspringen</button>
+</div>
 
-    <!-- 3. Wort-Alternativen -->
-    <div class="quiz-card">
-        <h2>🔄 Wort-Alternativen</h2>
-        <div class="progress-info" id="alt-progress">Frage 1 / 10 · Richtig: 0</div>
-        <div class="quiz-sentence" id="alt-sentence">Lade...</div>
-        <div class="options-row" id="alt-options"></div>
-        <div class="feedback-text" id="alt-fb"></div>
-    </div>
+<div class="quiz-card" id="card-alt">
+  <h2>🔄 Wort-Alternativen</h2>
+  <div class="progress-info" id="alt-progress">Frage 1 / 10 · Richtig: 0</div>
+  <div class="quiz-sentence" id="alt-sentence">Lade...</div>
+  <div class="options-row" id="alt-options"></div>
+  <div class="feedback-text" id="alt-fb"></div>
+  <button class="skip-btn" onclick="skipCategory('alt')">Diese Kategorie überspringen</button>
+</div>
 
-    <!-- 4. kennen / wissen -->
-    <div class="quiz-card">
-        <h2>🧠 kennen oder wissen?</h2>
-        <div class="progress-info" id="kw-progress">Frage 1 / 10 · Richtig: 0</div>
-        <div class="quiz-sentence" id="kw-sentence">Lade...</div>
-        <div class="options-row" id="kw-options"></div>
-        <div class="feedback-text" id="kw-fb"></div>
-    </div>
+<div class="quiz-card" id="card-kw">
+  <h2>🧠 kennen oder wissen?</h2>
+  <div class="progress-info" id="kw-progress">Frage 1 / 10 · Richtig: 0</div>
+  <div class="quiz-sentence" id="kw-sentence">Lade...</div>
+  <div class="options-row" id="kw-options"></div>
+  <div class="feedback-text" id="kw-fb"></div>
+  <button class="skip-btn" onclick="skipCategory('kw')">Diese Kategorie überspringen</button>
+</div>
 
-    <!-- 5. Deutschland-Wissen -->
-    <div class="quiz-card">
-        <h2>🇩🇪 Deutschland-Wissen</h2>
-        <div class="progress-info" id="tri-progress">Frage 1 / 10 · Richtig: 0</div>
-        <div class="quiz-sentence" id="tri-sentence">Lade...</div>
-        <div class="options-row" id="tri-options"></div>
-        <div class="feedback-text" id="tri-fb"></div>
-    </div>
+<div class="quiz-card" id="card-ob">
+  <h2>❓ ob oder wenn?</h2>
+  <div class="progress-info" id="ob-progress">Frage 1 / 10 · Richtig: 0</div>
+  <div class="quiz-sentence" id="ob-sentence">Lade...</div>
+  <div class="options-row" id="ob-options"></div>
+  <div class="feedback-text" id="ob-fb"></div>
+  <button class="skip-btn" onclick="skipCategory('ob')">Diese Kategorie überspringen</button>
+</div>
 
-    <div class="score-box">
-        <h2>Gesamtbewertung</h2>
-        <div class="score-line"><span>Artikel</span><span id="score-art">–</span></div>
-        <div class="score-line"><span>Singular/Plural</span><span id="score-plu">–</span></div>
-        <div class="score-line"><span>Wort-Alternativen</span><span id="score-alt">–</span></div>
-        <div class="score-line"><span>kennen / wissen</span><span id="score-kw">–</span></div>
-        <div class="score-line"><span>Deutschland-Wissen</span><span id="score-tri">–</span></div>
-        <div class="score-total">Gesamt: <span id="score-total">–</span></div>
-    </div>
+<div class="quiz-card" id="card-als">
+  <h2>⚖️ als oder wie?</h2>
+  <div class="progress-info" id="als-progress">Frage 1 / 10 · Richtig: 0</div>
+  <div class="quiz-sentence" id="als-sentence">Lade...</div>
+  <div class="options-row" id="als-options"></div>
+  <div class="feedback-text" id="als-fb"></div>
+  <button class="skip-btn" onclick="skipCategory('als')">Diese Kategorie überspringen</button>
+</div>
+
+<div class="quiz-card" id="card-err">
+  <h2>🚫 Typische Fehler</h2>
+  <div class="progress-info" id="err-progress">Frage 1 / 10 · Richtig: 0</div>
+  <div class="quiz-sentence" id="err-sentence">Lade...</div>
+  <div class="options-row" id="err-options"></div>
+  <div class="feedback-text" id="err-fb"></div>
+  <button class="skip-btn" onclick="skipCategory('err')">Diese Kategorie überspringen</button>
+</div>
+
+<div class="quiz-card" id="card-tri">
+  <h2>🇩🇪 Deutschland-Wissen</h2>
+  <div class="progress-info" id="tri-progress">Frage 1 / 10 · Richtig: 0</div>
+  <div class="quiz-sentence" id="tri-sentence">Lade...</div>
+  <div class="options-row" id="tri-options"></div>
+  <div class="feedback-text" id="tri-fb"></div>
+  <button class="skip-btn" onclick="skipCategory('tri')">Diese Kategorie überspringen</button>
+</div>
+
+<div class="score-box">
+  <h2>Deine Auswertung</h2>
+  <div id="score-lines"></div>
+  <div class="score-total">Gesamt (nur gespielte Kategorien): <span id="score-total">–</span></div>
+  <div class="reward" id="reward-text"></div>
+</div>
 
 </div>
 
 <script>
-    let difficulty = 'leicht';
-    let questionsPerRound = 10;
+/* ===================== EINSTELLUNGEN ===================== */
+let difficulty = 'leicht';
+let questionsPerRound = 10;
 
-    // ========== DATEN ==========
-    const articlePool = [
-        { text: "___ Kölner Dom ist weltberühmt.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Sonne scheint den ganzen Tag.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Auto fährt sehr schnell.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Apfel schmeckt frisch.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Tasse steht auf dem Tisch.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Buch ist interessant.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Lehrer erklärt die Regel.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Schule beginnt um acht.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Kind spielt im Garten.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Hund bellt laut.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Tür ist offen.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Fenster ist zu.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Mann wartet draußen.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Frau liest ein Buch.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Mädchen lacht.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Bus kommt gleich.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Straße ist gesperrt.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Problem ist gelöst.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Zug hat Verspätung.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Frage war schwer.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Wetter ist schön.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Schlüssel liegt hier.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Antwort war richtig.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Bild hängt an der Wand.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Computer funktioniert.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Musik ist zu laut.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Ergebnis überrascht mich.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" },
-        { text: "___ Tisch ist aus Holz.", correct: ["Der"], all: ["Der","Die","Das"], hint: "Maskulin" },
-        { text: "___ Lampe leuchtet hell.", correct: ["Die"], all: ["Der","Die","Das"], hint: "Feminin" },
-        { text: "___ Haus steht am See.", correct: ["Das"], all: ["Der","Die","Das"], hint: "Neutral" }
-    ];
+const state = {};
+const categories = ['art','plu','alt','kw','ob','als','err','tri'];
+categories.forEach(c => state[c] = {index:0, correct:0, used:[], skipped:false, finished:false});
 
-    const pluralPool = [
-        { text: "Im Garten zwitschert ein ___.", correct: ["Vogel"], all: ["Vogel","Vögel"], hint: "Ein = Singular" },
-        { text: "Im Garten zwitschern viele ___.", correct: ["Vögel"], all: ["Vogel","Vögel"], hint: "Viele = Plural" },
-        { text: "Auf dem Tisch steht eine ___.", correct: ["Tasse"], all: ["Tasse","Tassen"], hint: "Eine = Singular" },
-        { text: "Auf dem Tisch stehen drei ___.", correct: ["Tassen"], all: ["Tasse","Tassen"], hint: "Drei = Plural" },
-        { text: "Im Park läuft ein ___.", correct: ["Hund"], all: ["Hund","Hunde"], hint: "Singular" },
-        { text: "Im Park laufen mehrere ___.", correct: ["Hunde"], all: ["Hund","Hunde"], hint: "Plural" },
-        { text: "Die ___ hängt im Schrank.", correct: ["Jacke"], all: ["Jacke","Jacken"], hint: "Singular" },
-        { text: "Die ___ hängen im Schrank.", correct: ["Jacken"], all: ["Jacke","Jacken"], hint: "Plural" },
-        { text: "In der Stadt fährt ein ___.", correct: ["Auto"], all: ["Auto","Autos"], hint: "Singular" },
-        { text: "In der Stadt fahren viele ___.", correct: ["Autos"], all: ["Auto","Autos"], hint: "Plural" },
-        { text: "Die ___ blüht im Frühling.", correct: ["Blume"], all: ["Blume","Blumen"], hint: "Singular" },
-        { text: "Die ___ blühen im Frühling.", correct: ["Blumen"], all: ["Blume","Blumen"], hint: "Plural" },
-        { text: "Der ___ ist rot.", correct: ["Apfel"], all: ["Apfel","Äpfel"], hint: "Singular" },
-        { text: "Die ___ sind rot.", correct: ["Äpfel"], all: ["Apfel","Äpfel"], hint: "Plural" },
-        { text: "Der ___ steht vor dem Haus.", correct: ["Baum"], all: ["Baum","Bäume"], hint: "Singular" },
-        { text: "Die ___ stehen vor dem Haus.", correct: ["Bäume"], all: ["Baum","Bäume"], hint: "Plural" },
-        { text: "Mein ___ heißt Tom.", correct: ["Bruder"], all: ["Bruder","Brüder"], hint: "Singular" },
-        { text: "Meine ___ heißen Tom und Tim.", correct: ["Brüder"], all: ["Bruder","Brüder"], hint: "Plural" },
-        { text: "Das ___ ist neu.", correct: ["Buch"], all: ["Buch","Bücher"], hint: "Singular" },
-        { text: "Die ___ sind neu.", correct: ["Bücher"], all: ["Buch","Bücher"], hint: "Plural" },
-        { text: "Das ___ ist groß.", correct: ["Haus"], all: ["Haus","Häuser"], hint: "Singular" },
-        { text: "Die ___ sind groß.", correct: ["Häuser"], all: ["Haus","Häuser"], hint: "Plural" },
-        { text: "Das ___ spielt draußen.", correct: ["Kind"], all: ["Kind","Kinder"], hint: "Singular" },
-        { text: "Die ___ spielen draußen.", correct: ["Kinder"], all: ["Kind","Kinder"], hint: "Plural" },
-        { text: "Die ___ ist grau.", correct: ["Maus"], all: ["Maus","Mäuse"], hint: "Singular" },
-        { text: "Die ___ sind grau.", correct: ["Mäuse"], all: ["Maus","Mäuse"], hint: "Plural" },
-        { text: "Der ___ ist bequem.", correct: ["Stuhl"], all: ["Stuhl","Stühle"], hint: "Singular" },
-        { text: "Die ___ sind bequem.", correct: ["Stühle"], all: ["Stuhl","Stühle"], hint: "Plural" },
-        { text: "Der ___ ist geschlossen.", correct: ["Laden"], all: ["Laden","Läden"], hint: "Singular" },
-        { text: "Die ___ sind geschlossen.", correct: ["Läden"], all: ["Laden","Läden"], hint: "Plural" }
-    ];
+/* ===================== FRAGEN-POOLS (große Auswahl) ===================== */
+const articlePool = [
+{text:"___ Kölner Dom ist weltberühmt.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Sonne scheint den ganzen Tag.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Auto fährt sehr schnell.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Apfel schmeckt frisch.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Tasse steht auf dem Tisch.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Buch ist interessant.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Lehrer erklärt die Regel.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Schule beginnt um acht.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Kind spielt im Garten.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Hund bellt laut.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Tür ist offen.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Fenster ist zu.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Mann wartet draußen.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Frau liest ein Buch.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Mädchen lacht.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Bus kommt gleich.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Straße ist gesperrt.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Problem ist gelöst.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Zug hat Verspätung.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Frage war schwer.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Wetter ist schön.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Schlüssel liegt hier.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Antwort war richtig.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Bild hängt an der Wand.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Computer funktioniert.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Musik ist zu laut.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Ergebnis überrascht mich.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Tisch ist aus Holz.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Lampe leuchtet hell.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Haus steht am See.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Mond scheint heute Nacht.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Nacht war sehr kalt.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Jahr geht schnell vorbei.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Freund kommt später.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Freundin heißt Anna.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Handy liegt auf dem Tisch.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Kaffee ist heiß.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"},
+{text:"___ Milch ist alle.",correct:["Die"],all:["Der","Die","Das"],hint:"Feminin"},
+{text:"___ Brot schmeckt gut.",correct:["Das"],all:["Der","Die","Das"],hint:"Neutral"},
+{text:"___ Stuhl ist kaputt.",correct:["Der"],all:["Der","Die","Das"],hint:"Maskulin"}
+];
 
-    // Echte Alternativen – mehrere können richtig sein
-    const altPool = [
-        { text: "Kannst du bitte die Tür ___?", correct: ["öffnen","aufmachen"], all: ["öffnen","aufmachen","schließen"], hint: "öffnen = aufmachen" },
-        { text: "Ich muss das Fenster ___.", correct: ["schließen","zumachen"], all: ["schließen","zumachen","öffnen"], hint: "schließen = zumachen" },
-        { text: "Lass uns etwas zu essen ___.", correct: ["kochen","zubereiten"], all: ["kochen","zubereiten","backen"], hint: "Essen kochen/zubereiten" },
-        { text: "Sie möchte einen Kuchen ___.", correct: ["backen"], all: ["backen","kochen","braten"], hint: "Kuchen → backen" },
-        { text: "Wir ___ jeden Morgen im Park.", correct: ["laufen","joggen"], all: ["laufen","joggen","rennen"], hint: "laufen/joggen" },
-        { text: "Das Kind ___ schnell über den Hof.", correct: ["rennt","läuft"], all: ["rennt","läuft","geht"], hint: "schnell → rennen/laufen" },
-        { text: "Ich ___ heute zum Supermarkt.", correct: ["gehe"], all: ["gehe","laufe","renne"], hint: "normal gehen" },
-        { text: "Kannst du mir das Buch ___?", correct: ["geben","reichen"], all: ["geben","reichen","nehmen"], hint: "geben = reichen" },
-        { text: "Er hat das Geschenk ___.", correct: ["bekommen","erhalten"], all: ["bekommen","erhalten","genommen"], hint: "bekommen = erhalten" },
-        { text: "Ich möchte dieses Handy ___.", correct: ["kaufen"], all: ["kaufen","verkaufen","leihen"], hint: "kaufen" },
-        { text: "Sie will ihr altes Auto ___.", correct: ["verkaufen"], all: ["verkaufen","kaufen","verschenken"], hint: "verkaufen" },
-        { text: "Ich muss meiner Freundin eine Nachricht ___.", correct: ["schreiben","schicken"], all: ["schreiben","schicken","rufen"], hint: "Nachricht schreiben/schicken" },
-        { text: "Er hat mich gestern ___.", correct: ["angerufen"], all: ["angerufen","geschrieben","besucht"], hint: "angerufen" },
-        { text: "Wir müssen das Problem ___.", correct: ["lösen"], all: ["lösen","machen","finden"], hint: "Problem lösen" },
-        { text: "Ich habe den Schlüssel ___.", correct: ["gefunden"], all: ["gefunden","gesucht","verlegt"], hint: "gefunden" },
-        { text: "Sie ___ jeden Tag Sport.", correct: ["macht","treibt"], all: ["macht","treibt","spielt"], hint: "Sport machen/treiben" },
-        { text: "Lass uns eine Pause ___.", correct: ["machen"], all: ["machen","tun","nehmen"], hint: "Pause machen" },
-        { text: "Ich habe einen Fehler ___.", correct: ["gemacht"], all: ["gemacht","getan","erledigt"], hint: "Fehler machen" },
-        { text: "Kannst du das Licht ___?", correct: ["anmachen","anschalten"], all: ["anmachen","anschalten","ausmachen"], hint: "anmachen/anschalten" },
-        { text: "Bitte ___ das Licht aus.", correct: ["mach","schalte"], all: ["mach","schalte","tu"], hint: "ausmachen" },
-        { text: "Ich muss noch die Hausaufgaben ___.", correct: ["machen","erledigen"], all: ["machen","erledigen","tun"], hint: "machen/erledigen" },
-        { text: "Er hat seine Arbeit schon ___.", correct: ["erledigt","gemacht"], all: ["erledigt","gemacht","getan"], hint: "erledigt/gemacht" },
-        { text: "Wir ___ um 8 Uhr auf.", correct: ["stehen"], all: ["stehen","wachen","kommen"], hint: "aufstehen" },
-        { text: "Das Baby ist gerade ___.", correct: ["eingeschlafen"], all: ["eingeschlafen","aufgewacht","aufgestanden"], hint: "eingeschlafen" },
-        { text: "Kannst du das bitte ___?", correct: ["wiederholen"], all: ["wiederholen","erklären","übersetzen"], hint: "wiederholen" },
-        { text: "Er hat mir die Regel ___.", correct: ["erklärt"], all: ["erklärt","gesagt","erzählt"], hint: "erklärt" },
-        { text: "Ich möchte die Geschichte ___.", correct: ["erzählen"], all: ["erzählen","sagen","sprechen"], hint: "erzählen" },
-        { text: "Wir müssen uns beeilen und ___.", correct: ["losgehen","aufbrechen"], all: ["losgehen","aufbrechen","ankommen"], hint: "losgehen/aufbrechen" },
-        { text: "Kannst du mir kurz ___?", correct: ["helfen"], all: ["helfen","retten","unterstützen"], hint: "helfen" },
-        { text: "Ich habe lange ___.", correct: ["geschlafen"], all: ["geschlafen","geruht","gelegen"], hint: "geschlafen" }
-    ];
+const pluralPool = [
+{text:"Im Garten zwitschert ein ___.",correct:["Vogel"],all:["Vogel","Vögel"],hint:"Singular"},
+{text:"Im Garten zwitschern viele ___.",correct:["Vögel"],all:["Vogel","Vögel"],hint:"Plural"},
+{text:"Auf dem Tisch steht eine ___.",correct:["Tasse"],all:["Tasse","Tassen"],hint:"Singular"},
+{text:"Auf dem Tisch stehen drei ___.",correct:["Tassen"],all:["Tasse","Tassen"],hint:"Plural"},
+{text:"Im Park läuft ein ___.",correct:["Hund"],all:["Hund","Hunde"],hint:"Singular"},
+{text:"Im Park laufen mehrere ___.",correct:["Hunde"],all:["Hund","Hunde"],hint:"Plural"},
+{text:"Die ___ hängt im Schrank.",correct:["Jacke"],all:["Jacke","Jacken"],hint:"Singular"},
+{text:"Die ___ hängen im Schrank.",correct:["Jacken"],all:["Jacke","Jacken"],hint:"Plural"},
+{text:"In der Stadt fährt ein ___.",correct:["Auto"],all:["Auto","Autos"],hint:"Singular"},
+{text:"In der Stadt fahren viele ___.",correct:["Autos"],all:["Auto","Autos"],hint:"Plural"},
+{text:"Die ___ blüht im Frühling.",correct:["Blume"],all:["Blume","Blumen"],hint:"Singular"},
+{text:"Die ___ blühen im Frühling.",correct:["Blumen"],all:["Blume","Blumen"],hint:"Plural"},
+{text:"Der ___ ist rot.",correct:["Apfel"],all:["Apfel","Äpfel"],hint:"Singular"},
+{text:"Die ___ sind rot.",correct:["Äpfel"],all:["Apfel","Äpfel"],hint:"Plural"},
+{text:"Der ___ steht vor dem Haus.",correct:["Baum"],all:["Baum","Bäume"],hint:"Singular"},
+{text:"Die ___ stehen vor dem Haus.",correct:["Bäume"],all:["Baum","Bäume"],hint:"Plural"},
+{text:"Mein ___ heißt Tom.",correct:["Bruder"],all:["Bruder","Brüder"],hint:"Singular"},
+{text:"Meine ___ heißen Tom und Tim.",correct:["Brüder"],all:["Bruder","Brüder"],hint:"Plural"},
+{text:"Das ___ ist neu.",correct:["Buch"],all:["Buch","Bücher"],hint:"Singular"},
+{text:"Die ___ sind neu.",correct:["Bücher"],all:["Buch","Bücher"],hint:"Plural"},
+{text:"Das ___ ist groß.",correct:["Haus"],all:["Haus","Häuser"],hint:"Singular"},
+{text:"Die ___ sind groß.",correct:["Häuser"],all:["Haus","Häuser"],hint:"Plural"},
+{text:"Das ___ spielt draußen.",correct:["Kind"],all:["Kind","Kinder"],hint:"Singular"},
+{text:"Die ___ spielen draußen.",correct:["Kinder"],all:["Kind","Kinder"],hint:"Plural"},
+{text:"Die ___ ist grau.",correct:["Maus"],all:["Maus","Mäuse"],hint:"Singular"},
+{text:"Die ___ sind grau.",correct:["Mäuse"],all:["Maus","Mäuse"],hint:"Plural"},
+{text:"Der ___ ist bequem.",correct:["Stuhl"],all:["Stuhl","Stühle"],hint:"Singular"},
+{text:"Die ___ sind bequem.",correct:["Stühle"],all:["Stuhl","Stühle"],hint:"Plural"},
+{text:"Der ___ ist geschlossen.",correct:["Laden"],all:["Laden","Läden"],hint:"Singular"},
+{text:"Die ___ sind geschlossen.",correct:["Läden"],all:["Laden","Läden"],hint:"Plural"},
+{text:"Das ___ fliegt hoch.",correct:["Flugzeug"],all:["Flugzeug","Flugzeuge"],hint:"Singular"},
+{text:"Die ___ fliegen hoch.",correct:["Flugzeuge"],all:["Flugzeug","Flugzeuge"],hint:"Plural"},
+{text:"Der ___ schmeckt lecker.",correct:["Kuchen"],all:["Kuchen","Kuchen"],hint:"Singular (gleich)"},
+{text:"Die ___ schmecken lecker.",correct:["Kuchen"],all:["Kuchen","Kuchen"],hint:"Plural (gleich)"},
+{text:"Das ___ ist kaputt.",correct:["Fenster"],all:["Fenster","Fenster"],hint:"Singular"},
+{text:"Die ___ sind kaputt.",correct:["Fenster"],all:["Fenster","Fenster"],hint:"Plural"},
+{text:"Der ___ ist teuer.",correct:["Schuh"],all:["Schuh","Schuhe"],hint:"Singular"},
+{text:"Die ___ sind teuer.",correct:["Schuhe"],all:["Schuh","Schuhe"],hint:"Plural"},
+{text:"Das ___ liegt auf dem Boden.",correct:["Blatt"],all:["Blatt","Blätter"],hint:"Singular"},
+{text:"Die ___ liegen auf dem Boden.",correct:["Blätter"],all:["Blatt","Blätter"],hint:"Plural"}
+];
 
-    const kwPool = [
-        { text: "Ich ___ seine Telefonnummer nicht.", correct: ["weiß"], all: ["kenne","weiß"], hint: "Fakten → wissen" },
-        { text: "___ du diesen Mann?", correct: ["Kennst"], all: ["Kennst","Weißt"], hint: "Personen → kennen" },
-        { text: "Ich ___ Berlin sehr gut.", correct: ["kenne"], all: ["kenne","weiß"], hint: "Orte → kennen" },
-        { text: "___ du, wie spät es ist?", correct: ["Weißt"], all: ["Kennst","Weißt"], hint: "Info → wissen" },
-        { text: "Sie ___ die Antwort nicht.", correct: ["weiß"], all: ["kennt","weiß"], hint: "Fakten → wissen" },
-        { text: "Ich ___ das Buch schon.", correct: ["kenne"], all: ["kenne","weiß"], hint: "Bücher → kennen" },
-        { text: "___ du den Weg zum Bahnhof?", correct: ["Kennst"], all: ["Kennst","Weißt"], hint: "Wege → kennen" },
-        { text: "Ich ___ nicht, ob er kommt.", correct: ["weiß"], all: ["kenne","weiß"], hint: "Info → wissen" },
-        { text: "Wir ___ uns seit der Schule.", correct: ["kennen"], all: ["kennen","wissen"], hint: "Personen → kennen" },
-        { text: "___ du, dass er umgezogen ist?", correct: ["Weißt"], all: ["Kennst","Weißt"], hint: "Info → wissen" },
-        { text: "___ du das Lied?", correct: ["Kennst"], all: ["Kennst","Weißt"], hint: "Lieder → kennen" },
-        { text: "Er ___ nicht, was er will.", correct: ["weiß"], all: ["kennt","weiß"], hint: "Info → wissen" },
-        { text: "Ich ___ die Stadt kaum.", correct: ["kenne"], all: ["kenne","weiß"], hint: "Orte → kennen" },
-        { text: "___ ihr den neuen Kollegen?", correct: ["Kennt"], all: ["Kennt","Wisst"], hint: "Personen → kennen" },
-        { text: "Ich ___ genau, wo er wohnt.", correct: ["weiß"], all: ["kenne","weiß"], hint: "Info → wissen" },
-        { text: "___ du mein Passwort?", correct: ["Weißt"], all: ["Kennst","Weißt"], hint: "Info → wissen" },
-        { text: "Ich ___ ihn nur vom Sehen.", correct: ["kenne"], all: ["kenne","weiß"], hint: "Personen → kennen" },
-        { text: "Wir ___ nicht, wann der Zug kommt.", correct: ["wissen"], all: ["kennen","wissen"], hint: "Info → wissen" },
-        { text: "___ du dieses Restaurant?", correct: ["Kennst"], all: ["Kennst","Weißt"], hint: "Orte → kennen" },
-        { text: "Er ___ die Lösung.", correct: ["weiß"], all: ["kennt","weiß"], hint: "Info → wissen" },
-        { text: "Ich ___ das Gefühl.", correct: ["kenne"], all: ["kenne","weiß"], hint: "Gefühle → kennen" },
-        { text: "___ du, ob sie da ist?", correct: ["Weißt"], all: ["Kennst","Weißt"], hint: "Info → wissen" },
-        { text: "Sie ___ die Regeln sehr gut.", correct: ["kennt"], all: ["kennt","weiß"], hint: "Regeln → kennen" },
-        { text: "Ich ___ nicht mehr, was er gesagt hat.", correct: ["weiß"], all: ["kenne","weiß"], hint: "Info → wissen" },
-        { text: "___ ihr euch noch?", correct: ["Kennt"], all: ["Kennt","Wisst"], hint: "Personen → kennen" },
-        { text: "Er ___ viel über Geschichte.", correct: ["weiß"], all: ["kennt","weiß"], hint: "Info → wissen" },
-        { text: "Ich ___ den Film schon.", correct: ["kenne"], all: ["kenne","weiß"], hint: "Filme → kennen" },
-        { text: "___ du den Grund?", correct: ["Weißt"], all: ["Kennst","Weißt"], hint: "Info → wissen" },
-        { text: "Ich ___ seine Adresse nicht.", correct: ["weiß","kenne"], all: ["kenne","weiß"], hint: "Beide möglich" },
-        { text: "___ du den Unterschied?", correct: ["Weißt"], all: ["Kennst","Weißt"], hint: "Info → wissen" }
-    ];
+const altPool = [
+{text:"Kannst du bitte die Tür ___?",correct:["öffnen","aufmachen"],all:["öffnen","aufmachen","schließen"],hint:"öffnen = aufmachen"},
+{text:"Ich muss das Fenster ___.",correct:["schließen","zumachen"],all:["schließen","zumachen","öffnen"],hint:"schließen = zumachen"},
+{text:"Lass uns etwas zu essen ___.",correct:["kochen","zubereiten"],all:["kochen","zubereiten","backen"],hint:"kochen/zubereiten"},
+{text:"Sie möchte einen Kuchen ___.",correct:["backen"],all:["backen","kochen","braten"],hint:"Kuchen → backen"},
+{text:"Wir ___ jeden Morgen im Park.",correct:["laufen","joggen"],all:["laufen","joggen","rennen"],hint:"laufen/joggen"},
+{text:"Das Kind ___ schnell über den Hof.",correct:["rennt","läuft"],all:["rennt","läuft","geht"],hint:"schnell → rennen/laufen"},
+{text:"Ich ___ heute zum Supermarkt.",correct:["gehe"],all:["gehe","laufe","renne"],hint:"normal gehen"},
+{text:"Kannst du mir das Buch ___?",correct:["geben","reichen"],all:["geben","reichen","nehmen"],hint:"geben = reichen"},
+{text:"Er hat das Geschenk ___.",correct:["bekommen","erhalten"],all:["bekommen","erhalten","genommen"],hint:"bekommen = erhalten"},
+{text:"Ich möchte dieses Handy ___.",correct:["kaufen"],all:["kaufen","verkaufen","leihen"],hint:"kaufen"},
+{text:"Sie will ihr altes Auto ___.",correct:["verkaufen"],all:["verkaufen","kaufen","verschenken"],hint:"verkaufen"},
+{text:"Ich muss meiner Freundin eine Nachricht ___.",correct:["schreiben","schicken"],all:["schreiben","schicken","rufen"],hint:"schreiben/schicken"},
+{text:"Er hat mich gestern ___.",correct:["angerufen"],all:["angerufen","geschrieben","besucht"],hint:"angerufen"},
+{text:"Wir müssen das Problem ___.",correct:["lösen"],all:["lösen","machen","finden"],hint:"Problem lösen"},
+{text:"Ich habe den Schlüssel ___.",correct:["gefunden"],all:["gefunden","gesucht","verlegt"],hint:"gefunden"},
+{text:"Sie ___ jeden Tag Sport.",correct:["macht","treibt"],all:["macht","treibt","spielt"],hint:"Sport machen/treiben"},
+{text:"Lass uns eine Pause ___.",correct:["machen"],all:["machen","tun","nehmen"],hint:"Pause machen"},
+{text:"Ich habe einen Fehler ___.",correct:["gemacht"],all:["gemacht","getan","erledigt"],hint:"Fehler machen"},
+{text:"Kannst du das Licht ___?",correct:["anmachen","anschalten"],all:["anmachen","anschalten","ausmachen"],hint:"anmachen/anschalten"},
+{text:"Ich muss noch die Hausaufgaben ___.",correct:["machen","erledigen"],all:["machen","erledigen","tun"],hint:"machen/erledigen"},
+{text:"Er hat seine Arbeit schon ___.",correct:["erledigt","gemacht"],all:["erledigt","gemacht","getan"],hint:"erledigt/gemacht"},
+{text:"Wir ___ um 8 Uhr auf.",correct:["stehen"],all:["stehen","wachen","kommen"],hint:"aufstehen"},
+{text:"Das Baby ist gerade ___.",correct:["eingeschlafen"],all:["eingeschlafen","aufgewacht","aufgestanden"],hint:"eingeschlafen"},
+{text:"Kannst du das bitte ___?",correct:["wiederholen"],all:["wiederholen","erklären","übersetzen"],hint:"wiederholen"},
+{text:"Er hat mir die Regel ___.",correct:["erklärt"],all:["erklärt","gesagt","erzählt"],hint:"erklärt"},
+{text:"Ich möchte die Geschichte ___.",correct:["erzählen"],all:["erzählen","sagen","sprechen"],hint:"erzählen"},
+{text:"Wir müssen uns beeilen und ___.",correct:["losgehen","aufbrechen"],all:["losgehen","aufbrechen","ankommen"],hint:"losgehen/aufbrechen"},
+{text:"Kannst du mir kurz ___?",correct:["helfen"],all:["helfen","retten","unterstützen"],hint:"helfen"},
+{text:"Ich habe lange ___.",correct:["geschlafen"],all:["geschlafen","geruht","gelegen"],hint:"geschlafen"},
+{text:"Bitte ___ die Musik leiser.",correct:["mach","dreh"],all:["mach","dreh","tu"],hint:"leiser machen"}
+];
 
-    // Deutschland-Wissen (Trivia) – teilweise Mehrfachantwort möglich
-    const triPool = [
-        { text: "Wie viele Bundesländer hat Deutschland?", correct: ["16"], all: ["12","14","16","18"], hint: "16 Bundesländer" },
-        { text: "In welcher Stadt steht der Kölner Dom?", correct: ["Köln"], all: ["Berlin","München","Köln","Hamburg"], hint: "Köln" },
-        { text: "Was ist die Hauptstadt von Deutschland?", correct: ["Berlin"], all: ["Berlin","München","Hamburg","Frankfurt"], hint: "Berlin" },
-        { text: "Welcher Fluss fließt durch Köln?", correct: ["Rhein"], all: ["Elbe","Rhein","Donau","Main"], hint: "Rhein" },
-        { text: "In welchem Landesteil liegt Bayern?", correct: ["Süden"], all: ["Norden","Süden","Osten","Westen"], hint: "Süden" },
-        { text: "Welche Stadt hat den größten Hafen Deutschlands?", correct: ["Hamburg"], all: ["Hamburg","Bremen","Kiel","Rostock"], hint: "Hamburg" },
-        { text: "Was feiert man am 3. Oktober?", correct: ["Tag der Deutschen Einheit"], all: ["Tag der Deutschen Einheit","Oktoberfest","Weihnachten","Ostern"], hint: "Tag der Deutschen Einheit" },
-        { text: "Welche Farbe hat die deutsche Flagge nicht?", correct: ["Blau"], all: ["Schwarz","Rot","Gold","Blau"], hint: "Schwarz-Rot-Gold" },
-        { text: "Wo kann man im Urlaub in Deutschland gut wandern?", correct: ["Bayern","Schwarzwald"], all: ["Bayern","Schwarzwald","Ruhrgebiet","Berlin"], hint: "Bayern und Schwarzwald" },
-        { text: "Was kann man aus Milch machen?", correct: ["Käse","Joghurt","Butter"], all: ["Käse","Joghurt","Butter","Brot"], hint: "Käse, Joghurt, Butter" },
-        { text: "Welche Stadt liegt an der Isar?", correct: ["München"], all: ["München","Stuttgart","Nürnberg","Augsburg"], hint: "München" },
-        { text: "Wie heißt das Meer im Norden Deutschlands?", correct: ["Nordsee","Ostsee"], all: ["Nordsee","Ostsee","Mittelmeer","Schwarzes Meer"], hint: "Nordsee und Ostsee" },
-        { text: "Welches Bundesland ist flächenmäßig das größte?", correct: ["Bayern"], all: ["Bayern","Niedersachsen","Baden-Württemberg","Nordrhein-Westfalen"], hint: "Bayern" },
-        { text: "In welcher Stadt steht das Brandenburger Tor?", correct: ["Berlin"], all: ["Berlin","Potsdam","Leipzig","Dresden"], hint: "Berlin" },
-        { text: "Was ist ein typisch deutsches Lebensmittel?", correct: ["Brot","Wurst","Käse"], all: ["Brot","Wurst","Käse","Pizza"], hint: "Brot, Wurst, Käse" },
-        { text: "Welche Stadt liegt im Ruhrgebiet?", correct: ["Dortmund","Essen"], all: ["Dortmund","Essen","München","Leipzig"], hint: "Dortmund und Essen" },
-        { text: "Wie heißt die Währung in Deutschland?", correct: ["Euro"], all: ["Euro","D-Mark","Franken","Schilling"], hint: "Euro" },
-        { text: "Welcher Berg ist der höchste in Deutschland?", correct: ["Zugspitze"], all: ["Zugspitze","Brocken","Feldberg","Watzmann"], hint: "Zugspitze" },
-        { text: "In welchem Bundesland liegt Stuttgart?", correct: ["Baden-Württemberg"], all: ["Bayern","Baden-Württemberg","Hessen","Rheinland-Pfalz"], hint: "Baden-Württemberg" },
-        { text: "Was trinkt man oft zum Oktoberfest?", correct: ["Bier"], all: ["Bier","Wein","Saft","Kaffee"], hint: "Bier" },
-        { text: "Welche Stadt liegt an der Elbe?", correct: ["Hamburg","Dresden"], all: ["Hamburg","Dresden","Köln","München"], hint: "Hamburg und Dresden" },
-        { text: "Wie viele Einwohner hat Deutschland ungefähr?", correct: ["83 Millionen"], all: ["50 Millionen","67 Millionen","83 Millionen","100 Millionen"], hint: "ca. 83 Millionen" },
-        { text: "Welches Tier ist auf dem deutschen Wappen?", correct: ["Adler"], all: ["Adler","Löwe","Bär","Wolf"], hint: "Adler" },
-        { text: "In welcher Stadt findet die Frankfurter Buchmesse statt?", correct: ["Frankfurt"], all: ["Frankfurt","Leipzig","Berlin","Hamburg"], hint: "Frankfurt" },
-        { text: "Was ist der längste Fluss Deutschlands?", correct: ["Rhein"], all: ["Rhein","Elbe","Donau","Weser"], hint: "Rhein" },
-        { text: "Welche Stadt ist für ihren Dom und den Karneval bekannt?", correct: ["Köln"], all: ["Köln","Düsseldorf","Mainz","Aachen"], hint: "Köln" },
-        { text: "Wo kann man gut Ski fahren in Deutschland?", correct: ["Bayern","Allgäu"], all: ["Bayern","Allgäu","Nordsee","Ruhrgebiet"], hint: "Bayern / Allgäu" },
-        { text: "Was gehört zu einem klassischen deutschen Frühstück?", correct: ["Brot","Käse","Wurst"], all: ["Brot","Käse","Wurst","Sushi"], hint: "Brot, Käse, Wurst" },
-        { text: "Welches Bundesland liegt ganz im Norden?", correct: ["Schleswig-Holstein"], all: ["Schleswig-Holstein","Mecklenburg-Vorpommern","Niedersachsen","Hamburg"], hint: "Schleswig-Holstein" },
-        { text: "In welcher Stadt steht die Frauenkirche?", correct: ["Dresden","München"], all: ["Dresden","München","Berlin","Leipzig"], hint: "Dresden und München haben eine" }
-    ];
+const kwPool = [
+{text:"Ich ___ seine Telefonnummer nicht.",correct:["weiß"],all:["kenne","weiß"],hint:"Fakten → wissen"},
+{text:"___ du diesen Mann?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Personen → kennen"},
+{text:"Ich ___ Berlin sehr gut.",correct:["kenne"],all:["kenne","weiß"],hint:"Orte → kennen"},
+{text:"___ du, wie spät es ist?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
+{text:"Sie ___ die Antwort nicht.",correct:["weiß"],all:["kennt","weiß"],hint:"Fakten → wissen"},
+{text:"Ich ___ das Buch schon.",correct:["kenne"],all:["kenne","weiß"],hint:"Bücher → kennen"},
+{text:"___ du den Weg zum Bahnhof?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Wege → kennen"},
+{text:"Ich ___ nicht, ob er kommt.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
+{text:"Wir ___ uns seit der Schule.",correct:["kennen"],all:["kennen","wissen"],hint:"Personen → kennen"},
+{text:"___ du, dass er umgezogen ist?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
+{text:"___ du das Lied?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Lieder → kennen"},
+{text:"Er ___ nicht, was er will.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
+{text:"Ich ___ die Stadt kaum.",correct:["kenne"],all:["kenne","weiß"],hint:"Orte → kennen"},
+{text:"___ ihr den neuen Kollegen?",correct:["Kennt"],all:["Kennt","Wisst"],hint:"Personen → kennen"},
+{text:"Ich ___ genau, wo er wohnt.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
+{text:"___ du mein Passwort?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
+{text:"Ich ___ ihn nur vom Sehen.",correct:["kenne"],all:["kenne","weiß"],hint:"Personen → kennen"},
+{text:"Wir ___ nicht, wann der Zug kommt.",correct:["wissen"],all:["kennen","wissen"],hint:"Info → wissen"},
+{text:"___ du dieses Restaurant?",correct:["Kennst"],all:["Kennst","Weißt"],hint:"Orte → kennen"},
+{text:"Er ___ die Lösung.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
+{text:"Ich ___ das Gefühl.",correct:["kenne"],all:["kenne","weiß"],hint:"Gefühle → kennen"},
+{text:"___ du, ob sie da ist?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
+{text:"Sie ___ die Regeln sehr gut.",correct:["kennt"],all:["kennt","weiß"],hint:"Regeln → kennen"},
+{text:"Ich ___ nicht mehr, was er gesagt hat.",correct:["weiß"],all:["kenne","weiß"],hint:"Info → wissen"},
+{text:"___ ihr euch noch?",correct:["Kennt"],all:["Kennt","Wisst"],hint:"Personen → kennen"},
+{text:"Er ___ viel über Geschichte.",correct:["weiß"],all:["kennt","weiß"],hint:"Info → wissen"},
+{text:"Ich ___ den Film schon.",correct:["kenne"],all:["kenne","weiß"],hint:"Filme → kennen"},
+{text:"___ du den Grund?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"},
+{text:"Ich ___ seine Adresse nicht.",correct:["weiß","kenne"],all:["kenne","weiß"],hint:"Beide möglich"},
+{text:"___ du den Unterschied?",correct:["Weißt"],all:["Kennst","Weißt"],hint:"Info → wissen"}
+];
 
-    // ========== STATE ==========
-    const state = {
-        art: { index: 0, correct: 0, used: [] },
-        plu: { index: 0, correct: 0, used: [] },
-        alt: { index: 0, correct: 0, used: [] },
-        kw:  { index: 0, correct: 0, used: [] },
-        tri: { index: 0, correct: 0, used: [] }
-    };
+const obPool = [
+{text:"Ich weiß nicht, ___ er kommt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ es regnet, bleiben wir zu Hause.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Sie fragt, ___ wir Zeit haben.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
+{text:"___ du Hunger hast, gibt es Pizza.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Ich bin unsicher, ___ das stimmt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ er anruft, sag Bescheid.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Weißt du, ___ der Zug pünktlich ist?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
+{text:"___ ich Zeit habe, helfe ich dir.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Es ist egal, ___ du mitkommst oder nicht.",correct:["ob"],all:["ob","wenn"],hint:"ob ... oder"},
+{text:"___ das Wetter schön ist, gehen wir wandern.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Ich frage mich, ___ sie das weiß.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ du willst, können wir später treffen.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Sag mir, ___ du einverstanden bist.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
+{text:"___ er krank ist, bleibt er im Bett.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Niemand weiß, ___ das funktioniert.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ du fertig bist, ruf mich an.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Ich bin gespannt, ___ er die Prüfung besteht.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ es kalt wird, ziehe ich eine Jacke an.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Sie überlegt, ___ sie absagen soll.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ du das Buch gelesen hast, verstehst du die Geschichte.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Kannst du mir sagen, ___ der Laden offen ist?",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
+{text:"___ ich dich sehe, freue ich mich.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Es ist unklar, ___ wir rechtzeitig ankommen.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ du Hilfe brauchst, melde dich.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Ich weiß nicht, ___ das die beste Lösung ist.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ er pünktlich kommt, können wir anfangen.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Frag sie, ___ sie mitspielen will.",correct:["ob"],all:["ob","wenn"],hint:"Frage → ob"},
+{text:"___ das stimmt, müssen wir handeln.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"},
+{text:"Er hat nicht gesagt, ___ er kommt.",correct:["ob"],all:["ob","wenn"],hint:"Unsicherheit → ob"},
+{text:"___ du müde bist, leg dich hin.",correct:["Wenn"],all:["Ob","Wenn"],hint:"Bedingung → wenn"}
+];
 
-    function setDifficulty(level, btn) {
-        difficulty = level;
-        questionsPerRound = level === 'leicht' ? 10 : level === 'mittel' ? 20 : 30;
-        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        ['art','plu','alt','kw','tri'].forEach(k => state[k] = { index: 0, correct: 0, used: [] });
-        loadArticle(); loadPlural(); loadAlt(); loadKw(); loadTri();
-        updateScores();
-    }
+const alsPool = [
+{text:"Er ist größer ___ sein Bruder.",correct:["als"],all:["als","wie"],hint:"Vergleich ungleich → als"},
+{text:"Sie singt so schön ___ eine Opernsängerin.",correct:["wie"],all:["als","wie"],hint:"Vergleich gleich → wie"},
+{text:"Ich bin älter ___ du.",correct:["als"],all:["als","wie"],hint:"älter = ungleich → als"},
+{text:"Das Auto ist so teuer ___ ein Haus.",correct:["wie"],all:["als","wie"],hint:"so ... wie"},
+{text:"Heute ist es kälter ___ gestern.",correct:["als"],all:["als","wie"],hint:"kälter → als"},
+{text:"Er läuft so schnell ___ ein Gepard.",correct:["wie"],all:["als","wie"],hint:"so ... wie"},
+{text:"Mein Handy ist neuer ___ deins.",correct:["als"],all:["als","wie"],hint:"neuer → als"},
+{text:"Sie sieht aus ___ ihre Mutter.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
+{text:"Das war einfacher ___ gedacht.",correct:["als"],all:["als","wie"],hint:"einfacher → als"},
+{text:"Er spricht Deutsch so gut ___ ein Muttersprachler.",correct:["wie"],all:["als","wie"],hint:"so ... wie"},
+{text:"Ich habe mehr Bücher ___ du.",correct:["als"],all:["als","wie"],hint:"mehr ... als"},
+{text:"Das Wetter ist heute genauso schön ___ gestern.",correct:["wie"],all:["als","wie"],hint:"genauso ... wie"},
+{text:"Sie ist jünger ___ ihre Schwester.",correct:["als"],all:["als","wie"],hint:"jünger → als"},
+{text:"Er arbeitet so hart ___ sein Vater.",correct:["wie"],all:["als","wie"],hint:"so ... wie"},
+{text:"Das Ergebnis war besser ___ erwartet.",correct:["als"],all:["als","wie"],hint:"besser → als"},
+{text:"Du bist so nett ___ immer.",correct:["wie"],all:["als","wie"],hint:"so ... wie"},
+{text:"Ich trinke lieber Tee ___ Kaffee.",correct:["als"],all:["als","wie"],hint:"lieber ... als"},
+{text:"Das Haus sieht aus ___ ein Schloss.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
+{text:"Er kam später ___ vereinbart.",correct:["als"],all:["als","wie"],hint:"später → als"},
+{text:"Sie tanzt so elegant ___ eine Tänzerin.",correct:["wie"],all:["als","wie"],hint:"so ... wie"},
+{text:"Mein Bruder ist größer ___ ich.",correct:["als"],all:["als","wie"],hint:"größer → als"},
+{text:"Das schmeckt so gut ___ bei meiner Oma.",correct:["wie"],all:["als","wie"],hint:"so ... wie"},
+{text:"Die Prüfung war schwieriger ___ letztes Jahr.",correct:["als"],all:["als","wie"],hint:"schwieriger → als"},
+{text:"Er benimmt sich ___ ein Kind.",correct:["wie"],all:["als","wie"],hint:"sich benehmen wie"},
+{text:"Ich habe weniger Geld ___ du.",correct:["als"],all:["als","wie"],hint:"weniger ... als"},
+{text:"Sie spricht so leise ___ ein Flüstern.",correct:["wie"],all:["als","wie"],hint:"so ... wie"},
+{text:"Das war teurer ___ geplant.",correct:["als"],all:["als","wie"],hint:"teurer → als"},
+{text:"Du siehst aus ___ jemand, der nicht geschlafen hat.",correct:["wie"],all:["als","wie"],hint:"aussehen wie"},
+{text:"Er ist klüger ___ die meisten.",correct:["als"],all:["als","wie"],hint:"klüger → als"},
+{text:"Das fühlt sich an ___ Seide.",correct:["wie"],all:["als","wie"],hint:"sich anfühlen wie"}
+];
 
-    function shuffle(arr) {
-        return [...arr].sort(() => Math.random() - 0.5);
-    }
+const errPool = [
+{text:"Welcher Satz ist richtig?",correct:["Das ist das einzige Problem."],all:["Das ist das einzigste Problem.","Das ist das einzige Problem."],hint:"\"einzig\" kann man nicht steigern"},
+{text:"Welcher Satz ist richtig?",correct:["Er fragt mich etwas."],all:["Er frägt mich etwas.","Er fragt mich etwas."],hint:"fragen → fragt (nicht frägt)"},
+{text:"Welcher Satz ist richtig?",correct:["Mein Handy lädt gerade."],all:["Mein Handy ladet gerade.","Mein Handy lädt gerade."],hint:"laden → lädt"},
+{text:"Welcher Satz ist richtig?",correct:["Der Kuchen backt im Ofen."],all:["Der Kuchen bäckt im Ofen.","Der Kuchen backt im Ofen."],hint:"backen → backt (bäckt ist veraltet/regional)"},
+{text:"Welcher Satz ist richtig?",correct:["Siehst du das mal an?"],all:["Siehst euch das mal an?","Siehst du das mal an?"],hint:"du → siehst"},
+{text:"Welcher Satz ist richtig?",correct:["Ich bin größer als du."],all:["Ich bin größer wie du.","Ich bin größer als du."],hint:"Ungleichheit → als"},
+{text:"Welcher Satz ist richtig?",correct:["Er ist so groß wie sein Vater."],all:["Er ist so groß als sein Vater.","Er ist so groß wie sein Vater."],hint:"Gleichheit → wie"},
+{text:"Welcher Satz ist richtig?",correct:["Das macht Sinn."],all:["Das ergibt Sinn.","Das macht Sinn."],hint:"Beide werden benutzt, \"macht Sinn\" ist üblich"},
+{text:"Welcher Satz ist richtig?",correct:["Ich gehe einkaufen."],all:["Ich gehe zum Einkaufen.","Ich gehe einkaufen."],hint:"Beide möglich, \"einkaufen gehen\" ist Standard"},
+{text:"Welcher Satz ist richtig?",correct:["Wegen des Regens bleiben wir hier."],all:["Wegen dem Regen bleiben wir hier.","Wegen des Regens bleiben wir hier."],hint:"wegen + Genitiv"},
+{text:"Welcher Satz ist richtig?",correct:["Das ist mir egal."],all:["Das ist mir wurscht.","Das ist mir egal."],hint:"Beide umgangssprachlich ok, \"egal\" ist neutraler"},
+{text:"Welcher Satz ist richtig?",correct:["Er hat den Ball gefangen."],all:["Er hat den Ball gefangt.","Er hat den Ball gefangen."],hint:"fangen → gefangen"},
+{text:"Welcher Satz ist richtig?",correct:["Sie hat angerufen."],all:["Sie hat angeruft.","Sie hat angerufen."],hint:"anrufen → angerufen"},
+{text:"Welcher Satz ist richtig?",correct:["Ich bin gestern schwimmen gegangen."],all:["Ich bin gestern schwimmen gegangen.","Ich habe gestern schwimmen gegangen."],hint:"mit sein"},
+{text:"Welcher Satz ist richtig?",correct:["Das Buch liegt auf dem Tisch."],all:["Das Buch liegt auf dem Tisch.","Das Buch liegt auf den Tisch."],hint:"wo? → Dativ"},
+{text:"Welcher Satz ist richtig?",correct:["Ich stelle die Tasse auf den Tisch."],correct:["Ich stelle die Tasse auf den Tisch."],all:["Ich stelle die Tasse auf dem Tisch.","Ich stelle die Tasse auf den Tisch."],hint:"wohin? → Akkusativ"},
+{text:"Welcher Satz ist richtig?",correct:["Er ist der Beste in der Klasse."],all:["Er ist der Besteste in der Klasse.","Er ist der Beste in der Klasse."],hint:"beste nicht nochmal steigern"},
+{text:"Welcher Satz ist richtig?",correct:["Mir ist langweilig."],all:["Ich bin langweilig.","Mir ist langweilig."],hint:"Mir ist langweilig = ich habe Langeweile"},
+{text:"Welcher Satz ist richtig?",correct:["Das interessiert mich."],all:["Das interessiert mir.","Das interessiert mich."],hint:"Akkusativ"},
+{text:"Welcher Satz ist richtig?",correct:["Ich warte auf dich."],all:["Ich warte auf dir.","Ich warte auf dich."],hint:"auf + Akkusativ"},
+{text:"Welcher Satz ist richtig?",correct:["Sie hat sich hingesetzt."],all:["Sie hat sich hingesetzt.","Sie hat sich gesetzt."],hint:"beide möglich, \"hingesetzt\" ist klarer"},
+{text:"Welcher Satz ist richtig?",correct:["Der Apfel fällt vom Baum."],all:["Der Apfel fällt vom Baum.","Der Apfel fällt von dem Baum."],hint:"beide korrekt"},
+{text:"Welcher Satz ist richtig?",correct:["Ich habe mich vertan."],all:["Ich habe mich vertan.","Ich habe mich vertut."],hint:"vertun → vertan"},
+{text:"Welcher Satz ist richtig?",correct:["Er nimmt den Bus."],all:["Er nimmt den Bus.","Er nimmt dem Bus."],hint:"Akkusativ"},
+{text:"Welcher Satz ist richtig?",correct:["Das gehört mir."],all:["Das gehört mir.","Das gehört mich."],hint:"Dativ"},
+{text:"Welcher Satz ist richtig?",correct:["Ich helfe dir gerne."],all:["Ich helfe dir gerne.","Ich helfe dich gerne."],hint:"helfen + Dativ"},
+{text:"Welcher Satz ist richtig?",correct:["Sie sieht ihn jeden Tag."],all:["Sie sieht ihn jeden Tag.","Sie sieht ihm jeden Tag."],hint:"Akkusativ"},
+{text:"Welcher Satz ist richtig?",correct:["Wir treffen uns morgen."],all:["Wir treffen uns morgen.","Wir treffen wir morgen."],hint:"reflexiv"},
+{text:"Welcher Satz ist richtig?",correct:["Das habe ich nicht gewusst."],all:["Das habe ich nicht gewusst.","Das habe ich nicht gewusst gehabt."],hint:"kein Doppelperfekt nötig"},
+{text:"Welcher Satz ist richtig?",correct:["Er ist nach Hause gegangen."],all:["Er ist nach Hause gegangen.","Er hat nach Hause gegangen."],hint:"gehen mit sein"}
+];
 
-    function getUniqueItem(pool, used) {
-        const available = pool.filter((_, i) => !used.includes(i));
-        if (available.length === 0) {
-            // Falls alle aufgebraucht, zurücksetzen
-            used.length = 0;
-            return pool[Math.floor(Math.random() * pool.length)];
-        }
-        const item = available[Math.floor(Math.random() * available.length)];
-        used.push(pool.indexOf(item));
-        return item;
-    }
+const triPool = [
+{text:"Wie viele Bundesländer hat Deutschland?",correct:["16"],all:["12","14","16","18"],hint:"16"},
+{text:"In welcher Stadt steht der Kölner Dom?",correct:["Köln"],all:["Berlin","München","Köln","Hamburg"],hint:"Köln"},
+{text:"Was ist die Hauptstadt von Deutschland?",correct:["Berlin"],all:["Berlin","München","Hamburg","Frankfurt"],hint:"Berlin"},
+{text:"Welcher Fluss fließt durch Köln?",correct:["Rhein"],all:["Elbe","Rhein","Donau","Main"],hint:"Rhein"},
+{text:"In welchem Landesteil liegt Bayern?",correct:["Süden"],all:["Norden","Süden","Osten","Westen"],hint:"Süden"},
+{text:"Welche Stadt hat den größten Hafen?",correct:["Hamburg"],all:["Hamburg","Bremen","Kiel","Rostock"],hint:"Hamburg"},
+{text:"Was feiert man am 3. Oktober?",correct:["Tag der Deutschen Einheit"],all:["Tag der Deutschen Einheit","Oktoberfest","Weihnachten","Ostern"],hint:"Tag der Deutschen Einheit"},
+{text:"Welche Farbe hat die Flagge nicht?",correct:["Blau"],all:["Schwarz","Rot","Gold","Blau"],hint:"Schwarz-Rot-Gold"},
+{text:"Wo kann man gut wandern?",correct:["Bayern","Schwarzwald"],all:["Bayern","Schwarzwald","Ruhrgebiet","Berlin"],hint:"Bayern & Schwarzwald"},
+{text:"Was kann man aus Milch machen?",correct:["Käse","Joghurt","Butter"],all:["Käse","Joghurt","Butter","Brot"],hint:"Käse, Joghurt, Butter"},
+{text:"Welche Stadt liegt an der Isar?",correct:["München"],all:["München","Stuttgart","Nürnberg","Augsburg"],hint:"München"},
+{text:"Wie heißt das Meer im Norden?",correct:["Nordsee","Ostsee"],all:["Nordsee","Ostsee","Mittelmeer","Schwarzes Meer"],hint:"Nord- und Ostsee"},
+{text:"Welches Bundesland ist am größten?",correct:["Bayern"],all:["Bayern","Niedersachsen","Baden-Württemberg","NRW"],hint:"Bayern"},
+{text:"Wo steht das Brandenburger Tor?",correct:["Berlin"],all:["Berlin","Potsdam","Leipzig","Dresden"],hint:"Berlin"},
+{text:"Typisch deutsches Lebensmittel?",correct:["Brot","Wurst","Käse"],all:["Brot","Wurst","Käse","Pizza"],hint:"Brot, Wurst, Käse"},
+{text:"Stadt im Ruhrgebiet?",correct:["Dortmund","Essen"],all:["Dortmund","Essen","München","Leipzig"],hint:"Dortmund & Essen"},
+{text:"Währung in Deutschland?",correct:["Euro"],all:["Euro","D-Mark","Franken","Schilling"],hint:"Euro"},
+{text:"Höchster Berg Deutschlands?",correct:["Zugspitze"],all:["Zugspitze","Brocken","Feldberg","Watzmann"],hint:"Zugspitze"},
+{text:"In welchem Bundesland liegt Stuttgart?",correct:["Baden-Württemberg"],all:["Bayern","Baden-Württemberg","Hessen","Rheinland-Pfalz"],hint:"Baden-Württemberg"},
+{text:"Was trinkt man oft zum Oktoberfest?",correct:["Bier"],all:["Bier","Wein","Saft","Kaffee"],hint:"Bier"},
+{text:"Stadt an der Elbe?",correct:["Hamburg","Dresden"],all:["Hamburg","Dresden","Köln","München"],hint:"Hamburg & Dresden"},
+{text:"Einwohner ungefähr?",correct:["83 Millionen"],all:["50 Millionen","67 Millionen","83 Millionen","100 Millionen"],hint:"ca. 83 Mio."},
+{text:"Tier auf dem Wappen?",correct:["Adler"],all:["Adler","Löwe","Bär","Wolf"],hint:"Adler"},
+{text:"Wo findet die Buchmesse statt?",correct:["Frankfurt"],all:["Frankfurt","Leipzig","Berlin","Hamburg"],hint:"Frankfurt"},
+{text:"Längster Fluss?",correct:["Rhein"],all:["Rhein","Elbe","Donau","Weser"],hint:"Rhein"},
+{text:"Stadt für Dom und Karneval?",correct:["Köln"],all:["Köln","Düsseldorf","Mainz","Aachen"],hint:"Köln"},
+{text:"Wo kann man gut Ski fahren?",correct:["Bayern","Allgäu"],all:["Bayern","Allgäu","Nordsee","Ruhrgebiet"],hint:"Bayern/Allgäu"},
+{text:"Klassisches deutsches Frühstück?",correct:["Brot","Käse","Wurst"],all:["Brot","Käse","Wurst","Sushi"],hint:"Brot, Käse, Wurst"},
+{text:"Bundesland ganz im Norden?",correct:["Schleswig-Holstein"],all:["Schleswig-Holstein","Mecklenburg-Vorpommern","Niedersachsen","Hamburg"],hint:"Schleswig-Holstein"},
+{text:"Wo steht die Frauenkirche?",correct:["Dresden","München"],all:["Dresden","München","Berlin","Leipzig"],hint:"Dresden und München"}
+];
 
-    function showQuestion(type, pool, sentenceId, optionsId, fbId, progressId, slotId = null) {
-        const st = state[type];
+/* ===================== LOGIK ===================== */
+function setDifficulty(level, btn) {
+  difficulty = level;
+  questionsPerRound = level === 'leicht' ? 10 : level === 'mittel' ? 20 : 30;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  categories.forEach(c => {
+    state[c] = {index:0, correct:0, used:[], skipped:false, finished:false};
+    document.getElementById('card-'+c).style.opacity = '1';
+  });
+  loadAll();
+  updateScores();
+}
 
-        if (st.index >= questionsPerRound) {
-            document.getElementById(sentenceId).innerHTML = `<strong>Fertig!</strong> ${st.correct} von ${questionsPerRound} richtig.`;
-            document.getElementById(optionsId).innerHTML = "";
-            document.getElementById(fbId).textContent = "";
-            document.getElementById(progressId).textContent = `Abgeschlossen · ${st.correct}/${questionsPerRound}`;
-            updateScores();
-            return;
-        }
+function skipCategory(type) {
+  state[type].skipped = true;
+  state[type].finished = true;
+  document.getElementById('card-'+type).style.opacity = '0.45';
+  document.getElementById(type+'-sentence').innerHTML = '<em>Kategorie übersprungen</em>';
+  document.getElementById(type+'-options').innerHTML = '';
+  document.getElementById(type+'-fb').textContent = '';
+  document.getElementById(type+'-progress').textContent = 'Übersprungen';
+  updateScores();
+}
 
-        const item = getUniqueItem(pool, st.used);
-        let html = item.text;
-        if (slotId) {
-            html = item.text.replace("___", `<span class="blank-slot" id="${slotId}">_____</span>`);
-        }
-        document.getElementById(sentenceId).innerHTML = slotId ? `Satz: „${html}“` : html;
-        document.getElementById(fbId).textContent = "";
-        document.getElementById(progressId).textContent = `Frage ${st.index + 1} / ${questionsPerRound} · Richtig: ${st.correct}`;
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5)}
 
-        const optionsEl = document.getElementById(optionsId);
-        optionsEl.innerHTML = "";
+function getUniqueItem(pool, used) {
+  let available = pool.map((item,i)=>({item,i})).filter(x => !used.includes(x.i));
+  if (available.length === 0) {
+    used.length = 0;
+    available = pool.map((item,i)=>({item,i}));
+  }
+  const choice = available[Math.floor(Math.random()*available.length)];
+  used.push(choice.i);
+  return choice.item;
+}
 
-        // Bei Alternativen und Trivia: Mehrfachauswahl möglich
-        const isMulti = (type === 'alt' || type === 'tri') && item.correct.length > 1;
-        let selected = [];
+function showQuestion(type, pool, sentenceId, optionsId, fbId, progressId, hasSlot) {
+  const st = state[type];
+  if (st.skipped) return;
 
-        shuffle(item.all).forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'opt-choice';
-            btn.textContent = opt;
-
-            btn.onclick = () => {
-                if (btn.disabled) return;
-
-                if (isMulti) {
-                    // Mehrfachauswahl-Logik
-                    if (selected.includes(opt)) return;
-                    selected.push(opt);
-
-                    const isCorrectOpt = item.correct.includes(opt);
-                    btn.classList.add(isCorrectOpt ? 'correct' : 'wrong');
-                    btn.disabled = true;
-
-                    // Prüfen ob alle richtigen gefunden wurden oder ein Fehler gemacht wurde
-                    const foundAllCorrect = item.correct.every(c => selected.includes(c));
-                    const hasWrong = selected.some(s => !item.correct.includes(s));
-
-                    if (hasWrong) {
-                        // Fehler → alle richtigen markieren und weiter
-                        optionsEl.querySelectorAll('button').forEach(b => {
-                            b.disabled = true;
-                            if (item.correct.includes(b.textContent)) b.classList.add('correct');
-                        });
-                        document.getElementById(fbId).style.color = '#e11d48';
-                        document.getElementById(fbId).textContent = `Falsch. Richtig wären: ${item.correct.join(', ')}`;
-                        setTimeout(() => { st.index++; loadByType(type); updateScores(); }, 1400);
-                    } else if (foundAllCorrect) {
-                        // Alle richtigen gefunden → Bonus
-                        optionsEl.querySelectorAll('button').forEach(b => b.disabled = true);
-                        const bonus = item.correct.length > 1 ? 1 : 0;
-                        st.correct += 1 + bonus;
-                        document.getElementById(fbId).style.color = '#0d9488';
-                        document.getElementById(fbId).textContent = bonus ? `Super! Alle richtigen gefunden (+Bonus)` : "Richtig!";
-                        setTimeout(() => { st.index++; loadByType(type); updateScores(); }, 1200);
-                    }
-                } else {
-                    // Einfachauswahl
-                    optionsEl.querySelectorAll('button').forEach(b => b.disabled = true);
-                    const isCorrect = item.correct.includes(opt);
-
-                    if (slotId) {
-                        const slot = document.getElementById(slotId);
-                        if (slot) {
-                            slot.textContent = opt;
-                            slot.style.color = isCorrect ? '#0d9488' : '#e11d48';
-                        }
-                    }
-
-                    btn.classList.add(isCorrect ? 'correct' : 'wrong');
-                    // Richtige Antworten grün markieren
-                    optionsEl.querySelectorAll('button').forEach(b => {
-                        if (item.correct.includes(b.textContent)) b.classList.add('correct');
-                    });
-
-                    document.getElementById(fbId).style.color = isCorrect ? '#0d9488' : '#e11d48';
-                    document.getElementById(fbId).textContent = isCorrect ? "Richtig!" : `Falsch. Tipp: ${item.hint}`;
-
-                    if (isCorrect) st.correct++;
-
-                    setTimeout(() => { st.index++; loadByType(type); updateScores(); }, 1200);
-                }
-            };
-            optionsEl.appendChild(btn);
-        });
-    }
-
-    function loadByType(type) {
-        if (type === 'art') loadArticle();
-        if (type === 'plu') loadPlural();
-        if (type === 'alt') loadAlt();
-        if (type === 'kw')  loadKw();
-        if (type === 'tri') loadTri();
-    }
-
-    function loadArticle() { showQuestion('art', articlePool, 'art-sentence', 'art-options', 'art-fb', 'art-progress', 'art-slot'); }
-    function loadPlural()  { showQuestion('plu', pluralPool,  'plu-sentence', 'plu-options', 'plu-fb', 'plu-progress', 'plu-slot'); }
-    function loadAlt()     { showQuestion('alt', altPool,     'alt-sentence', 'alt-options', 'alt-fb', 'alt-progress', 'alt-slot'); }
-    function loadKw()      { showQuestion('kw',  kwPool,      'kw-sentence',  'kw-options',  'kw-fb',  'kw-progress',  'kw-slot'); }
-    function loadTri()     { showQuestion('tri', triPool,     'tri-sentence', 'tri-options', 'tri-fb', 'tri-progress'); }
-
-    function updateScores() {
-        function pct(st) {
-            if (st.index === 0) return "–";
-            const percent = Math.round((st.correct / questionsPerRound) * 100);
-            return `${st.correct}/${questionsPerRound} (${percent}%)`;
-        }
-        document.getElementById('score-art').textContent = pct(state.art);
-        document.getElementById('score-plu').textContent = pct(state.plu);
-        document.getElementById('score-alt').textContent = pct(state.alt);
-        document.getElementById('score-kw').textContent  = pct(state.kw);
-        document.getElementById('score-tri').textContent = pct(state.tri);
-
-        const totalCorrect = state.art.correct + state.plu.correct + state.alt.correct + state.kw.correct + state.tri.correct;
-        const totalPossible = questionsPerRound * 5;
-        const totalPercent = Math.round((totalCorrect / totalPossible) * 100);
-        document.getElementById('score-total').textContent = `${totalCorrect}/${totalPossible} · ${totalPercent}%`;
-    }
-
-    // Start
-    loadArticle(); loadPlural(); loadAlt(); loadKw(); loadTri();
+  if (st.index >= questionsPerRound) {
+    st.finished = true;
+    document.getElementById(sentenceId).innerHTML = `<strong>Fertig!</strong> ${st.correct} von ${questionsPerRound} richtig.`;
+    document.getElementById(optionsId).innerHTML = '';
+    document.getElementById(fbId).textContent = '';
+    document.getElementById(progressId).textContent = `Abgeschlossen · ${st.correct}/${questionsPerRound}`;
     updateScores();
+    return;
+  }
+
+  const item = getUniqueItem(pool, st.used);
+  let html = item.text;
+  if (hasSlot) html = item.text.replace('___', `<span class="blank-slot" id="${type}-slot">_____</span>`);
+  document.getElementById(sentenceId).innerHTML = hasSlot ? `Satz: „${html}“` : html;
+  document.getElementById(fbId).textContent = '';
+  document.getElementById(progressId).textContent = `Frage ${st.index+1} / ${questionsPerRound} · Richtig: ${st.correct}`;
+
+  const optionsEl = document.getElementById(optionsId);
+  optionsEl.innerHTML = '';
+  const isMulti = item.correct.length > 1;
+  let selected = [];
+
+  shuffle(item.all).forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-choice';
+    btn.textContent = opt;
+    btn.onclick = () => {
+      if (btn.disabled) return;
+
+      if (isMulti) {
+        if (selected.includes(opt)) return;
+        selected.push(opt);
+        const ok = item.correct.includes(opt);
+        btn.classList.add(ok ? 'correct' : 'wrong');
+        btn.disabled = true;
+
+        const foundAll = item.correct.every(c => selected.includes(c));
+        const hasWrong = selected.some(s => !item.correct.includes(s));
+
+        if (hasWrong) {
+          optionsEl.querySelectorAll('button').forEach(b => {
+            b.disabled = true;
+            if (item.correct.includes(b.textContent)) b.classList.add('correct');
+          });
+          document.getElementById(fbId).style.color = '#e11d48';
+          document.getElementById(fbId).textContent = `Falsch. Richtig: ${item.correct.join(', ')}`;
+          setTimeout(() => { st.index++; loadByType(type); updateScores(); }, 1300);
+        } else if (foundAll) {
+          optionsEl.querySelectorAll('button').forEach(b => b.disabled = true);
+          const bonus = item.correct.length > 1 ? 1 : 0;
+          st.correct += 1 + bonus;
+          document.getElementById(fbId).style.color = '#0d9488';
+          document.getElementById(fbId).textContent = bonus ? 'Super! Alle richtigen gefunden (+Bonus)' : 'Richtig!';
+          setTimeout(() => { st.index++; loadByType(type); updateScores(); }, 1100);
+        }
+      } else {
+        optionsEl.querySelectorAll('button').forEach(b => b.disabled = true);
+        const ok = item.correct.includes(opt);
+        if (hasSlot) {
+          const slot = document.getElementById(type+'-slot');
+          if (slot) { slot.textContent = opt; slot.style.color = ok ? '#0d9488' : '#e11d48'; }
+        }
+        btn.classList.add(ok ? 'correct' : 'wrong');
+        optionsEl.querySelectorAll('button').forEach(b => {
+          if (item.correct.includes(b.textContent)) b.classList.add('correct');
+        });
+        document.getElementById(fbId).style.color = ok ? '#0d9488' : '#e11d48';
+        document.getElementById(fbId).textContent = ok ? 'Richtig!' : `Falsch. Tipp: ${item.hint}`;
+        if (ok) st.correct++;
+        setTimeout(() => { st.index++; loadByType(type); updateScores(); }, 1100);
+      }
+    };
+    optionsEl.appendChild(btn);
+  });
+}
+
+function loadByType(t) {
+  if (t==='art') loadArticle();
+  if (t==='plu') loadPlural();
+  if (t==='alt') loadAlt();
+  if (t==='kw')  loadKw();
+  if (t==='ob')  loadOb();
+  if (t==='als') loadAls();
+  if (t==='err') loadErr();
+  if (t==='tri') loadTri();
+}
+
+function loadArticle(){ showQuestion('art',articlePool,'art-sentence','art-options','art-fb','art-progress',true); }
+function loadPlural(){  showQuestion('plu',pluralPool,'plu-sentence','plu-options','plu-fb','plu-progress',true); }
+function loadAlt(){     showQuestion('alt',altPool,'alt-sentence','alt-options','alt-fb','alt-progress',true); }
+function loadKw(){      showQuestion('kw',kwPool,'kw-sentence','kw-options','kw-fb','kw-progress',true); }
+function loadOb(){      showQuestion('ob',obPool,'ob-sentence','ob-options','ob-fb','ob-progress',true); }
+function loadAls(){     showQuestion('als',alsPool,'als-sentence','als-options','als-fb','als-progress',true); }
+function loadErr(){     showQuestion('err',errPool,'err-sentence','err-options','err-fb','err-progress',false); }
+function loadTri(){     showQuestion('tri',triPool,'tri-sentence','tri-options','tri-fb','tri-progress',false); }
+
+function loadAll(){ loadArticle();loadPlural();loadAlt();loadKw();loadOb();loadAls();loadErr();loadTri(); }
+
+function getReward(p) {
+  if (p >= 100) return '🦸 Deutsch-Superheld/in! Unglaublich!';
+  if (p >= 90)  return '🏆 Deutsch-Profi – respekt!';
+  if (p >= 75)  return '💪 Sehr stark – du bist auf einem guten Weg!';
+  if (p >= 60)  return '👍 Solide Leistung – weiter so!';
+  if (p >= 40)  return '🌱 Deutsch-Probierer – übung macht den Meister!';
+  if (p >= 20)  return '😅 Anfänger-Modus – kein Drama, einfach nochmal versuchen!';
+  return '🫖 Kaffee holen und nochmal starten!';
+}
+
+function updateScores() {
+  const lines = document.getElementById('score-lines');
+  lines.innerHTML = '';
+  let totalCorrect = 0, totalPossible = 0;
+
+  const names = {
+    art:'Artikel', plu:'Singular/Plural', alt:'Wort-Alternativen',
+    kw:'kennen/wissen', ob:'ob/wenn', als:'als/wie',
+    err:'Typische Fehler', tri:'Deutschland-Wissen'
+  };
+
+  categories.forEach(c => {
+    const st = state[c];
+    if (st.skipped) {
+      lines.innerHTML += `<div class="score-line"><span>${names[c]}</span><span>übersprungen</span></div>`;
+      return;
+    }
+    if (st.index === 0 && !st.finished) {
+      lines.innerHTML += `<div class="score-line"><span>${names[c]}</span><span>–</span></div>`;
+      return;
+    }
+    const percent = Math.round((st.correct / questionsPerRound) * 100);
+    lines.innerHTML += `<div class="score-line"><span>${names[c]}</span><span>${st.correct}/${questionsPerRound} (${percent}%)</span></div>`;
+    totalCorrect += st.correct;
+    totalPossible += questionsPerRound;
+  });
+
+  if (totalPossible === 0) {
+    document.getElementById('score-total').textContent = '–';
+    document.getElementById('reward-text').textContent = '';
+    return;
+  }
+  const totalPercent = Math.round((totalCorrect / totalPossible) * 100);
+  document.getElementById('score-total').textContent = `${totalCorrect}/${totalPossible} · ${totalPercent}%`;
+  document.getElementById('reward-text').textContent = getReward(totalPercent);
+}
+
+// Start
+loadAll();
+updateScores();
 </script>
 </body>
 </html>
